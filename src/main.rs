@@ -1,1 +1,5 @@
-include!(concat!(env!("OUT_DIR"), "/example.rs"));
+include!(concat!(env!("OUT_DIR"), "/cef.rs"));
+
+fn main() {
+    println!("Hello CEF");
+}
