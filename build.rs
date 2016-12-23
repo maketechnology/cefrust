@@ -1,10 +1,10 @@
 extern crate libbindgen;
 
-use std::env;
+//use std::env;
 use std::path::Path;
 
 fn main() {
-  let out_dir = env::var("OUT_DIR").unwrap();
+  //let out_dir = env::var("OUT_DIR").unwrap();
   let config = libbindgen::CodegenConfig {
             functions: true,
             types: true,
@@ -21,5 +21,6 @@ fn main() {
     .whitelisted_type("_cef_main_args_t")
     //.hide_type("XEvent")
     .generate().unwrap()
-    .write_to_file(Path::new(&out_dir).join("cef.rs"));
+    //.write_to_file(Path::new(&out_dir).join("cef.rs"));
+    .write_to_file(Path::new("src").join("cef.rs"));
 }
