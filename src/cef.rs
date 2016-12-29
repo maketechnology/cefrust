@@ -89,6 +89,28 @@ impl Clone for _cef_time_t {
 }
 pub type cef_time_t = _cef_time_t;
 pub type cef_color_t = uint32;
+pub const LOGSEVERITY_DEFAULT: _bindgen_ty_3 =
+    _bindgen_ty_3::LOGSEVERITY_DEFAULT;
+pub const LOGSEVERITY_VERBOSE: _bindgen_ty_3 =
+    _bindgen_ty_3::LOGSEVERITY_VERBOSE;
+pub const LOGSEVERITY_INFO: _bindgen_ty_3 = _bindgen_ty_3::LOGSEVERITY_INFO;
+pub const LOGSEVERITY_WARNING: _bindgen_ty_3 =
+    _bindgen_ty_3::LOGSEVERITY_WARNING;
+pub const LOGSEVERITY_ERROR: _bindgen_ty_3 = _bindgen_ty_3::LOGSEVERITY_ERROR;
+pub const LOGSEVERITY_DISABLE: _bindgen_ty_3 =
+    _bindgen_ty_3::LOGSEVERITY_DISABLE;
+#[repr(u32)]
+///
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+pub enum _bindgen_ty_3 {
+    LOGSEVERITY_DEFAULT = 0,
+    LOGSEVERITY_VERBOSE = 1,
+    LOGSEVERITY_INFO = 2,
+    LOGSEVERITY_WARNING = 3,
+    LOGSEVERITY_ERROR = 4,
+    LOGSEVERITY_DISABLE = 99,
+}
+pub type cef_log_severity_t = _bindgen_ty_3;
 pub const STATE_DEFAULT: _bindgen_ty_4 = _bindgen_ty_4::STATE_DEFAULT;
 pub const STATE_ENABLED: _bindgen_ty_4 = _bindgen_ty_4::STATE_ENABLED;
 pub const STATE_DISABLED: _bindgen_ty_4 = _bindgen_ty_4::STATE_DISABLED;
@@ -101,6 +123,75 @@ pub enum _bindgen_ty_4 {
     STATE_DISABLED = 2,
 }
 pub type cef_state_t = _bindgen_ty_4;
+///
+#[repr(C)]
+#[derive(Debug, Copy)]
+pub struct _cef_settings_t {
+    ///
+    pub size: usize,
+    ///
+    pub single_process: ::std::os::raw::c_int,
+    ///
+    pub no_sandbox: ::std::os::raw::c_int,
+    ///
+    pub browser_subprocess_path: cef_string_t,
+    ///
+    pub multi_threaded_message_loop: ::std::os::raw::c_int,
+    ///
+    pub external_message_pump: ::std::os::raw::c_int,
+    ///
+    pub windowless_rendering_enabled: ::std::os::raw::c_int,
+    ///
+    pub command_line_args_disabled: ::std::os::raw::c_int,
+    ///
+    pub cache_path: cef_string_t,
+    ///
+    pub user_data_path: cef_string_t,
+    ///
+    pub persist_session_cookies: ::std::os::raw::c_int,
+    ///
+    pub persist_user_preferences: ::std::os::raw::c_int,
+    ///
+    pub user_agent: cef_string_t,
+    ///
+    pub product_version: cef_string_t,
+    ///
+    pub locale: cef_string_t,
+    ///
+    pub log_file: cef_string_t,
+    ///
+    pub log_severity: cef_log_severity_t,
+    ///
+    pub javascript_flags: cef_string_t,
+    ///
+    pub resources_dir_path: cef_string_t,
+    ///
+    pub locales_dir_path: cef_string_t,
+    ///
+    pub pack_loading_disabled: ::std::os::raw::c_int,
+    ///
+    pub remote_debugging_port: ::std::os::raw::c_int,
+    ///
+    pub uncaught_exception_stack_size: ::std::os::raw::c_int,
+    ///
+    pub context_safety_implementation: ::std::os::raw::c_int,
+    ///
+    pub ignore_certificate_errors: ::std::os::raw::c_int,
+    ///
+    pub enable_net_security_expiration: ::std::os::raw::c_int,
+    ///
+    pub background_color: cef_color_t,
+    ///
+    pub accept_language_list: cef_string_t,
+}
+#[test]
+fn bindgen_test_layout__cef_settings_t() {
+    assert_eq!(::std::mem::size_of::<_cef_settings_t>() , 344usize);
+    assert_eq!(::std::mem::align_of::<_cef_settings_t>() , 8usize);
+}
+impl Clone for _cef_settings_t {
+    fn clone(&self) -> Self { *self }
+}
 ///
 #[repr(C)]
 #[derive(Debug, Copy)]
@@ -5218,4 +5309,20 @@ extern "C" {
                                windows_sandbox_info:
                                    *mut ::std::os::raw::c_void)
      -> ::std::os::raw::c_int;
+}
+extern "C" {
+    ///
+    pub fn cef_initialize(args: *const _cef_main_args_t,
+                          settings: *const _cef_settings_t,
+                          application: *mut cef_app_t,
+                          windows_sandbox_info: *mut ::std::os::raw::c_void)
+     -> ::std::os::raw::c_int;
+}
+extern "C" {
+    ///
+    pub fn cef_shutdown();
+}
+extern "C" {
+    ///
+    pub fn cef_run_message_loop();
 }

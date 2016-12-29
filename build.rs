@@ -29,6 +29,9 @@ fn main() {
     .whitelisted_type("_cef_main_args_t")
     //.hide_type("XEvent")
     .whitelisted_function("cef_execute_process")
+    .whitelisted_function("cef_initialize")
+    .whitelisted_function("cef_run_message_loop")
+    .whitelisted_function("cef_shutdown")
     .generate().unwrap()
     //.write_to_file(Path::new(&out_dir).join("cef.rs"));
     .write_to_file(Path::new("src").join("cef.rs"));
