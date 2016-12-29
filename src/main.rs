@@ -15,8 +15,14 @@ fn main() {
     };
     println!("Hello CEF: {}", args.argc);
 
-    unsafe{
+    let exit_code:raw::c_int = unsafe{
         let exit_code = cef::cef_execute_process(&args, std::ptr::null_mut(), std::ptr::null_mut());
-        println!("exit_code: {}", exit_code)
-    }
+        exit_code
+    };
+    println!("exit_code: {}", exit_code);
+
+    if exit_code >= 0 {
+        // The sub-process terminated, exit now.
+        std::process::exit(exit_code);
+    } 
 }
