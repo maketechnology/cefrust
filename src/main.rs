@@ -30,11 +30,15 @@ fn main() {
         std::process::exit(exit_code);
     }
 
+    let bsp:cef::cef_string_t = {};
+    //cef::cef_string_utf16_set("", 0, bsp, true);
+    cef::cef_string_utf8_to_wide("", 0, bsp);
+
     let settings = cef::_cef_settings_t {
         size: 344usize,
         single_process: 0,
         no_sandbox: 1,
-        browser_subprocess_path: std::ptr::null(),
+        browser_subprocess_path: bsp,
         multi_threaded_message_loop: 0,
         external_message_pump: 0,
         windowless_rendering_enabled: 0,

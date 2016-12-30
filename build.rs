@@ -28,6 +28,7 @@ fn main() {
     //.no_unstable_rust()
     .whitelisted_type("_cef_main_args_t")
     //.hide_type("XEvent")
+    .whitelisted_function("cef_string_.*")
     .whitelisted_function("cef_execute_process")
     .whitelisted_function("cef_initialize")
     .whitelisted_function("cef_run_message_loop")
