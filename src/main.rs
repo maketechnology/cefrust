@@ -30,31 +30,35 @@ fn main() {
         std::process::exit(exit_code);
     }
 
-    let bsp:cef::cef_string_t = {};
-    //cef::cef_string_utf16_set("", 0, bsp, true);
-    cef::cef_string_utf8_to_wide("", 0, bsp);
+    let empty_str = cef::cef_string_t {
+        str: std::ptr::null_mut(), 
+        length: 0, 
+        dtor: std::option::Option::None
+    };
+    //cef::cef_string_utf16_set("", 0, empty_str, true);
+    cef::cef_string_utf8_to_utf16("".as_ptr() as *mut std::os::raw::c_char, 0, &mut empty_str);
 
     let settings = cef::_cef_settings_t {
         size: 344usize,
         single_process: 0,
         no_sandbox: 1,
-        browser_subprocess_path: bsp,
+        browser_subprocess_path: empty_str,
         multi_threaded_message_loop: 0,
         external_message_pump: 0,
         windowless_rendering_enabled: 0,
         command_line_args_disabled: 0,
-        cache_path: std::ptr::null_mut(),
-        user_data_path: std::ptr::null_mut(),
+        cache_path: empty_str,
+        user_data_path: empty_str,
         persist_session_cookies: 1,
         persist_user_preferences: 1,
-        user_agent: std::ptr::null_mut(),
-        product_version: std::ptr::null_mut(),
-        locale: std::ptr::null_mut(),
-        log_file: std::ptr::null_mut(),
+        user_agent: empty_str,
+        product_version: empty_str,
+        locale: empty_str,
+        log_file: empty_str,
         log_severity: cef::_bindgen_ty_3::LOGSEVERITY_VERBOSE,
-        javascript_flags: std::ptr::null_mut(),
-        resources_dir_path: std::ptr::null_mut(),
-        locales_dir_path: std::ptr::null_mut(),
+        javascript_flags: empty_str,
+        resources_dir_path: empty_str,
+        locales_dir_path: empty_str,
         pack_loading_disabled: 0,
         remote_debugging_port: 0,
         uncaught_exception_stack_size: 0,
@@ -62,13 +66,13 @@ fn main() {
         ignore_certificate_errors: 0,
         enable_net_security_expiration: 0,
         background_color: 0,
-        accept_language_list: std::ptr::null_mut()
+        accept_language_list: empty_str
     };
 
     // Initialize CEF in the main process.
     let app = std::ptr::null_mut();
 
-    cef::cef_initialize(main_args, settings, app, std::ptr::null_mut());
+    cef::cef_initialize(&main_args, &settings, app, std::ptr::null_mut());
 
     // Run the CEF message loop. This will block until CefQuitMessageLoop() is called.
     cef::cef_run_message_loop();
