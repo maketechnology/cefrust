@@ -17,9 +17,12 @@ fn main() {
  
     // Structure for passing command-line arguments.
     // The definition of this structure is platform-specific.
+    let args_ptr = args.as_ptr();
+    unsafe { println!("Hello CEF, ARGS: {:?}", *args[0]) };
+
     let main_args = cef::_cef_main_args_t {
         argc : args.len() as std::os::raw::c_int,
-        argv : args.as_ptr() as *mut *mut std::os::raw::c_char
+        argv : args_ptr as *mut *mut std::os::raw::c_char
     };
     println!("Hello CEF, ARGS: {}", main_args.argc);
 
