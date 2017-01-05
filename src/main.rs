@@ -106,6 +106,10 @@ fn main() {
         has_one_ref: Option::None
     };
 
+    unsafe extern "C" fn context_initialized_fn(self_: *mut _cef_browser_process_handler_t) {
+        
+    };
+
     unsafe extern "C" fn bph_fn(self_: *mut cef::cef_app_t) -> *mut cef::_cef_browser_process_handler_t {
         println!("In get_browser_process_handler");
 
@@ -116,7 +120,7 @@ fn main() {
                 release: Option::None,
                 has_one_ref: Option::None
             },
-            on_context_initialized: Option::None,
+            on_context_initialized: Option::Some(context_initialized_fn),
             on_before_child_process_launch: Option::None,
             on_render_process_thread_created: Option::None,
             get_print_handler: Option::None,
