@@ -2,14 +2,18 @@
 mod cef;
 
 use std::ffi;
+//use std::os::ext::ffi::OsStrExt;
+use std::os::unix::ffi::OsStrExt;
 use std::os::raw;
 
 fn main() {
     let argv:Vec<ffi::CString> = std::env::args_os().map(|arg| {
         //println!("argv: {:?}", arg);     
-        ffi::CString::new(arg.into_string().unwrap()).unwrap() 
+        //ffi::CString::new(arg.into_string().unwrap()).unwrap() 
+        let osstr:&ffi::OsStr = arg.as_os_str();
+        ffi::CString::new(osstr.as_bytes()).unwrap() 
     } ).collect();
-    let args:Vec<*const ::std::os::raw::c_char> = argv.into_iter().map(|arg| { 
+    let args:Vec<_> = argv.iter().map(|arg| { 
         println!("args: {:?}", arg);
         arg.as_ptr() 
     } ).collect();
