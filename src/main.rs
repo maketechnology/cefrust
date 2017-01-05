@@ -5,6 +5,7 @@ use std::ffi;
 //use std::os::ext::ffi::OsStrExt;
 use std::os::unix::ffi::OsStrExt;
 use std::os::raw;
+use std::option::Option;
 
 fn main() {
     let argv:Vec<ffi::CString> = std::env::args_os().map(|arg| {
@@ -52,18 +53,18 @@ fn main() {
     let mut empty_str = cef::cef_string_t {
         str: std::ptr::null_mut(), 
         length: 0, 
-        dtor: std::option::Option::None
+        dtor: Option::None
     };
     //cef::cef_string_utf16_set("", 0, empty_str, true);
     unsafe {
         cef::cef_string_utf8_to_utf16("".as_ptr() as *mut std::os::raw::c_char, 0, &mut empty_str);
     }
 
-    let mut locales_cef = cef::cef_string_t {str: std::ptr::null_mut(), length: 0, dtor: std::option::Option::None};
+    let mut locales_cef = cef::cef_string_t {str: std::ptr::null_mut(), length: 0, dtor: Option::None};
     let locales = "/home/gzunino/workspaces/rust/cefrust/target/debug/locales";
     unsafe {cef::cef_string_utf8_to_utf16(locales.as_ptr() as *mut std::os::raw::c_char, locales.len(), &mut locales_cef);}
 
-    let mut resources_cef = cef::cef_string_t {str: std::ptr::null_mut(), length: 0, dtor: std::option::Option::None};
+    let mut resources_cef = cef::cef_string_t {str: std::ptr::null_mut(), length: 0, dtor: Option::None};
     let resources = "/home/gzunino/workspaces/rust/cefrust/target/debug/Resources";
     unsafe {cef::cef_string_utf8_to_utf16(resources.as_ptr() as *mut std::os::raw::c_char, resources.len(), &mut resources_cef);}
 
@@ -98,12 +99,47 @@ fn main() {
         accept_language_list: empty_str
     };
 
+    let app_base = cef::cef_base_t {
+        size: std::mem::size_of::<cef::cef_app_t>(),
+        add_ref: Option::None,
+        release: Option::None,
+        has_one_ref: Option::None
+    };
+
+    unsafe extern "C" fn bph_fn(self_: *mut cef::cef_app_t) -> *mut cef::_cef_browser_process_handler_t {
+        println!("In get_browser_process_handler");
+
+        let mut bph = cef::_cef_browser_process_handler_t {
+            base: cef::cef_base_t {
+                size: std::mem::size_of::<cef::_cef_browser_process_handler_t>(),
+                add_ref: Option::None,
+                release: Option::None,
+                has_one_ref: Option::None
+            },
+            on_context_initialized: Option::None,
+            on_before_child_process_launch: Option::None,
+            on_render_process_thread_created: Option::None,
+            get_print_handler: Option::None,
+            on_schedule_message_pump_work: Option::None
+        };
+        &mut bph
+    };
+
+    //let bph = bph_fn;
+
     // Initialize CEF in the main process.
-    let app = std::ptr::null_mut();
+    let mut app = cef::cef_app_t {
+        base: app_base,
+        on_before_command_line_processing: Option::None,
+        on_register_custom_schemes: Option::None,
+        get_resource_bundle_handler: Option::None,
+        get_browser_process_handler: Option::Some(bph_fn),
+        get_render_process_handler: Option::None
+    };
 
     unsafe {
         println!("Calling cef_initialize");
-        cef::cef_initialize(&main_args, &settings, app, std::ptr::null_mut());
+        cef::cef_initialize(&main_args, &settings, &mut app, std::ptr::null_mut());
         
         println!("Calling cef_run_message_loop");
         // Run the CEF message loop. This will block until CefQuitMessageLoop() is called.
