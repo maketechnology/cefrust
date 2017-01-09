@@ -5,3 +5,4 @@
 //#include "include/base/cef_build.h"
 //#include "include/base/cef_basictypes.h"
 #include "include/capi/cef_app_capi.h"
+#include "include/capi/cef_client_capi.h"

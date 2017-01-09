@@ -7,6 +7,118 @@ use std::os::unix::ffi::OsStrExt;
 use std::os::raw;
 use std::option::Option;
 
+unsafe extern "C" fn context_initialized_fn(_: *mut cef::_cef_browser_process_handler_t) {
+    println!("In context_initialized_fn");
+
+    let mut empty_str = cef::cef_string_t {
+        str: std::ptr::null_mut(), 
+        length: 0, 
+        dtor: Option::None
+    };
+    //cef::cef_string_utf16_set("", 0, empty_str, true);
+    cef::cef_string_utf8_to_utf16("".as_ptr() as *mut std::os::raw::c_char, 0, &mut empty_str);    
+    
+    // Create GTK window. You can pass a NULL handle 
+    // to CEF and then it will create a window of its own.
+//			    initialize_gtk();
+//			    GtkWidget* hwnd = create_gtk_window("cefcapi example", 1024, 768);
+    let window_info = std::ptr::null();
+    //let windowInfo = cef::_cef_window_info_t {
+    //};
+//			    windowInfo.parent_widget = hwnd;
+
+    // Browser settings.
+    // It is mandatory to set the "size" member.
+    let browser_settings = cef::_cef_browser_settings_t {
+        size: std::mem::size_of::<cef::_cef_browser_settings_t>(),
+        windowless_frame_rate: 0,
+        standard_font_family: empty_str,
+        fixed_font_family: empty_str,
+        serif_font_family: empty_str,
+        sans_serif_font_family: empty_str,
+        cursive_font_family: empty_str,
+        fantasy_font_family: empty_str,
+        default_font_size: 0,
+        default_fixed_font_size: 0,
+        minimum_font_size: 0,
+        minimum_logical_font_size: 0,
+        default_encoding: empty_str,
+        remote_fonts: cef::STATE_DEFAULT,
+        javascript: cef::STATE_DEFAULT,
+        javascript_open_windows: cef::STATE_DEFAULT,
+        javascript_close_windows: cef::STATE_DEFAULT,
+        javascript_access_clipboard: cef::STATE_DEFAULT,
+        javascript_dom_paste: cef::STATE_DEFAULT,
+        caret_browsing: cef::STATE_DEFAULT,
+        plugins: cef::STATE_DEFAULT,
+        universal_access_from_file_urls: cef::STATE_DEFAULT,
+        file_access_from_file_urls: cef::STATE_DEFAULT,
+        web_security: cef::STATE_DEFAULT,
+        image_loading: cef::STATE_DEFAULT,
+        image_shrink_standalone_to_fit: cef::STATE_DEFAULT,
+        text_area_resize: cef::STATE_DEFAULT,
+        tab_to_links: cef::STATE_DEFAULT,
+        local_storage: cef::STATE_DEFAULT,
+        databases: cef::STATE_DEFAULT,
+        application_cache: cef::STATE_DEFAULT,
+        webgl: cef::STATE_DEFAULT,
+        background_color: 0,
+        accept_language_list: empty_str
+    };
+
+    // Client handler and its callbacks.
+    // cef_client_t structure must be filled. It must implement
+    // reference counting. You cannot pass a structure 
+    // initialized with zeroes.
+    let mut client = cef::_cef_client_t {
+        base: cef::cef_base_t {
+            size: std::mem::size_of::<cef::_cef_client_t>(),
+            add_ref: Option::None,
+            release: Option::None,
+            has_one_ref: Option::None
+        },
+        get_context_menu_handler: Option::None,
+        get_dialog_handler: Option::None,
+        get_display_handler: Option::None,
+        get_download_handler: Option::None,
+        get_drag_handler: Option::None,
+        get_find_handler: Option::None,
+        get_focus_handler: Option::None,
+        get_geolocation_handler: Option::None,
+        get_jsdialog_handler: Option::None,
+        get_keyboard_handler: Option::None,
+        get_life_span_handler: Option::None,
+        get_load_handler: Option::None,
+        get_render_handler: Option::None,
+        get_request_handler: Option::None,
+        on_process_message_received: Option::None
+    };
+
+    let mut url_cef = cef::cef_string_t {str: std::ptr::null_mut(), length: 0, dtor: Option::None};
+    let url = "http://www.google.com";
+    cef::cef_string_utf8_to_utf16(url.as_ptr() as *mut std::os::raw::c_char, url.len(), &mut url_cef);
+
+    // Create browser.
+    println!("Calling cef_browser_host_create_browser");
+    if cef::cef_browser_host_create_browser(window_info, &mut client, &url_cef, &browser_settings, std::ptr::null_mut()) != 1 {
+        println!("Failed calling browserHostCreateBrowser");
+    }
+}
+
+pub const bph:cef::_cef_browser_process_handler_t = cef::_cef_browser_process_handler_t {
+    base: cef::cef_base_t {
+        size: 72usize,
+        add_ref: Option::None,
+        release: Option::None,
+        has_one_ref: Option::None
+    },
+    on_context_initialized: Option::Some(context_initialized_fn),
+    on_before_child_process_launch: Option::None,
+    on_render_process_thread_created: Option::None,
+    get_print_handler: Option::None,
+    on_schedule_message_pump_work: Option::None
+};
+
 fn main() {
     let argv:Vec<ffi::CString> = std::env::args_os().map(|arg| {
         //println!("argv: {:?}", arg);     
@@ -106,30 +218,12 @@ fn main() {
         has_one_ref: Option::None
     };
 
-    unsafe extern "C" fn context_initialized_fn(self_: *mut _cef_browser_process_handler_t) {
-        
-    };
-
-    unsafe extern "C" fn bph_fn(self_: *mut cef::cef_app_t) -> *mut cef::_cef_browser_process_handler_t {
+    unsafe extern "C" fn bph_fn(_: *mut cef::cef_app_t) -> *mut cef::_cef_browser_process_handler_t {
+    //let bph_fn = |_: *mut cef::cef_app_t| -> *mut cef::_cef_browser_process_handler_t {
         println!("In get_browser_process_handler");
 
-        let mut bph = cef::_cef_browser_process_handler_t {
-            base: cef::cef_base_t {
-                size: std::mem::size_of::<cef::_cef_browser_process_handler_t>(),
-                add_ref: Option::None,
-                release: Option::None,
-                has_one_ref: Option::None
-            },
-            on_context_initialized: Option::Some(context_initialized_fn),
-            on_before_child_process_launch: Option::None,
-            on_render_process_thread_created: Option::None,
-            get_print_handler: Option::None,
-            on_schedule_message_pump_work: Option::None
-        };
         &mut bph
     };
-
-    //let bph = bph_fn;
 
     // Initialize CEF in the main process.
     let mut app = cef::cef_app_t {
