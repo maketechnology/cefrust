@@ -6,6 +6,8 @@ use std::ffi;
 use std::os::unix::ffi::OsStrExt;
 use std::os::raw;
 use std::option::Option;
+use std::env;
+use std::path::Path;
 
 unsafe extern "C" fn context_initialized_fn(_: *mut cef::_cef_browser_process_handler_t) {
     println!("In context_initialized_fn");
@@ -22,9 +24,17 @@ unsafe extern "C" fn context_initialized_fn(_: *mut cef::_cef_browser_process_ha
     // to CEF and then it will create a window of its own.
 //			    initialize_gtk();
 //			    GtkWidget* hwnd = create_gtk_window("cefcapi example", 1024, 768);
-    let window_info = std::ptr::null();
-    //let windowInfo = cef::_cef_window_info_t {
-    //};
+    //let window_info = std::ptr::null();
+    let window_info = cef::_cef_window_info_t {
+        x: 50,
+        y: 50,
+        width: 800,
+        height: 600,
+        parent_window: 0,
+        windowless_rendering_enabled: 0,
+        transparent_painting_enabled: 0,
+        window: 0,
+    };
 //			    windowInfo.parent_widget = hwnd;
 
     // Browser settings.
@@ -100,24 +110,31 @@ unsafe extern "C" fn context_initialized_fn(_: *mut cef::_cef_browser_process_ha
 
     // Create browser.
     println!("Calling cef_browser_host_create_browser");
-    if cef::cef_browser_host_create_browser(window_info, &mut client, &url_cef, &browser_settings, std::ptr::null_mut()) != 1 {
+    if cef::cef_browser_host_create_browser(&window_info, &mut client, &url_cef, &browser_settings, std::ptr::null_mut()) != 1 {
         println!("Failed calling browserHostCreateBrowser");
     }
 }
 
-pub const bph:cef::_cef_browser_process_handler_t = cef::_cef_browser_process_handler_t {
-    base: cef::cef_base_t {
-        size: 72usize,
-        add_ref: Option::None,
-        release: Option::None,
-        has_one_ref: Option::None
-    },
-    on_context_initialized: Option::Some(context_initialized_fn),
-    on_before_child_process_launch: Option::None,
-    on_render_process_thread_created: Option::None,
-    get_print_handler: Option::None,
-    on_schedule_message_pump_work: Option::None
-};
+static mut bph: cef::_cef_browser_process_handler_t = cef::_cef_browser_process_handler_t {
+        base: cef::cef_base_t {
+            size: 72usize,
+            add_ref: Option::None,
+            release: Option::None,
+            has_one_ref: Option::None
+        },
+        on_context_initialized: Option::Some(context_initialized_fn),
+        on_before_child_process_launch: Option::None,
+        on_render_process_thread_created: Option::None,
+        get_print_handler: Option::None,
+        on_schedule_message_pump_work: Option::None
+    };
+
+unsafe extern "C" fn bph_fn(_: *mut cef::cef_app_t) -> *mut cef::_cef_browser_process_handler_t {
+//let bph_fn = |_: *mut cef::cef_app_t| -> *mut cef::_cef_browser_process_handler_t {
+    println!("In get_browser_process_handler");
+
+    &mut bph
+}
 
 fn main() {
     let argv:Vec<ffi::CString> = std::env::args_os().map(|arg| {
@@ -135,7 +152,6 @@ fn main() {
     // Structure for passing command-line arguments.
     // The definition of this structure is platform-specific.
     let args_ptr = args.as_ptr();
-    unsafe { println!("Hello CEF, ARGS: {:?}", *args[0]) };
 
     let main_args = cef::_cef_main_args_t {
         argc : args.len() as std::os::raw::c_int,
@@ -159,7 +175,7 @@ fn main() {
 
     if exit_code >= 0 {
         // The sub-process terminated, exit now.
-        std::process::exit(exit_code);
+        //std::process::exit(exit_code);
     }
 
     let mut empty_str = cef::cef_string_t {
@@ -172,12 +188,18 @@ fn main() {
         cef::cef_string_utf8_to_utf16("".as_ptr() as *mut std::os::raw::c_char, 0, &mut empty_str);
     }
 
+    //let out_dir = env::var("OUT_DIR").unwrap();
+    let cwd_path = env::current_exe().unwrap();
+    let cwd = cwd_path.parent().unwrap();
+
     let mut locales_cef = cef::cef_string_t {str: std::ptr::null_mut(), length: 0, dtor: Option::None};
-    let locales = "/home/gzunino/workspaces/rust/cefrust/target/debug/locales";
+    let locales_path = cwd.join("locales");
+    let locales = locales_path.to_str().unwrap();
     unsafe {cef::cef_string_utf8_to_utf16(locales.as_ptr() as *mut std::os::raw::c_char, locales.len(), &mut locales_cef);}
 
     let mut resources_cef = cef::cef_string_t {str: std::ptr::null_mut(), length: 0, dtor: Option::None};
-    let resources = "/home/gzunino/workspaces/rust/cefrust/target/debug/Resources";
+    let resources_path = cwd.join("Resources");
+    let resources = resources_path.to_str().unwrap();
     unsafe {cef::cef_string_utf8_to_utf16(resources.as_ptr() as *mut std::os::raw::c_char, resources.len(), &mut resources_cef);}
 
     let settings = cef::_cef_settings_t {
@@ -197,7 +219,7 @@ fn main() {
         product_version: empty_str,
         locale: locales_cef,
         log_file: empty_str,
-        log_severity: cef::_bindgen_ty_3::LOGSEVERITY_VERBOSE,
+        log_severity: cef::LOGSEVERITY_VERBOSE,
         javascript_flags: empty_str,
         resources_dir_path: resources_cef,
         locales_dir_path: empty_str,
@@ -216,13 +238,6 @@ fn main() {
         add_ref: Option::None,
         release: Option::None,
         has_one_ref: Option::None
-    };
-
-    unsafe extern "C" fn bph_fn(_: *mut cef::cef_app_t) -> *mut cef::_cef_browser_process_handler_t {
-    //let bph_fn = |_: *mut cef::cef_app_t| -> *mut cef::_cef_browser_process_handler_t {
-        println!("In get_browser_process_handler");
-
-        &mut bph
     };
 
     // Initialize CEF in the main process.

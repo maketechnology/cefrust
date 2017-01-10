@@ -1,11 +1,12 @@
 extern crate libbindgen;
 
-//use std::env;
+use std::env;
 use std::path::Path;
 
 fn main() {
-  // Tell cargo to tell rustc to link the system bzip2 shared library.
-  println!("cargo:rustc-link-search={}", "/home/gzunino/Downloads/cef_binary_3.2883.1539.gd7f087e_linux64/Release");
+  let cef_path = format!("{}/Downloads/cef_binary_3.2883.1539.gd7f087e_linux64/", env::var("HOME").unwrap());
+  // Tell cargo to tell rustc to link the system shared library.
+  println!("cargo:rustc-link-search={}", format!("{}Release/", cef_path));
   println!("cargo:rustc-link-lib=cef");
   //cargo:rustc-flags=-l foo -L src/c/foo
 
@@ -19,7 +20,7 @@ fn main() {
         };
   let _ = libbindgen::builder()
     .header("cef.h")
-    .clang_arg("-I/home/gzunino/Downloads/cef_binary_3.2883.1539.gd7f087e_linux64/")
+    .clang_arg(format!("-I{}", cef_path))
     //.clang_arg("-L/home/gzunino/Downloads/cef_binary_3.2883.1539.gd7f087e_linux64/Release")
     //.clang_arg("-lcef")
     .link("cef")
