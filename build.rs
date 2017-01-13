@@ -21,14 +21,11 @@ fn main() {
   let _ = libbindgen::builder()
     .header("cef.h")
     .clang_arg(format!("-I{}", cef_path))
-    //.clang_arg("-L/home/gzunino/Downloads/cef_binary_3.2883.1539.gd7f087e_linux64/Release")
-    //.clang_arg("-lcef")
     .link("cef")
     //.use_core()
     .with_codegen_config(config)
     .no_unstable_rust()
     .whitelisted_type("_cef_main_args_t")
-    //.whitelisted_type("_cef_client_t")
     //.hide_type(".*XEvent")
     .whitelisted_function("cef_string_.*")
     .whitelisted_function("cef_execute_process")
@@ -39,4 +36,47 @@ fn main() {
     .generate().unwrap()
     //.write_to_file(Path::new(&out_dir).join("cef.rs"));
     .write_to_file(Path::new("src").join("cef.rs"));
+
+    gen_gtk();
+}
+
+fn gen_gtk() {
+  println!("cargo:rustc-link-lib=gtk-x11-2.0");
+  println!("cargo:rustc-link-lib=gdk-x11-2.0");
+  //let out_dir = env::var("OUT_DIR").unwrap();
+  let config = libbindgen::CodegenConfig {
+            functions: true,
+            types: true,
+            vars: true,
+            methods: true,
+            constructors: true,
+        };
+  let _ = libbindgen::builder()
+    //.header("/usr/include/gtk-2.0/gtk/gtk.h")
+    .header("gtk2.h")
+    .clang_arg(format!("-I{}", "/usr/include/gtk-2.0"))
+    .clang_arg(format!("-I{}", "/usr/include/glib-2.0"))
+    .clang_arg(format!("-I{}", "/usr/lib/x86_64-linux-gnu/glib-2.0/include"))
+    .clang_arg(format!("-I{}", "/usr/include/cairo"))
+    .clang_arg(format!("-I{}", "/usr/include/pango-1.0"))
+    .clang_arg(format!("-I{}", "/usr/lib/x86_64-linux-gnu/gtk-2.0/include"))
+    .clang_arg(format!("-I{}", "/usr/include/gdk-pixbuf-2.0"))
+    .clang_arg(format!("-I{}", "/usr/include/atk-1.0"))
+    //.use_core()
+    .with_codegen_config(config)
+    //.no_unstable_rust()
+    .whitelisted_function("gtk_init")
+    .whitelisted_function("gtk_window_new")
+    .whitelisted_function("gtk_widget_get_window")
+    .whitelisted_function("gtk_window_new")
+    .whitelisted_function("gdk_x11_drawable_get_xid")
+    .whitelisted_function("gtk_window_set_default_size")
+    .whitelisted_function("gtk_window_set_position")
+    .whitelisted_function("gtk_window_set_title")
+    .whitelisted_function("gtk_vbox_new")
+    .whitelisted_function("gtk_container_add")
+    .whitelisted_function("gtk_widget_show_all")
+    .whitelisted_function("g_signal_connect")
+    .generate().unwrap()
+    .write_to_file(Path::new("src").join("gtk2.rs"));
 }

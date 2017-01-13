@@ -1,5 +1,6 @@
 //include!(concat!(env!("OUT_DIR"), "/cef.rs"));
 mod cef;
+mod gtk2;
 
 use std::ffi;
 //use std::os::ext::ffi::OsStrExt;
@@ -7,7 +8,48 @@ use std::os::unix::ffi::OsStrExt;
 use std::os::raw;
 use std::option::Option;
 use std::env;
-use std::path::Path;
+//use std::path::Path;
+
+fn initialize_gtk() {
+    println!("initialize_gtk");
+    unsafe { gtk2::gtk_init(&mut 0, std::ptr::null_mut()); }
+    //signal(SIGINT, app_terminate_signal);
+    //signal(SIGTERM, app_terminate_signal);
+}
+
+fn create_gtk_window(title: std::string::String, width: i32, height: i32) -> *mut gtk2::GtkWidget {
+    println!("create_gtk_window");
+    
+    // Create window.
+    let mut window = unsafe { gtk2::gtk_window_new(gtk2::GTK_WINDOW_TOPLEVEL) };
+
+    // Destroy signal.
+    //g_signal_connect(G_OBJECT(window), "destroy",
+    //        G_CALLBACK(window_destroy_signal), NULL);
+    
+    // Default size.
+    unsafe { gtk2::gtk_window_set_default_size(std::mem::transmute(window), width, height) };
+    
+    // Center.
+    unsafe { gtk2::gtk_window_set_position(std::mem::transmute(window), gtk2::GTK_WIN_POS_CENTER) };
+    
+    // Title.
+    let c_title = ffi::CString::new(title).unwrap();
+    unsafe { gtk2::gtk_window_set_title(std::mem::transmute(window), c_title.as_ptr()) };
+    
+    // TODO: focus
+    // g_signal_connect(window, "focus", G_CALLBACK(&HandleFocus), NULL);
+
+    // CEF requires a container. Embedding browser in a top
+    // level window fails.
+    let vbox = unsafe { gtk2::gtk_vbox_new(0, 0) };
+    unsafe { gtk2::gtk_container_add(std::mem::transmute(window), vbox) };
+    
+    // Show.
+    unsafe { gtk2::gtk_widget_show_all(window) };
+
+    vbox
+}
 
 unsafe extern "C" fn context_initialized_fn(_: *mut cef::_cef_browser_process_handler_t) {
     println!("In context_initialized_fn");
@@ -22,20 +64,20 @@ unsafe extern "C" fn context_initialized_fn(_: *mut cef::_cef_browser_process_ha
     
     // Create GTK window. You can pass a NULL handle 
     // to CEF and then it will create a window of its own.
-//			    initialize_gtk();
-//			    GtkWidget* hwnd = create_gtk_window("cefcapi example", 1024, 768);
+    initialize_gtk();
+    let hwnd = create_gtk_window(String::from("cefcapi example"), 1024, 768);
     //let window_info = std::ptr::null();
     let window_info = cef::_cef_window_info_t {
         x: 50,
         y: 50,
-        width: 800,
-        height: 600,
-        parent_window: 0,
+        width: 1024,
+        height: 768,
+        parent_window: gtk2::gdk_x11_drawable_get_xid(gtk2::gtk_widget_get_window(hwnd)),
         windowless_rendering_enabled: 0,
         transparent_painting_enabled: 0,
         window: 0,
     };
-//			    windowInfo.parent_widget = hwnd;
+    println!("parent {}", window_info.parent_window);
 
     // Browser settings.
     // It is mandatory to set the "size" member.
@@ -175,7 +217,7 @@ fn main() {
 
     if exit_code >= 0 {
         // The sub-process terminated, exit now.
-        //std::process::exit(exit_code);
+        std::process::exit(exit_code);
     }
 
     let mut empty_str = cef::cef_string_t {
