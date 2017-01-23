@@ -95,7 +95,7 @@ unsafe extern "C" fn get_render_handler(_: *mut cef::_cef_client_t) -> *mut cef:
 }
 
 unsafe extern "C" fn get_request_handler(_: *mut cef::_cef_client_t) -> *mut cef::_cef_request_handler_t {
-    debug("get_request_handler");
+    //debug("get_request_handler");
     ptr::null_mut()
 }
 

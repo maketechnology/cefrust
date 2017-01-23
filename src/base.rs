@@ -2,7 +2,7 @@ use cef;
 
 use std::option::Option;
 
-const DEBUG_REFERENCE_COUNTING: bool = true;
+const DEBUG_REFERENCE_COUNTING: bool = false;
 
 pub type CefBase = cef::cef_base_t;
 
@@ -68,5 +68,5 @@ impl CefBase {
 //pub 
 
 fn debug_callback(l: &str) {
-	println!("{}", l)
+	//println!("{}", l)
 }

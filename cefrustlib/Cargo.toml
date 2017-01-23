@@ -1,0 +1,12 @@
+[package]
+name = "cefrustlib"
+version = "0.1.0"
+authors = ["Guillermo Zunino <guillez@gmail.com>"]
+
+[dependencies]
+cefrust = { path = "..", version = "0.1.0" }
+libc = "0.2.20"
+
+[lib]
+name = "cefrustlib"
+crate-type = ["dylib"]
