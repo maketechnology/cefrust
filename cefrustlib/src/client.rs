@@ -40,7 +40,7 @@ unsafe extern "C" fn get_dialog_handler(_: *mut cef::_cef_client_t) -> *mut cef:
 }
 
 unsafe extern "C" fn get_display_handler(_: *mut cef::_cef_client_t) -> *mut cef::_cef_display_handler_t {
-    debug("get_display_handler");
+    //debug("get_display_handler");
     ptr::null_mut()
 }
 
@@ -60,7 +60,7 @@ unsafe extern "C" fn get_find_handler(_: *mut cef::_cef_client_t) -> *mut cef::_
 }
 
 unsafe extern "C" fn get_focus_handler(_: *mut cef::_cef_client_t) -> *mut cef::_cef_focus_handler_t {
-    debug("get_focus_handler");
+    //debug("get_focus_handler");
     ptr::null_mut()
 }
 
@@ -85,12 +85,12 @@ unsafe extern "C" fn get_life_span_handler(_: *mut cef::_cef_client_t) -> *mut c
 }
 
 unsafe extern "C" fn get_load_handler(_: *mut cef::_cef_client_t) -> *mut cef::_cef_load_handler_t {
-    debug("get_load_handler");
+    //debug("get_load_handler");
     ptr::null_mut()
 }
 
 unsafe extern "C" fn get_render_handler(_: *mut cef::_cef_client_t) -> *mut cef::_cef_render_handler_t {
-    debug("get_render_handler");
+    //debug("get_render_handler");
     ptr::null_mut()
 }
 
