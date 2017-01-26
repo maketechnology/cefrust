@@ -18,16 +18,15 @@ unsafe extern fn xerror_handler_impl(_: *mut xlib::Display, event: *mut xlib::XE
 }
 
 unsafe extern fn xioerror_handler_impl(_: *mut xlib::Display) -> libc::c_int {
-    print!("XUI error received");
+    println!("XUI error received");
     0
 }
 
 #[no_mangle]
-pub extern fn init(hwnd: u64) -> *const app::App {
+pub extern fn init() -> *const cef::cef_app_t {
     println!("DLL init");
 
-    println!("hwnd1: {}", hwnd);
-    println!("sizeof: {}", std::mem::size_of::<app::App>());
+    //println!("sizeof: {}", std::mem::size_of::<app::App>());
 
     let main_args = cefrust::prepare_args();
 
@@ -61,6 +60,7 @@ pub extern fn init(hwnd: u64) -> *const app::App {
         locale: cefrust::cef_string_empty(),
         log_file: logfile_cef,
         log_severity: cef::LOGSEVERITY_INFO,
+        //log_severity: cef::LOGSEVERITY_VERBOSE,
         javascript_flags: cefrust::cef_string_empty(),
         resources_dir_path: resources_cef,
         locales_dir_path: locales_cef,
@@ -76,23 +76,38 @@ pub extern fn init(hwnd: u64) -> *const app::App {
 
     // Initialize CEF in the main process.
     //let mut app = app::new(hwnd);
-    let app = app::App::new(hwnd);
-    println!("hwnd2: {:?}", app.canvas_hwnd);
+    let app = app::new();
     let app_box = Box::new(app);
     let app_raw = Box::into_raw(app_box);
     println!("Calling cef_initialize");
-    unsafe { cef::cef_initialize(&main_args, &settings, &mut (*app_raw).cef_app, std::ptr::null_mut()) };
+    unsafe { cef::cef_initialize(&main_args, &settings, &mut (*app_raw), std::ptr::null_mut()) };
     //unsafe { cef::cef_initialize(&main_args, &settings, &mut app.cef_app, std::ptr::null_mut()) };
- 
-    unsafe{ (*app_raw).create_browser() };
-    //unsafe{ app.create_browser() };
-
-    //println!("Calling cef_run_message_loop");
-    // Run the CEF message loop. This will block until CefQuitMessageLoop() is called.
-    //unsafe { cef::cef_run_message_loop() };
-
-    //unsafe { cef::cef_shutdown() };
     app_raw
+}
+
+fn str_from_c(cstr: *const libc::c_char) -> &'static str {
+    let slice = unsafe { std::ffi::CStr::from_ptr(cstr) };
+    let url = std::str::from_utf8(slice.to_bytes()).unwrap();
+    url
+}
+
+#[no_mangle]
+pub extern fn create_browser(hwnd: u64, url: *const libc::c_char, client: &mut cef::_cef_client_t) -> *const cef::cef_browser_t {
+    println!("create_browser");
+
+    println!("hwnd: {}", hwnd);
+    println!("client: {:?}", client);
+    println!("_cef_client_t sizeof: {:?}", std::mem::size_of::<cef::_cef_client_t>());
+    println!("_cef_focus_handler_t sizeof: {:?}", std::mem::size_of::<cef::_cef_focus_handler_t>());
+ 
+    //let url = "http://www.google.com";
+    //let url = std::ffi::CString::new(url).unwrap().to_str().unwrap();
+    let url = str_from_c(url);
+    println!("url: {:?}", url);
+    //let url = String::from_utf16(url as &[u16]).unwrap();
+    let browser = app::create_browser(hwnd, url, client);
+
+    browser
 }
 
 #[no_mangle]
@@ -106,16 +121,13 @@ pub extern fn do_message_loop_work() {
 }
 
 #[no_mangle]
-pub extern fn resized(app: *const app::App, width: i32, height: i32) {
+pub extern fn resized(browser: *mut cef::cef_browser_t, width: i32, height: i32) {
     //println!("Calling resized {}:{}", width, height);
     
     //println!("hwnd: {}", unsafe { (*app).canvas_hwnd });
     //println!("app: {:?}", unsafe { (*app).cef_app });
-    let browser: *mut cef::cef_browser_t = unsafe { (*app).browser.expect("NO BROWSER IN APP") };
     //println!("Calling resized1");
-    let get_host_fn = unsafe { (*browser).get_host.expect("No host") };
-    //println!("Calling resized2");
-    let browser_host = unsafe { get_host_fn(browser) };
+    let browser_host = get_browser_host(browser);
     //println!("Calling resized3");
     //let resized_fn = unsafe { (*browser_host).was_resized.unwrap() };
     //println!("Calling resized4");
@@ -170,10 +182,54 @@ pub extern fn resized(app: *const app::App, width: i32, height: i32) {
 }
 
 #[no_mangle]
+pub extern fn try_close_browser(browser: *mut cef::cef_browser_t) {
+    let browser_host = get_browser_host(browser);
+    let close_fn = unsafe { (*browser_host).close_browser.expect("null try_close_browser") };
+    unsafe { close_fn(browser_host, 1) };
+}
+
+
+#[no_mangle]
+pub extern fn load_url(browser: *mut cef::cef_browser_t, url: *const libc::c_char) {
+    let url = str_from_c(url);
+    let url_cef = cefrust::cef_string(url);
+    println!("url: {:?}", url);
+    let get_frame = unsafe { (*browser).get_main_frame.expect("null get_main_frame") };
+    let main_frame = unsafe { get_frame(browser) };
+    let load_url = unsafe { (*main_frame).load_url.expect("null load_url") };
+    unsafe { load_url(main_frame, &url_cef) };
+}
+
+#[no_mangle]
+pub extern fn set_focus(browser: *mut cef::cef_browser_t, set: bool, parent: *mut libc::c_void) {
+    let browser_host = get_browser_host(browser);
+    let focus_fn = unsafe { (*browser_host).set_focus.expect("null set_focus") };
+    let focus = if set {
+        1
+    } else {
+        0
+    };
+    println!("<<<<<<<< set_focus {}", focus);
+    unsafe { focus_fn(browser_host, focus) };
+    if !set && parent as u64 != 0 {
+        let root = unsafe { gtk2::gtk_widget_get_toplevel(parent) };
+        println!("<<<<<<<< set_focus {} {:?} {:?}", focus, parent, root);
+        // workaround to actually remove focus from cef inputs
+        unsafe { gtk2::gtk_window_present(root) };
+    }
+}
+
+#[no_mangle]
 pub extern fn shutdown() {
     println!("Calling cef_shutdown");
     // Shut down CEF.
     unsafe { cef::cef_shutdown() };
+}
+
+fn get_browser_host(browser: *mut cef::cef_browser_t) -> *mut cef::_cef_browser_host_t {
+    let get_host_fn = unsafe { (*browser).get_host.expect("null get_host") };
+    let browser_host = unsafe { get_host_fn(browser) };
+    browser_host
 }
 
 #[cfg(test)]

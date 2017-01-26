@@ -8,124 +8,120 @@ use client;
 use gtk2;
 
 use std;
-//use std::ffi;
 
-//static mut WIN: Option<u64> = Option::None;
-
-#[repr(C)]
-pub struct App {
-    pub canvas_hwnd: u64,
-    pub cef_app: cef::cef_app_t,
-    pub browser: Option<*mut cef::cef_browser_t>
+pub fn new() -> cef::cef_app_t {
+    let cef_app = cef::cef_app_t {
+        base: base::CefBase::new(std::mem::size_of::<cef::cef_app_t>()),
+        on_before_command_line_processing: Option::Some(on_before_command_line_processing),
+        //on_register_custom_schemes: Option::Some(on_register_custom_schemes),
+        on_register_custom_schemes: Option::None,
+        get_resource_bundle_handler: Option::Some(get_resource_bundle_handler),
+        get_browser_process_handler: Option::Some(get_browser_process_handler),
+        get_render_process_handler: Option::Some(get_render_process_handler)
+    };
+    cef_app
 }
 
-impl App {
-    pub fn new(hwnd: u64) -> App {
-        let app = App {
-            canvas_hwnd: hwnd,
-            cef_app: cef::cef_app_t {
-                base: base::CefBase::new(std::mem::size_of::<cef::cef_app_t>()),
-                on_before_command_line_processing: Option::Some(on_before_command_line_processing),
-                //on_register_custom_schemes: Option::Some(on_register_custom_schemes),
-                on_register_custom_schemes: Option::None,
-                get_resource_bundle_handler: Option::Some(get_resource_bundle_handler),
-                get_browser_process_handler: Option::Some(get_browser_process_handler),
-                get_render_process_handler: Option::Some(get_render_process_handler)
-            },
-            browser: Option::None
-        };
-        app
-    }
+pub unsafe extern "C" fn window_focus_in(widget: *mut libc::c_void, event: *mut libc::c_void, data: *mut libc::c_void) -> libc::c_int {
+    println!(">>>>>>>> IN window_focus_in");
+  /*if (event->in && self->browser_window_.get()) {
+    self->browser_window_->SetFocus(true);
+    // Return true for a windowed browser so that focus is not passed to GTK.
+    return self->with_osr_ ? FALSE : TRUE;
+  }
 
-    pub fn create_browser(&mut self) -> *const cef::cef_browser_t {
-            // Create GTK window. You can pass a NULL handle 
-        // to CEF and then it will create a window of its own.
-        let canvas_hwnd = self.canvas_hwnd;
-        println!("create_browser in {}", canvas_hwnd);
-        //initialize_gtk();
-        //let hwnd = create_gtk_window(String::from("cefcapi example"), 1024, 768);
-        //let window_info = std::ptr::null();
+  return FALSE;*/
+  1
+}
 
-        //let vbox = unsafe { gtk2::gtk_vbox_new(0, 0) };
-        //unsafe { gtk2::gtk_fixed_put(canvas_hwnd, vbox, 0, 0) };
-        //println!("vbox {}", vbox);
+pub fn create_browser(canvas_hwnd: u64, url: &str, jclient: &mut cef::_cef_client_t) -> *const cef::cef_browser_t {
+        // Create GTK window. You can pass a NULL handle 
+    // to CEF and then it will create a window of its own.
+    println!("create_browser in {}", canvas_hwnd);
 
-        let window_info = cef::_cef_window_info_t {
-            x: 0,
-            y: 0,
-            width: 0,
-            height: 0,
-            //parent_window: 0,
-            parent_window: unsafe {gtk2::gdk_x11_drawable_get_xid(gtk2::gtk_widget_get_window(canvas_hwnd as *mut libc::c_void)) },
-            //parent_window: unsafe {gtk2::gdk_x11_drawable_get_xid(gtk2::gtk_widget_get_window(vbox as *mut libc::c_void)) },
-            windowless_rendering_enabled: 0,
-            transparent_painting_enabled: 0,
-            window: 0
-            //window: unsafe {gtk2::gdk_x11_drawable_get_xid(gtk2::gtk_widget_get_window(vbox as *mut libc::c_void)) }
-        };
-        println!("parent {}", window_info.parent_window);
-        //self.vbox_hwnd = vbox;
 
-        // Browser settings.
-        // It is mandatory to set the "size" member.
-        let browser_settings = cef::_cef_browser_settings_t {
-            size: std::mem::size_of::<cef::_cef_browser_settings_t>(),
-            windowless_frame_rate: 0,
-            standard_font_family: cefrust::cef_string_empty(),
-            fixed_font_family: cefrust::cef_string_empty(),
-            serif_font_family: cefrust::cef_string_empty(),
-            sans_serif_font_family: cefrust::cef_string_empty(),
-            cursive_font_family: cefrust::cef_string_empty(),
-            fantasy_font_family: cefrust::cef_string_empty(),
-            default_font_size: 0,
-            default_fixed_font_size: 0,
-            minimum_font_size: 0,
-            minimum_logical_font_size: 0,
-            default_encoding: cefrust::cef_string_empty(),
-            remote_fonts: cef::STATE_DEFAULT,
-            javascript: cef::STATE_DEFAULT,
-            javascript_open_windows: cef::STATE_DEFAULT,
-            javascript_close_windows: cef::STATE_DEFAULT,
-            javascript_access_clipboard: cef::STATE_DEFAULT,
-            javascript_dom_paste: cef::STATE_DEFAULT,
-            caret_browsing: cef::STATE_DEFAULT,
-            plugins: cef::STATE_DEFAULT,
-            universal_access_from_file_urls: cef::STATE_DEFAULT,
-            file_access_from_file_urls: cef::STATE_DEFAULT,
-            web_security: cef::STATE_DEFAULT,
-            image_loading: cef::STATE_DEFAULT,
-            image_shrink_standalone_to_fit: cef::STATE_DEFAULT,
-            text_area_resize: cef::STATE_DEFAULT,
-            tab_to_links: cef::STATE_DEFAULT,
-            local_storage: cef::STATE_DEFAULT,
-            databases: cef::STATE_DEFAULT,
-            application_cache: cef::STATE_DEFAULT,
-            webgl: cef::STATE_DEFAULT,
-            background_color: 0,
-            accept_language_list: cefrust::cef_string_empty()
-        };
+    //let vbox = unsafe { gtk2::gtk_vbox_new(0, 0) };
+    //unsafe { gtk2::gtk_fixed_put(canvas_hwnd, vbox, 0, 0) };
+    //println!("vbox {}", vbox);
 
-        // Client handler and its callbacks.
-        // cef_client_t structure must be filled. It must implement
-        // reference counting. You cannot pass a structure 
-        // initialized with zeroes.
-        let client = Box::new(client::new());
-        let client = Box::into_raw(client);
+    //let event = std::ffi::CString::new("focus-in-event").unwrap();
+    //unsafe { gtk2::g_signal_connect_data(vbox as *mut libc::c_void, event.as_ptr(), 
+    //    Option::Some(window_focus_in), std::ptr::null_mut(), Option::None, gtk2::G_CONNECT_SWAPPED) };
 
-        let url = "http://www.google.com";
-        //let url = "chrome://gpu";
-        //let url = "https://webkit.org/blog-files/3d-transforms/poster-circle.html";
-        let url_cef = cefrust::cef_string(url);
+    let window_info = cef::_cef_window_info_t {
+        x: 0,
+        y: 0,
+        width: 0,
+        height: 0,
+        //parent_window: 0,
+        parent_window: unsafe {gtk2::gdk_x11_drawable_get_xid(gtk2::gtk_widget_get_window(canvas_hwnd as *mut libc::c_void)) },
+        //parent_window: unsafe {gtk2::gdk_x11_drawable_get_xid(gtk2::gtk_widget_get_window(vbox as *mut libc::c_void)) },
+        windowless_rendering_enabled: 0,
+        transparent_painting_enabled: 0,
+        window: 0
+        //window: unsafe {gtk2::gdk_x11_drawable_get_xid(gtk2::gtk_widget_get_window(vbox as *mut libc::c_void)) }
+    };
+    println!("parent {}", window_info.parent_window);
+    //self.vbox_hwnd = vbox;
 
-        // Create browser.
-        println!("Calling cef_browser_host_create_browser");
-        //if unsafe { cef::cef_browser_host_create_browser(&window_info, client, &url_cef, &browser_settings, std::ptr::null_mut()) } != 1 {
-            //println!("Failed calling browserHostCreateBrowser");
-        //}
-        let browser: *mut cef::cef_browser_t = unsafe { cef::cef_browser_host_create_browser_sync(&window_info, client, &url_cef, &browser_settings, std::ptr::null_mut()) };
-        self.browser = Option::Some(browser);
-        browser
-    }
+    // Browser settings.
+    // It is mandatory to set the "size" member.
+    let browser_settings = cef::_cef_browser_settings_t {
+        size: std::mem::size_of::<cef::_cef_browser_settings_t>(),
+        windowless_frame_rate: 0,
+        standard_font_family: cefrust::cef_string_empty(),
+        fixed_font_family: cefrust::cef_string_empty(),
+        serif_font_family: cefrust::cef_string_empty(),
+        sans_serif_font_family: cefrust::cef_string_empty(),
+        cursive_font_family: cefrust::cef_string_empty(),
+        fantasy_font_family: cefrust::cef_string_empty(),
+        default_font_size: 0,
+        default_fixed_font_size: 0,
+        minimum_font_size: 0,
+        minimum_logical_font_size: 0,
+        default_encoding: cefrust::cef_string_empty(),
+        remote_fonts: cef::STATE_DEFAULT,
+        javascript: cef::STATE_DEFAULT,
+        javascript_open_windows: cef::STATE_DEFAULT,
+        javascript_close_windows: cef::STATE_DEFAULT,
+        javascript_access_clipboard: cef::STATE_DEFAULT,
+        javascript_dom_paste: cef::STATE_DEFAULT,
+        caret_browsing: cef::STATE_DEFAULT,
+        plugins: cef::STATE_DEFAULT,
+        universal_access_from_file_urls: cef::STATE_DEFAULT,
+        file_access_from_file_urls: cef::STATE_DEFAULT,
+        web_security: cef::STATE_DEFAULT,
+        image_loading: cef::STATE_DEFAULT,
+        image_shrink_standalone_to_fit: cef::STATE_DEFAULT,
+        text_area_resize: cef::STATE_DEFAULT,
+        tab_to_links: cef::STATE_DEFAULT,
+        local_storage: cef::STATE_DEFAULT,
+        databases: cef::STATE_DEFAULT,
+        application_cache: cef::STATE_DEFAULT,
+        webgl: cef::STATE_DEFAULT,
+        background_color: 0,
+        accept_language_list: cefrust::cef_string_empty()
+    };
+
+    // Client handler and its callbacks.
+    // cef_client_t structure must be filled. It must implement
+    // reference counting. You cannot pass a structure 
+    // initialized with zeroes.
+    let mut client = client::new();
+    client.get_focus_handler = jclient.get_focus_handler;
+
+    let client = Box::new(client);
+    let client = Box::into_raw(client);
+
+    let url_cef = cefrust::cef_string(url);
+
+    // Create browser.
+    println!("Calling cef_browser_host_create_browser");
+    //if unsafe { cef::cef_browser_host_create_browser(&window_info, client, &url_cef, &browser_settings, std::ptr::null_mut()) } != 1 {
+        //println!("Failed calling browserHostCreateBrowser");
+    //}
+    let browser: *mut cef::cef_browser_t = unsafe { cef::cef_browser_host_create_browser_sync(&window_info, client, &url_cef, &browser_settings, std::ptr::null_mut()) };
+    browser
 }
 
 unsafe extern "C" fn on_context_initialized(_: *mut cef::_cef_browser_process_handler_t) {

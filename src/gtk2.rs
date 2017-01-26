@@ -7,11 +7,17 @@
 pub type guint8 = ::std::os::raw::c_uchar;
 pub type guint16 = ::std::os::raw::c_ushort;
 pub type guint32 = ::std::os::raw::c_uint;
+pub type gint64 = ::std::os::raw::c_long;
+pub type guint64 = ::std::os::raw::c_ulong;
 pub type gsize = ::std::os::raw::c_ulong;
 pub type gchar = ::std::os::raw::c_char;
+pub type glong = ::std::os::raw::c_long;
 pub type gint = ::std::os::raw::c_int;
 pub type gboolean = gint;
+pub type gulong = ::std::os::raw::c_ulong;
 pub type guint = ::std::os::raw::c_uint;
+pub type gfloat = f32;
+pub type gdouble = f64;
 pub type gpointer = *mut ::std::os::raw::c_void;
 #[repr(C)]
 #[derive(Debug, Copy)]
@@ -54,6 +60,54 @@ impl Clone for _GSList {
 pub use self::_GSList as GSList;
 pub type GType = gsize;
 /**
+ * GValue:
+ * 
+ * An opaque structure used to hold different types of values.
+ * The data within the structure has protected scope: it is accessible only
+ * to functions within a #GTypeValueTable structure, or implementations of
+ * the g_value_*() API. That is, code portions which implement new fundamental
+ * types.
+ * #GValue users cannot make any assumptions about how data is stored
+ * within the 2 element @data union, and the @g_type member should
+ * only be accessed through the G_VALUE_TYPE() macro.
+ */
+#[repr(C)]
+#[derive(Copy)]
+pub struct _GValue {
+    pub g_type: GType,
+    pub data: [_GValue__bindgen_ty_1; 2usize],
+}
+#[repr(C)]
+#[derive(Copy)]
+pub union _GValue__bindgen_ty_1 {
+    pub v_int: gint,
+    pub v_uint: guint,
+    pub v_long: glong,
+    pub v_ulong: gulong,
+    pub v_int64: gint64,
+    pub v_uint64: guint64,
+    pub v_float: gfloat,
+    pub v_double: gdouble,
+    pub v_pointer: gpointer,
+}
+#[test]
+fn bindgen_test_layout__GValue__bindgen_ty_1() {
+    assert_eq!(::std::mem::size_of::<_GValue__bindgen_ty_1>() , 8usize);
+    assert_eq!(::std::mem::align_of::<_GValue__bindgen_ty_1>() , 8usize);
+}
+impl Clone for _GValue__bindgen_ty_1 {
+    fn clone(&self) -> Self { *self }
+}
+#[test]
+fn bindgen_test_layout__GValue() {
+    assert_eq!(::std::mem::size_of::<_GValue>() , 24usize);
+    assert_eq!(::std::mem::align_of::<_GValue>() , 8usize);
+}
+impl Clone for _GValue {
+    fn clone(&self) -> Self { *self }
+}
+pub use self::_GValue as GValue;
+/**
  * GTypeClass:
  * 
  * An opaque structure used as the base of all classes.
@@ -91,6 +145,241 @@ impl Clone for _GTypeInstance {
     fn clone(&self) -> Self { *self }
 }
 pub use self::_GTypeInstance as GTypeInstance;
+/**
+ * GClosure:
+ * @in_marshal: Indicates whether the closure is currently being invoked with 
+ *  g_closure_invoke()
+ * @is_invalid: Indicates whether the closure has been invalidated by 
+ *  g_closure_invalidate()
+ * 
+ * A #GClosure represents a callback supplied by the programmer.
+ */
+#[repr(C)]
+#[derive(Debug, Copy)]
+pub struct _GClosure {
+    pub _bitfield_1: u32,
+    pub marshal: ::std::option::Option<unsafe extern "C" fn(closure:
+                                                                *mut GClosure,
+                                                            return_value:
+                                                                *mut GValue,
+                                                            n_param_values:
+                                                                guint,
+                                                            param_values:
+                                                                *const GValue,
+                                                            invocation_hint:
+                                                                gpointer,
+                                                            marshal_data:
+                                                                gpointer)>,
+    pub data: gpointer,
+    pub notifiers: *mut GClosureNotifyData,
+}
+#[test]
+fn bindgen_test_layout__GClosure() {
+    assert_eq!(::std::mem::size_of::<_GClosure>() , 32usize);
+    assert_eq!(::std::mem::align_of::<_GClosure>() , 8usize);
+}
+impl Clone for _GClosure {
+    fn clone(&self) -> Self { *self }
+}
+impl _GClosure {
+    #[inline]
+    pub fn ref_count(&self) -> guint {
+        unsafe {
+            ::std::mem::transmute(((self._bitfield_1 & (32767usize as u32)) >>
+                                       0u32) as u32)
+        }
+    }
+    #[inline]
+    pub fn set_ref_count(&mut self, val: guint) {
+        self._bitfield_1 &= !(32767usize as u32);
+        self._bitfield_1 |=
+            ((val as u32 as u32) << 0u32) & (32767usize as u32);
+    }
+    #[inline]
+    pub fn meta_marshal_nouse(&self) -> guint {
+        unsafe {
+            ::std::mem::transmute(((self._bitfield_1 & (32768usize as u32)) >>
+                                       15u32) as u32)
+        }
+    }
+    #[inline]
+    pub fn set_meta_marshal_nouse(&mut self, val: guint) {
+        self._bitfield_1 &= !(32768usize as u32);
+        self._bitfield_1 |=
+            ((val as u32 as u32) << 15u32) & (32768usize as u32);
+    }
+    #[inline]
+    pub fn n_guards(&self) -> guint {
+        unsafe {
+            ::std::mem::transmute(((self._bitfield_1 & (65536usize as u32)) >>
+                                       16u32) as u32)
+        }
+    }
+    #[inline]
+    pub fn set_n_guards(&mut self, val: guint) {
+        self._bitfield_1 &= !(65536usize as u32);
+        self._bitfield_1 |=
+            ((val as u32 as u32) << 16u32) & (65536usize as u32);
+    }
+    #[inline]
+    pub fn n_fnotifiers(&self) -> guint {
+        unsafe {
+            ::std::mem::transmute(((self._bitfield_1 & (393216usize as u32))
+                                       >> 17u32) as u32)
+        }
+    }
+    #[inline]
+    pub fn set_n_fnotifiers(&mut self, val: guint) {
+        self._bitfield_1 &= !(393216usize as u32);
+        self._bitfield_1 |=
+            ((val as u32 as u32) << 17u32) & (393216usize as u32);
+    }
+    #[inline]
+    pub fn n_inotifiers(&self) -> guint {
+        unsafe {
+            ::std::mem::transmute(((self._bitfield_1 &
+                                        (133693440usize as u32)) >> 19u32) as
+                                      u32)
+        }
+    }
+    #[inline]
+    pub fn set_n_inotifiers(&mut self, val: guint) {
+        self._bitfield_1 &= !(133693440usize as u32);
+        self._bitfield_1 |=
+            ((val as u32 as u32) << 19u32) & (133693440usize as u32);
+    }
+    #[inline]
+    pub fn in_inotify(&self) -> guint {
+        unsafe {
+            ::std::mem::transmute(((self._bitfield_1 &
+                                        (134217728usize as u32)) >> 27u32) as
+                                      u32)
+        }
+    }
+    #[inline]
+    pub fn set_in_inotify(&mut self, val: guint) {
+        self._bitfield_1 &= !(134217728usize as u32);
+        self._bitfield_1 |=
+            ((val as u32 as u32) << 27u32) & (134217728usize as u32);
+    }
+    #[inline]
+    pub fn floating(&self) -> guint {
+        unsafe {
+            ::std::mem::transmute(((self._bitfield_1 &
+                                        (268435456usize as u32)) >> 28u32) as
+                                      u32)
+        }
+    }
+    #[inline]
+    pub fn set_floating(&mut self, val: guint) {
+        self._bitfield_1 &= !(268435456usize as u32);
+        self._bitfield_1 |=
+            ((val as u32 as u32) << 28u32) & (268435456usize as u32);
+    }
+    #[inline]
+    pub fn derivative_flag(&self) -> guint {
+        unsafe {
+            ::std::mem::transmute(((self._bitfield_1 &
+                                        (536870912usize as u32)) >> 29u32) as
+                                      u32)
+        }
+    }
+    #[inline]
+    pub fn set_derivative_flag(&mut self, val: guint) {
+        self._bitfield_1 &= !(536870912usize as u32);
+        self._bitfield_1 |=
+            ((val as u32 as u32) << 29u32) & (536870912usize as u32);
+    }
+    #[inline]
+    pub fn in_marshal(&self) -> guint {
+        unsafe {
+            ::std::mem::transmute(((self._bitfield_1 &
+                                        (1073741824usize as u32)) >> 30u32) as
+                                      u32)
+        }
+    }
+    #[inline]
+    pub fn set_in_marshal(&mut self, val: guint) {
+        self._bitfield_1 &= !(1073741824usize as u32);
+        self._bitfield_1 |=
+            ((val as u32 as u32) << 30u32) & (1073741824usize as u32);
+    }
+    #[inline]
+    pub fn is_invalid(&self) -> guint {
+        unsafe {
+            ::std::mem::transmute(((self._bitfield_1 &
+                                        (2147483648usize as u32)) >> 31u32) as
+                                      u32)
+        }
+    }
+    #[inline]
+    pub fn set_is_invalid(&mut self, val: guint) {
+        self._bitfield_1 &= !(2147483648usize as u32);
+        self._bitfield_1 |=
+            ((val as u32 as u32) << 31u32) & (2147483648usize as u32);
+    }
+}
+pub use self::_GClosure as GClosure;
+#[repr(C)]
+#[derive(Debug, Copy)]
+pub struct _GClosureNotifyData {
+    pub data: gpointer,
+    pub notify: GClosureNotify,
+}
+#[test]
+fn bindgen_test_layout__GClosureNotifyData() {
+    assert_eq!(::std::mem::size_of::<_GClosureNotifyData>() , 16usize);
+    assert_eq!(::std::mem::align_of::<_GClosureNotifyData>() , 8usize);
+}
+impl Clone for _GClosureNotifyData {
+    fn clone(&self) -> Self { *self }
+}
+pub use self::_GClosureNotifyData as GClosureNotifyData;
+/**
+ * GCallback:
+ * 
+ * The type used for callback functions in structure definitions and function 
+ * signatures. This doesn't mean that all callback functions must take no 
+ * parameters and return void. The required signature of a callback function 
+ * is determined by the context in which is used (e.g. the signal to which it 
+ * is connected). Use G_CALLBACK() to cast the callback function to a #GCallback. 
+ */
+pub type GCallback = ::std::option::Option<unsafe extern "C" fn()>;
+/**
+ * GClosureNotify:
+ * @data: data specified when registering the notification callback
+ * @closure: the #GClosure on which the notification is emitted
+ * 
+ * The type used for the various notification callbacks which can be registered
+ * on closures.
+ */
+pub type GClosureNotify =
+    ::std::option::Option<unsafe extern "C" fn(data: gpointer,
+                                               closure: *mut GClosure)>;
+pub const G_CONNECT_AFTER: _bindgen_ty_99 = _bindgen_ty_99::G_CONNECT_AFTER;
+pub const G_CONNECT_SWAPPED: _bindgen_ty_99 =
+    _bindgen_ty_99::G_CONNECT_SWAPPED;
+#[repr(u32)]
+/**
+ * GConnectFlags:
+ * @G_CONNECT_AFTER: whether the handler should be called before or after the 
+ *  default handler of the signal.
+ * @G_CONNECT_SWAPPED: whether the instance and data should be swapped when
+ *  calling the handler; see g_signal_connect_swapped() for an example.
+ * 
+ * The connection flags are used to specify the behaviour of a signal's 
+ * connection.
+ */
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+pub enum _bindgen_ty_99 { G_CONNECT_AFTER = 1, G_CONNECT_SWAPPED = 2, }
+pub use self::_bindgen_ty_99 as GConnectFlags;
+extern "C" {
+    pub fn g_signal_connect_data(instance: gpointer,
+                                 detailed_signal: *const gchar,
+                                 c_handler: GCallback, data: gpointer,
+                                 destroy_data: GClosureNotify,
+                                 connect_flags: GConnectFlags) -> gulong;
+}
 /**
  * GObject:
  * 

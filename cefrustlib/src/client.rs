@@ -61,7 +61,28 @@ unsafe extern "C" fn get_find_handler(_: *mut cef::_cef_client_t) -> *mut cef::_
 
 unsafe extern "C" fn get_focus_handler(_: *mut cef::_cef_client_t) -> *mut cef::_cef_focus_handler_t {
     //debug("get_focus_handler");
-    ptr::null_mut()
+    //ptr::null_mut()
+    unsafe extern "C" fn on_take_focus(self_: *mut cef::_cef_focus_handler_t, browser: *mut cef::_cef_browser_t, next: ::std::os::raw::c_int) {
+        println!("on_take_focus_fn: {}: ", next);
+    }
+
+    unsafe extern "C" fn on_set_focus(self_: *mut cef::_cef_focus_handler_t, browser: *mut cef::_cef_browser_t, source: cef::cef_focus_source_t) -> ::std::os::raw::c_int {
+        println!("on_set_focus: {:?}", source);
+        1
+    }
+
+    unsafe extern "C" fn on_got_focus(self_: *mut cef::_cef_focus_handler_t, browser: *mut cef::_cef_browser_t) {
+        println!("on_got_focus");
+    }
+
+    let handler = Box::new(cef::_cef_focus_handler_t {
+        base: base::CefBase::new(mem::size_of::<cef::_cef_focus_handler_t>()),
+        on_take_focus: Option::Some(on_take_focus),
+        on_set_focus: Option::Some(on_set_focus),
+        on_got_focus: Option::Some(on_got_focus)
+    });
+    let handler = Box::into_raw(handler);
+    handler
 }
 
 unsafe extern "C" fn get_geolocation_handler(_: *mut cef::_cef_client_t) -> *mut cef::_cef_geolocation_handler_t {
@@ -75,7 +96,7 @@ unsafe extern "C" fn get_jsdialog_handler(_: *mut cef::_cef_client_t) -> *mut ce
 }
 
 unsafe extern "C" fn get_keyboard_handler(_: *mut cef::_cef_client_t) -> *mut cef::_cef_keyboard_handler_t {
-    debug("get_keyboard_handler");
+    //debug("get_keyboard_handler");
     ptr::null_mut()
 }
 

@@ -100,8 +100,8 @@ pub fn create_browser() {
     let client = Box::into_raw(client);
 
     let mut url_cef = cef::cef_string_t {str: std::ptr::null_mut(), length: 0, dtor: Option::None};
-    //let url = "http://www.google.com";
-    let url = "chrome://gpu";
+    let url = "http://www.google.com";
+    //let url = "chrome://gpu";
     unsafe {cef::cef_string_utf8_to_utf16(url.as_ptr() as *mut std::os::raw::c_char, url.len(), &mut url_cef) };
     //unsafe { cef::cef_string_utf16_set("".as_ptr(), 0, &mut empty_str, 1) };
 

@@ -97,6 +97,7 @@ fn gen_gtk() {
     .whitelisted_function("gtk_main")
     .whitelisted_function("g_signal_connect")
     .whitelisted_function("gtk_widget_get_allocation")
+    .whitelisted_function("g_signal_connect_data")
     .generate().unwrap()
     .write_to_file(Path::new("src").join("gtk2.rs"));
 }
