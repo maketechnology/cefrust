@@ -39,12 +39,12 @@ fn cef() {
     // Execute the sub-process logic, if any. This will either return immediately for the browser
     // process or block until the sub-process should exit
     // println!("Calling cef_execute_process");
-    //let exit_code: raw::c_int = unsafe { cef::cef_execute_process(&main_args, std::ptr::null_mut(), std::ptr::null_mut()) };
-    //println!("exit_code: {}", exit_code);
-    //if exit_code >= 0 {
-        // The sub-process terminated, exit now.
-        //std::process::exit(exit_code);
-    //}
+    // let exit_code: raw::c_int = unsafe { cef::cef_execute_process(&main_args, std::ptr::null_mut(), std::ptr::null_mut()) };
+    // println!("exit_code: {}", exit_code);
+    // if exit_code >= 0 {
+    //     // The sub-process terminated, exit now.
+    //     std::process::exit(exit_code);
+    // }
 
     unsafe { xlib::XSetErrorHandler(Option::Some(xerror_handler_impl)) };
     unsafe { xlib::XSetIOErrorHandler(Option::Some(xioerror_handler_impl)) };
@@ -63,7 +63,7 @@ fn cef() {
     let resources = resources_path.to_str().unwrap();
     unsafe {cef::cef_string_utf8_to_utf16(resources.as_ptr() as *mut std::os::raw::c_char, resources.len(), &mut resources_cef);}
 */
-    let subp_path = cwd.join("subprocess");
+    let subp_path = cwd.join("cefrust_subp");
     let subp = subp_path.to_str().unwrap();
     println!("subp: {:?}", subp);
     let subp_cef = cefrust::cef_string(subp);
@@ -109,13 +109,13 @@ fn cef() {
     //let ten_millis = std::time::Duration::from_millis(3000);
     //std::thread::sleep(ten_millis);
     let main_args = cefrust::prepare_args();
-    std::mem::forget(main_args);
+    //std::mem::forget(main_args);
     println!("Calling cef_initialize");
     unsafe { cef::cef_initialize(&main_args, &settings, &mut app, std::ptr::null_mut()) };
-    let ten_millis = std::time::Duration::from_millis(3000);
-    let now = std::time::Instant::now();
-    std::thread::sleep(ten_millis);
-    assert!(now.elapsed() >= ten_millis);
+    //let ten_millis = std::time::Duration::from_millis(3000);
+    //let now = std::time::Instant::now();
+    //std::thread::sleep(ten_millis);
+    //assert!(now.elapsed() >= ten_millis);
 
     //app::create_browser();
 

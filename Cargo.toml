@@ -4,9 +4,8 @@ version = "0.1.0"
 authors = ["Guillermo Zunino <guillez@gmail.com>"]
 build = "build.rs"
 
-[build-dependencies.libbindgen]
-git = "https://github.com/servo/rust-bindgen"
-#features = ["llvm_stable"]
+[build-dependencies]
+bindgen = "0.20.5"
 
 [dependencies]
 x11 = "2.12.0"

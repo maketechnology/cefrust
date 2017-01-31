@@ -30,44 +30,44 @@ impl CefBase {
     }
 }
 
-        ///
-        // Increment the reference count.
-        ///
-        pub unsafe extern "C" fn add_ref(_: *mut cef::cef_base_t) {
-            debug_callback("cef_base_t.add_ref");
-            if DEBUG_REFERENCE_COUNTING {
-                println!("+");
-            }
-        }
+///
+// Increment the reference count.
+///
+pub unsafe extern "C" fn add_ref(_: *mut cef::cef_base_t) {
+    debug_callback("cef_base_t.add_ref");
+    if DEBUG_REFERENCE_COUNTING {
+        println!("+");
+    }
+}
 
-        ///
-        // Decrement the reference count.  Delete this object when no references
-        // remain.
-        ///
-        pub unsafe extern "C" fn release(_: *mut cef::cef_base_t)
-                                                -> ::std::os::raw::c_int {
-            debug_callback("cef_base_t.release");
-            if DEBUG_REFERENCE_COUNTING {
-                println!("-");
-            }
-            1
-        }
+///
+// Decrement the reference count.  Delete this object when no references
+// remain.
+///
+pub unsafe extern "C" fn release(_: *mut cef::cef_base_t)
+                                        -> ::std::os::raw::c_int {
+    debug_callback("cef_base_t.release");
+    if DEBUG_REFERENCE_COUNTING {
+        println!("-");
+    }
+    1
+}
 
-        ///
-        // Returns the current number of references.
-        ///
-        pub unsafe extern "C" fn has_one_ref(_: *mut cef::cef_base_t)
-                                                -> ::std::os::raw::c_int {
-            debug_callback("cef_base_t.get_refct");
-            if DEBUG_REFERENCE_COUNTING {
-                println!("=");
-            }
-            1
-        }
+///
+// Returns the current number of references.
+///
+pub unsafe extern "C" fn has_one_ref(_: *mut cef::cef_base_t)
+                                        -> ::std::os::raw::c_int {
+    debug_callback("cef_base_t.get_refct");
+    if DEBUG_REFERENCE_COUNTING {
+        println!("=");
+    }
+    1
+}
 
 
 //pub 
 
-fn debug_callback(l: &str) {
+fn debug_callback(_: &str) {
 	//println!("{}", l)
 }

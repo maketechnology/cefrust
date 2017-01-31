@@ -33,18 +33,18 @@ pub extern fn init(japp: *const cef::cef_app_t) -> *const cef::cef_app_t {
     unsafe { xlib::XSetErrorHandler(Option::Some(xerror_handler_impl)) };
     unsafe { xlib::XSetIOErrorHandler(Option::Some(xioerror_handler_impl)) };
 
-    //let subp_path = cwd.join("subprocess");
+    //let subp_path = cwd.join("cefrust_subp");
     //let subp = subp_path.to_str().unwrap();
     //println!("subp: {:?}", subp);
 
     let locales_cef = cefrust::cef_string("/home/guille/workspaces/rust/cefrust/target/debug/locales");
     let resources_cef = cefrust::cef_string("/home/guille/workspaces/rust/cefrust/target/debug/Resources");
-    let subp_cef = cefrust::cef_string("/home/guille/workspaces/rust/cefrust/target/debug/subprocess");
+    let subp_cef = cefrust::cef_string("/home/guille/workspaces/rust/cefrust/target/debug/cefrust_subp");
     let logfile_cef = cefrust::cef_string("/home/guille/workspaces/rust/cefrust/target/debug/lib.log");
 
     let settings = cef::_cef_settings_t {
         size: std::mem::size_of::<cef::_cef_settings_t>(),
-        single_process: 1,
+        single_process: 0,
         no_sandbox: 1,
         browser_subprocess_path: subp_cef,
         multi_threaded_message_loop: 0,

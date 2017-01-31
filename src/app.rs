@@ -29,16 +29,16 @@ pub fn new() -> cef::cef_app_t {
 pub fn create_browser() {
         // Create GTK window. You can pass a NULL handle 
     // to CEF and then it will create a window of its own.
-    //initialize_gtk();
-    //let hwnd = create_gtk_window(String::from("cefcapi example"), 1024, 768);
+    initialize_gtk();
+    let hwnd = create_gtk_window(String::from("cefcapi example"), 1024, 768);
     //let window_info = std::ptr::null();
     let window_info = cef::_cef_window_info_t {
         x: 0,
         y: 0,
         width: 1024,
         height: 768,
-        //parent_window: unsafe {gtk2::gdk_x11_drawable_get_xid(gtk2::gtk_widget_get_window(hwnd)) },
-        parent_window: 0,
+        parent_window: unsafe {gtk2::gdk_x11_drawable_get_xid(gtk2::gtk_widget_get_window(hwnd)) },
+        //parent_window: 0,
         windowless_rendering_enabled: 0,
         transparent_painting_enabled: 0,
         window: 0
@@ -92,8 +92,8 @@ pub fn create_browser() {
     let client = Box::into_raw(client);
 
     //let mut url_cef = cef::cef_string_t {str: std::ptr::null_mut(), length: 0, dtor: Option::None};
-    let url = "http://www.google.com";
-    //let url = "chrome://gpu";
+    //let url = "http://www.google.com";
+    let url = "chrome://gpu";
     //unsafe {cef::cef_string_utf8_to_utf16(url.as_ptr() as *mut std::os::raw::c_char, url.len(), &mut url_cef) };
     //unsafe { cef::cef_string_utf16_set("".as_ptr(), 0, &mut cefrust::cef_string_empty, 1) };
 

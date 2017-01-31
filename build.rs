@@ -1,4 +1,4 @@
-extern crate libbindgen;
+extern crate bindgen;
 
 use std::env;
 use std::path::Path;
@@ -24,14 +24,14 @@ fn main() {
 #[allow(dead_code)]
 fn gen_cef(cef_path: String) {
     //let out_dir = env::var("OUT_DIR").unwrap();
-  let config = libbindgen::CodegenConfig {
+  let config = bindgen::CodegenConfig {
             functions: true,
             types: true,
             vars: false,
             methods: true,
             constructors: false,
         };
-  let _ = libbindgen::builder()
+  let _ = bindgen::builder()
     .header("cef.h")
     .clang_arg(format!("-I{}", cef_path))
     .link("cef")
@@ -58,14 +58,14 @@ fn gen_cef(cef_path: String) {
 #[allow(dead_code)]
 fn gen_gtk() {
   //let out_dir = env::var("OUT_DIR").unwrap();
-  let config = libbindgen::CodegenConfig {
+  let config = bindgen::CodegenConfig {
             functions: true,
             types: true,
             vars: true,
             methods: true,
             constructors: true,
         };
-  let _ = libbindgen::builder()
+  let _ = bindgen::builder()
     //.header("/usr/include/gtk-2.0/gtk/gtk.h")
     .header("gtk2.h")
     .clang_arg(format!("-I{}", "/usr/include/gtk-2.0"))
