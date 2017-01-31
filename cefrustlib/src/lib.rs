@@ -23,7 +23,7 @@ unsafe extern fn xioerror_handler_impl(_: *mut xlib::Display) -> libc::c_int {
 }
 
 #[no_mangle]
-pub extern fn init() -> *const cef::cef_app_t {
+pub extern fn init(japp: *const cef::cef_app_t) -> *const cef::cef_app_t {
     println!("DLL init");
 
     //println!("sizeof: {}", std::mem::size_of::<app::App>());
@@ -48,7 +48,7 @@ pub extern fn init() -> *const cef::cef_app_t {
         no_sandbox: 1,
         browser_subprocess_path: subp_cef,
         multi_threaded_message_loop: 0,
-        external_message_pump: 0,
+        external_message_pump: 1,
         windowless_rendering_enabled: 0,
         command_line_args_disabled: 0,
         cache_path: cefrust::cef_string_empty(),
@@ -76,7 +76,9 @@ pub extern fn init() -> *const cef::cef_app_t {
 
     // Initialize CEF in the main process.
     //let mut app = app::new(hwnd);
-    let app = app::new();
+    let mut app = app::new();
+    app.get_browser_process_handler = unsafe {(*japp).get_browser_process_handler};
+
     let app_box = Box::new(app);
     let app_raw = Box::into_raw(app_box);
     println!("Calling cef_initialize");

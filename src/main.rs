@@ -30,7 +30,7 @@ unsafe extern fn xioerror_handler_impl(_: *mut xlib::Display) -> raw::c_int {
 }
 
 fn cef() {
-    let main_args = cefrust::prepare_args();
+    //let main_args = cefrust::prepare_args();
 
     //std::process::exit(0);
 
@@ -39,16 +39,12 @@ fn cef() {
     // Execute the sub-process logic, if any. This will either return immediately for the browser
     // process or block until the sub-process should exit
     // println!("Calling cef_execute_process");
-    // let exit_code: raw::c_int = unsafe{
-    //     let exit_code = cef::cef_execute_process(&main_args, std::ptr::null_mut(), std::ptr::null_mut());
-    //     exit_code
-    // };
-    // println!("exit_code: {}", exit_code);
-
-    // if exit_code >= 0 {
-    //     // The sub-process terminated, exit now.
-    //     std::process::exit(exit_code);
-    // }
+    //let exit_code: raw::c_int = unsafe { cef::cef_execute_process(&main_args, std::ptr::null_mut(), std::ptr::null_mut()) };
+    //println!("exit_code: {}", exit_code);
+    //if exit_code >= 0 {
+        // The sub-process terminated, exit now.
+        //std::process::exit(exit_code);
+    //}
 
     unsafe { xlib::XSetErrorHandler(Option::Some(xerror_handler_impl)) };
     unsafe { xlib::XSetIOErrorHandler(Option::Some(xioerror_handler_impl)) };
@@ -77,28 +73,29 @@ fn cef() {
 
     let settings = cef::_cef_settings_t {
         size: std::mem::size_of::<cef::_cef_settings_t>(),
-        single_process: 1,
+        single_process: 0,
         no_sandbox: 1,
         browser_subprocess_path: subp_cef,
+        //browser_subprocess_path: cefrust::cef_string_empty(),
         multi_threaded_message_loop: 0,
         external_message_pump: 0,
         windowless_rendering_enabled: 0,
-        command_line_args_disabled: 0,
+        command_line_args_disabled: 1,
         cache_path: cefrust::cef_string_empty(),
         user_data_path: cefrust::cef_string_empty(),
         persist_session_cookies: 0,
         persist_user_preferences: 0,
         user_agent: cefrust::cef_string_empty(),
         product_version: cefrust::cef_string_empty(),
-        locale: locales_cef,
+        locale: cefrust::cef_string_empty(),
         log_file: cefrust::cef_string_empty(),
-        log_severity: cef::LOGSEVERITY_INFO,
+        log_severity: cef::LOGSEVERITY_DEFAULT,
         javascript_flags: cefrust::cef_string_empty(),
         resources_dir_path: resources_cef,
-        locales_dir_path: cefrust::cef_string_empty(),
+        locales_dir_path: locales_cef,
         pack_loading_disabled: 0,
         remote_debugging_port: 0,
-        uncaught_exception_stack_size: 0,
+        uncaught_exception_stack_size: 100,
         context_safety_implementation: 0,
         ignore_certificate_errors: 0,
         enable_net_security_expiration: 0,
@@ -109,8 +106,16 @@ fn cef() {
     // Initialize CEF in the main process.
     let mut app = app::new();
     
+    //let ten_millis = std::time::Duration::from_millis(3000);
+    //std::thread::sleep(ten_millis);
+    let main_args = cefrust::prepare_args();
+    std::mem::forget(main_args);
     println!("Calling cef_initialize");
     unsafe { cef::cef_initialize(&main_args, &settings, &mut app, std::ptr::null_mut()) };
+    let ten_millis = std::time::Duration::from_millis(3000);
+    let now = std::time::Instant::now();
+    std::thread::sleep(ten_millis);
+    assert!(now.elapsed() >= ten_millis);
 
     //app::create_browser();
 

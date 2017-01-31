@@ -10,10 +10,11 @@ pub fn prepare_args() -> cef::_cef_main_args_t {
         //println!("argv: {:?}", arg);     
         //ffi::CString::new(arg.into_string().unwrap()).unwrap() 
         let osstr: &ffi::OsStr = arg.as_os_str();
-        ffi::CString::new(osstr.as_bytes()).unwrap() 
+        let carg = ffi::CString::new(osstr.as_bytes());
+        carg.expect("Null arg") 
     } ).collect();
 
-    let args:Vec<*const raw::c_char> = argv.iter().map(|arg| { 
+    let mut args:Vec<*const raw::c_char> = argv.iter().map(|arg| { 
         println!("args: {:?}", arg);
         arg.as_ptr() 
     } ).collect();
@@ -24,13 +25,25 @@ pub fn prepare_args() -> cef::_cef_main_args_t {
  
     // Structure for passing command-line arguments.
     // The definition of this structure is platform-specific.
-    let args_ptr = args.as_ptr();
+    /*let mut args:Vec<*mut raw::c_char> = std::env::args().map(|arg| {
+        println!("argv: {:?}", arg);     
+        //ffi::CString::new(arg.into_string().unwrap()).unwrap() 
+        //let osstr: &ffi::OsStr = arg.as_os_str();
+        let carg_rslt = ffi::CString::new(arg.as_bytes());
+        let carg = carg_rslt.expect("Null arg");
+        carg.into_raw()
+    } ).collect();*/
+    let args_size = args.len() as raw::c_int;
+    let args_ptr = args.as_mut_ptr();
+    let args_box = Box::new(args);
+    //let args = Box::into_raw(args);
+    std::mem::forget(args_box);
 
     let main_args = cef::_cef_main_args_t {
-        argc : args.len() as raw::c_int,
+        argc : args_size,
         argv : args_ptr as *mut *mut raw::c_char
     };
-    println!("Hello CEF, ARGS: {}", main_args.argc);
+    println!("Hello CEF, ARGS: {:?}", main_args.argc);
 
     //println!("arg0: {:?}", argv[0].into_string().unwrap());
     //println!("arg0: {:?}", args[0]);
@@ -39,21 +52,27 @@ pub fn prepare_args() -> cef::_cef_main_args_t {
 }
 
 pub fn cef_string(value: &str) -> cef::cef_string_t {
-    let mut str_cef = cef::cef_string_t {str: std::ptr::null_mut(), length: 0, dtor: Option::None};
+    let mut str_cef = cef::cef_string_t {str: std::ptr::null_mut(), length: 0, dtor: Option::Some(dtr)};
+    //unsafe { cef::cef_string_utf16_set(value.as_ptr() as *mut cef::char16, value.len(), &mut str_cef, 1) };
     unsafe {cef::cef_string_utf8_to_utf16(value.as_ptr() as *mut std::os::raw::c_char, value.len(), &mut str_cef);}
     str_cef
 }
 
 
 pub fn cef_string_empty() -> cef::cef_string_t {
-    let empty_str = cef::cef_string_t {
+    let mut empty_str = cef::cef_string_t {
         str: std::ptr::null_mut(), 
         length: 0, 
-        dtor: Option::None
+        dtor: Option::Some(dtr)
     };
     
-    //unsafe { cef::cef_string_utf16_set("".as_ptr(), 0, &mut empty_str, 1) };
-    //unsafe { cef::cef_string_utf8_to_utf16("".as_ptr() as *mut std::os::raw::c_char, 0, &mut empty_str);}
+    let emp = "";
+    //unsafe { cef::cef_string_utf16_set(emp.as_ptr() as *mut cef::char16, 0, &mut empty_str, 1) };
+    unsafe { cef::cef_string_utf8_to_utf16(emp.as_ptr() as *mut std::os::raw::c_char, 0, &mut empty_str);}
 
     empty_str
+}
+
+unsafe extern "C" fn dtr(str: *mut cef::char16) {
+    println!("DESTROY CEF_STRING");
 }

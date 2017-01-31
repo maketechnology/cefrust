@@ -12,12 +12,16 @@ use std;
 pub fn new() -> cef::cef_app_t {
     let cef_app = cef::cef_app_t {
         base: base::CefBase::new(std::mem::size_of::<cef::cef_app_t>()),
-        on_before_command_line_processing: Option::Some(on_before_command_line_processing),
-        //on_register_custom_schemes: Option::Some(on_register_custom_schemes),
+        on_before_command_line_processing: Option::None,
+        //on_before_command_line_processing: Option::Some(on_before_command_line_processing),
         on_register_custom_schemes: Option::None,
-        get_resource_bundle_handler: Option::Some(get_resource_bundle_handler),
-        get_browser_process_handler: Option::Some(get_browser_process_handler),
-        get_render_process_handler: Option::Some(get_render_process_handler)
+        //on_register_custom_schemes: Option::Some(on_register_custom_schemes),
+        get_resource_bundle_handler: Option::None,
+        //get_resource_bundle_handler: Option::Some(get_resource_bundle_handler),
+        get_browser_process_handler: Option::None,
+        //get_browser_process_handler: Option::Some(get_browser_process_handler),
+        get_render_process_handler: Option::None,
+        //get_render_process_handler: Option::Some(get_render_process_handler)
     };
     cef_app
 }

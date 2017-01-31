@@ -16,6 +16,20 @@ impl CefBase {
         println!("initialize_CefBase");
         println!("cef_base_t.size = {}", st_size);
 
+        let base = CefBase {
+            size: st_size,
+            add_ref: Option::Some(add_ref),
+            release: Option::Some(release),
+            has_one_ref: Option::Some(has_one_ref)
+//            add_ref: Option::None,
+//            release: Option::None,
+//            has_one_ref: Option::None
+        };
+        //println!("add_re {:?}", base.add_ref);
+        base
+    }
+}
+
         ///
         // Increment the reference count.
         ///
@@ -51,19 +65,6 @@ impl CefBase {
             1
         }
 
-        let base = CefBase {
-            size: st_size,
-            add_ref: Option::Some(add_ref),
-            release: Option::Some(release),
-            has_one_ref: Option::Some(has_one_ref)
-//            add_ref: Option::None,
-//            release: Option::None,
-//            has_one_ref: Option::None
-        };
-        //println!("add_re {:?}", base.add_ref);
-        base
-    }
-}
 
 //pub 
 

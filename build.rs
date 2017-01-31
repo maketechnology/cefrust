@@ -7,8 +7,8 @@ use std::string::String;
 fn main() {
   let cef_path = format!("{}/Downloads/cef_binary_3.2883.1539.gd7f087e_linux64/", env::var("HOME").unwrap());
   // Tell cargo to tell rustc to link the system shared library.
-  //println!("cargo:rustc-link-search={}", format!("{}Release/", cef_path));
-  println!("cargo:rustc-link-search={}", format!("{}Debug/", cef_path));
+  println!("cargo:rustc-link-search={}", format!("{}Release/", cef_path));
+  //println!("cargo:rustc-link-search={}", format!("{}Debug/", cef_path));
   println!("cargo:rustc-link-lib=cef");
   //cargo:rustc-flags=-l foo -L src/c/foo
 
@@ -78,7 +78,7 @@ fn gen_gtk() {
     .clang_arg(format!("-I{}", "/usr/include/atk-1.0"))
     //.use_core()
     .with_codegen_config(config)
-    //.no_unstable_rust()
+    .no_unstable_rust()
     .raw_line("#![allow(dead_code)]")
     .raw_line("#![allow(non_snake_case)]")
     .raw_line("#![allow(non_camel_case_types)]")

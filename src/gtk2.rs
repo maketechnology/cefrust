@@ -4,6 +4,30 @@
 #![allow(non_snake_case)]
 #![allow(non_camel_case_types)]
 
+#[repr(C)]
+pub struct __BindgenUnionField<T>(::std::marker::PhantomData<T>);
+impl <T> __BindgenUnionField<T> {
+    #[inline]
+    pub fn new() -> Self { __BindgenUnionField(::std::marker::PhantomData) }
+    #[inline]
+    pub unsafe fn as_ref(&self) -> &T { ::std::mem::transmute(self) }
+    #[inline]
+    pub unsafe fn as_mut(&mut self) -> &mut T { ::std::mem::transmute(self) }
+}
+impl <T> ::std::default::Default for __BindgenUnionField<T> {
+    #[inline]
+    fn default() -> Self { Self::new() }
+}
+impl <T> ::std::clone::Clone for __BindgenUnionField<T> {
+    #[inline]
+    fn clone(&self) -> Self { Self::new() }
+}
+impl <T> ::std::marker::Copy for __BindgenUnionField<T> { }
+impl <T> ::std::fmt::Debug for __BindgenUnionField<T> {
+    fn fmt(&self, fmt: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
+        fmt.write_str("__BindgenUnionField")
+    }
+}
 pub type guint8 = ::std::os::raw::c_uchar;
 pub type guint16 = ::std::os::raw::c_ushort;
 pub type guint32 = ::std::os::raw::c_uint;
@@ -33,7 +57,7 @@ fn bindgen_test_layout__GArray() {
 impl Clone for _GArray {
     fn clone(&self) -> Self { *self }
 }
-pub use self::_GArray as GArray;
+pub type GArray = _GArray;
 #[repr(C)]
 #[derive(Debug, Copy)]
 pub struct _GData {
@@ -42,7 +66,7 @@ pub struct _GData {
 impl Clone for _GData {
     fn clone(&self) -> Self { *self }
 }
-pub use self::_GData as GData;
+pub type GData = _GData;
 #[repr(C)]
 #[derive(Debug, Copy)]
 pub struct _GSList {
@@ -57,7 +81,7 @@ fn bindgen_test_layout__GSList() {
 impl Clone for _GSList {
     fn clone(&self) -> Self { *self }
 }
-pub use self::_GSList as GSList;
+pub type GSList = _GSList;
 pub type GType = gsize;
 /**
  * GValue:
@@ -72,23 +96,24 @@ pub type GType = gsize;
  * only be accessed through the G_VALUE_TYPE() macro.
  */
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Debug, Copy)]
 pub struct _GValue {
     pub g_type: GType,
     pub data: [_GValue__bindgen_ty_1; 2usize],
 }
 #[repr(C)]
-#[derive(Copy)]
-pub union _GValue__bindgen_ty_1 {
-    pub v_int: gint,
-    pub v_uint: guint,
-    pub v_long: glong,
-    pub v_ulong: gulong,
-    pub v_int64: gint64,
-    pub v_uint64: guint64,
-    pub v_float: gfloat,
-    pub v_double: gdouble,
-    pub v_pointer: gpointer,
+#[derive(Debug, Copy)]
+pub struct _GValue__bindgen_ty_1 {
+    pub v_int: __BindgenUnionField<gint>,
+    pub v_uint: __BindgenUnionField<guint>,
+    pub v_long: __BindgenUnionField<glong>,
+    pub v_ulong: __BindgenUnionField<gulong>,
+    pub v_int64: __BindgenUnionField<gint64>,
+    pub v_uint64: __BindgenUnionField<guint64>,
+    pub v_float: __BindgenUnionField<gfloat>,
+    pub v_double: __BindgenUnionField<gdouble>,
+    pub v_pointer: __BindgenUnionField<gpointer>,
+    pub bindgen_union_field: u64,
 }
 #[test]
 fn bindgen_test_layout__GValue__bindgen_ty_1() {
@@ -106,7 +131,7 @@ fn bindgen_test_layout__GValue() {
 impl Clone for _GValue {
     fn clone(&self) -> Self { *self }
 }
-pub use self::_GValue as GValue;
+pub type GValue = _GValue;
 /**
  * GTypeClass:
  * 
@@ -125,7 +150,7 @@ fn bindgen_test_layout__GTypeClass() {
 impl Clone for _GTypeClass {
     fn clone(&self) -> Self { *self }
 }
-pub use self::_GTypeClass as GTypeClass;
+pub type GTypeClass = _GTypeClass;
 /**
  * GTypeInstance:
  * 
@@ -144,7 +169,7 @@ fn bindgen_test_layout__GTypeInstance() {
 impl Clone for _GTypeInstance {
     fn clone(&self) -> Self { *self }
 }
-pub use self::_GTypeInstance as GTypeInstance;
+pub type GTypeInstance = _GTypeInstance;
 /**
  * GClosure:
  * @in_marshal: Indicates whether the closure is currently being invoked with 
@@ -319,7 +344,7 @@ impl _GClosure {
             ((val as u32 as u32) << 31u32) & (2147483648usize as u32);
     }
 }
-pub use self::_GClosure as GClosure;
+pub type GClosure = _GClosure;
 #[repr(C)]
 #[derive(Debug, Copy)]
 pub struct _GClosureNotifyData {
@@ -334,7 +359,7 @@ fn bindgen_test_layout__GClosureNotifyData() {
 impl Clone for _GClosureNotifyData {
     fn clone(&self) -> Self { *self }
 }
-pub use self::_GClosureNotifyData as GClosureNotifyData;
+pub type GClosureNotifyData = _GClosureNotifyData;
 /**
  * GCallback:
  * 
@@ -372,7 +397,7 @@ pub const G_CONNECT_SWAPPED: _bindgen_ty_99 =
  */
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub enum _bindgen_ty_99 { G_CONNECT_AFTER = 1, G_CONNECT_SWAPPED = 2, }
-pub use self::_bindgen_ty_99 as GConnectFlags;
+pub type GConnectFlags = _bindgen_ty_99;
 extern "C" {
     pub fn g_signal_connect_data(instance: gpointer,
                                  detailed_signal: *const gchar,
@@ -401,8 +426,8 @@ fn bindgen_test_layout__GObject() {
 impl Clone for _GObject {
     fn clone(&self) -> Self { *self }
 }
-pub use self::_GObject as GObject;
-pub use self::_GObject as GInitiallyUnowned;
+pub type GObject = _GObject;
+pub type GInitiallyUnowned = _GObject;
 #[repr(C)]
 #[derive(Debug, Copy)]
 pub struct _cairo_font_options {
@@ -433,7 +458,7 @@ impl Clone for _cairo_font_options {
  *
  * Since: 1.0
  **/
-pub use self::_cairo_font_options as cairo_font_options_t;
+pub type cairo_font_options_t = _cairo_font_options;
 #[repr(C)]
 #[derive(Debug, Copy)]
 pub struct _PangoFontDescription {
@@ -450,7 +475,7 @@ impl Clone for _PangoFontDescription {
  * what fonts are available on the system and also for specifying
  * the characteristics of a font to load.
  */
-pub use self::_PangoFontDescription as PangoFontDescription;
+pub type PangoFontDescription = _PangoFontDescription;
 #[repr(C)]
 #[derive(Debug, Copy)]
 pub struct _GdkRectangle {
@@ -467,7 +492,7 @@ fn bindgen_test_layout__GdkRectangle() {
 impl Clone for _GdkRectangle {
     fn clone(&self) -> Self { *self }
 }
-pub use self::_GdkRectangle as GdkRectangle;
+pub type GdkRectangle = _GdkRectangle;
 #[repr(C)]
 #[derive(Debug, Copy)]
 pub struct _GdkColor {
@@ -484,7 +509,7 @@ fn bindgen_test_layout__GdkColor() {
 impl Clone for _GdkColor {
     fn clone(&self) -> Self { *self }
 }
-pub use self::_GdkColor as GdkColor;
+pub type GdkColor = _GdkColor;
 #[repr(C)]
 #[derive(Debug, Copy)]
 pub struct _GdkColormap {
@@ -502,7 +527,7 @@ fn bindgen_test_layout__GdkColormap() {
 impl Clone for _GdkColormap {
     fn clone(&self) -> Self { *self }
 }
-pub use self::_GdkColormap as GdkColormap;
+pub type GdkColormap = _GdkColormap;
 #[repr(C)]
 #[derive(Debug, Copy)]
 pub struct _GdkFont {
@@ -518,7 +543,7 @@ fn bindgen_test_layout__GdkFont() {
 impl Clone for _GdkFont {
     fn clone(&self) -> Self { *self }
 }
-pub use self::_GdkFont as GdkFont;
+pub type GdkFont = _GdkFont;
 #[repr(C)]
 #[derive(Debug, Copy)]
 pub struct _GdkGC {
@@ -537,7 +562,7 @@ fn bindgen_test_layout__GdkGC() {
 impl Clone for _GdkGC {
     fn clone(&self) -> Self { *self }
 }
-pub use self::_GdkGC as GdkGC;
+pub type GdkGC = _GdkGC;
 #[repr(C)]
 #[derive(Debug, Copy)]
 pub struct _GdkVisual {
@@ -565,7 +590,7 @@ fn bindgen_test_layout__GdkVisual() {
 impl Clone for _GdkVisual {
     fn clone(&self) -> Self { *self }
 }
-pub use self::_GdkVisual as GdkVisual;
+pub type GdkVisual = _GdkVisual;
 #[repr(C)]
 #[derive(Debug, Copy)]
 pub struct _GdkDrawable {
@@ -579,9 +604,9 @@ fn bindgen_test_layout__GdkDrawable() {
 impl Clone for _GdkDrawable {
     fn clone(&self) -> Self { *self }
 }
-pub use self::_GdkDrawable as GdkDrawable;
-pub use self::_GdkDrawable as GdkPixmap;
-pub use self::_GdkDrawable as GdkWindow;
+pub type GdkDrawable = _GdkDrawable;
+pub type GdkPixmap = _GdkDrawable;
+pub type GdkWindow = _GdkDrawable;
 #[repr(C)]
 #[derive(Debug, Copy)]
 pub struct _GdkScreen {
@@ -615,13 +640,13 @@ impl _GdkScreen {
         self._bitfield_1 |= ((val as u32 as u8) << 0u32) & (1usize as u8);
     }
 }
-pub use self::_GdkScreen as GdkScreen;
+pub type GdkScreen = _GdkScreen;
 pub const GDK_LSB_FIRST: _bindgen_ty_209 = _bindgen_ty_209::GDK_LSB_FIRST;
 pub const GDK_MSB_FIRST: _bindgen_ty_209 = _bindgen_ty_209::GDK_MSB_FIRST;
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub enum _bindgen_ty_209 { GDK_LSB_FIRST = 0, GDK_MSB_FIRST = 1, }
-pub use self::_bindgen_ty_209 as GdkByteOrder;
+pub type GdkByteOrder = _bindgen_ty_209;
 pub const GDK_SHIFT_MASK: _bindgen_ty_210 = _bindgen_ty_210::GDK_SHIFT_MASK;
 pub const GDK_LOCK_MASK: _bindgen_ty_210 = _bindgen_ty_210::GDK_LOCK_MASK;
 pub const GDK_CONTROL_MASK: _bindgen_ty_210 =
@@ -670,14 +695,14 @@ pub enum _bindgen_ty_210 {
     GDK_RELEASE_MASK = 1073741824,
     GDK_MODIFIER_MASK = 1543512063,
 }
-pub use self::_bindgen_ty_210 as GdkModifierType;
+pub type GdkModifierType = _bindgen_ty_210;
 pub const GDK_FONT_FONT: _bindgen_ty_247 = _bindgen_ty_247::GDK_FONT_FONT;
 pub const GDK_FONT_FONTSET: _bindgen_ty_247 =
     _bindgen_ty_247::GDK_FONT_FONTSET;
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub enum _bindgen_ty_247 { GDK_FONT_FONT = 0, GDK_FONT_FONTSET = 1, }
-pub use self::_bindgen_ty_247 as GdkFontType;
+pub type GdkFontType = _bindgen_ty_247;
 pub const GDK_VISUAL_STATIC_GRAY: _bindgen_ty_261 =
     _bindgen_ty_261::GDK_VISUAL_STATIC_GRAY;
 pub const GDK_VISUAL_GRAYSCALE: _bindgen_ty_261 =
@@ -700,7 +725,7 @@ pub enum _bindgen_ty_261 {
     GDK_VISUAL_TRUE_COLOR = 4,
     GDK_VISUAL_DIRECT_COLOR = 5,
 }
-pub use self::_bindgen_ty_261 as GdkVisualType;
+pub type GdkVisualType = _bindgen_ty_261;
 pub const GTK_WIN_POS_NONE: _bindgen_ty_302 =
     _bindgen_ty_302::GTK_WIN_POS_NONE;
 pub const GTK_WIN_POS_CENTER: _bindgen_ty_302 =
@@ -720,7 +745,7 @@ pub enum _bindgen_ty_302 {
     GTK_WIN_POS_CENTER_ALWAYS = 3,
     GTK_WIN_POS_CENTER_ON_PARENT = 4,
 }
-pub use self::_bindgen_ty_302 as GtkWindowPosition;
+pub type GtkWindowPosition = _bindgen_ty_302;
 pub const GTK_WINDOW_TOPLEVEL: _bindgen_ty_303 =
     _bindgen_ty_303::GTK_WINDOW_TOPLEVEL;
 pub const GTK_WINDOW_POPUP: _bindgen_ty_303 =
@@ -728,7 +753,7 @@ pub const GTK_WINDOW_POPUP: _bindgen_ty_303 =
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub enum _bindgen_ty_303 { GTK_WINDOW_TOPLEVEL = 0, GTK_WINDOW_POPUP = 1, }
-pub use self::_bindgen_ty_303 as GtkWindowType;
+pub type GtkWindowType = _bindgen_ty_303;
 #[repr(C)]
 #[derive(Debug, Copy)]
 pub struct _GtkObject {
@@ -743,7 +768,7 @@ fn bindgen_test_layout__GtkObject() {
 impl Clone for _GtkObject {
     fn clone(&self) -> Self { *self }
 }
-pub use self::_GtkObject as GtkObject;
+pub type GtkObject = _GtkObject;
 #[repr(C)]
 #[derive(Debug, Copy)]
 pub struct _GtkStyle {
@@ -790,7 +815,7 @@ fn bindgen_test_layout__GtkStyle() {
 impl Clone for _GtkStyle {
     fn clone(&self) -> Self { *self }
 }
-pub use self::_GtkStyle as GtkStyle;
+pub type GtkStyle = _GtkStyle;
 #[repr(C)]
 #[derive(Debug, Copy)]
 pub struct _GtkRcStyle {
@@ -832,7 +857,7 @@ impl _GtkRcStyle {
         self._bitfield_1 |= ((val as u32 as u8) << 0u32) & (1usize as u8);
     }
 }
-pub use self::_GtkRcStyle as GtkRcStyle;
+pub type GtkRcStyle = _GtkRcStyle;
 #[repr(C)]
 #[derive(Debug, Copy)]
 pub struct _GtkWidget {
@@ -855,7 +880,7 @@ fn bindgen_test_layout__GtkWidget() {
 impl Clone for _GtkWidget {
     fn clone(&self) -> Self { *self }
 }
-pub use self::_GtkWidget as GtkWidget;
+pub type GtkWidget = _GtkWidget;
 pub const GTK_RC_FG: _bindgen_ty_322 = _bindgen_ty_322::GTK_RC_FG;
 pub const GTK_RC_BG: _bindgen_ty_322 = _bindgen_ty_322::GTK_RC_BG;
 pub const GTK_RC_TEXT: _bindgen_ty_322 = _bindgen_ty_322::GTK_RC_TEXT;
@@ -868,7 +893,7 @@ pub enum _bindgen_ty_322 {
     GTK_RC_TEXT = 4,
     GTK_RC_BASE = 8,
 }
-pub use self::_bindgen_ty_322 as GtkRcFlags;
+pub type GtkRcFlags = _bindgen_ty_322;
 /**
  * GtkRequisition:
  * @width: the widget's desired width
@@ -891,7 +916,7 @@ fn bindgen_test_layout__GtkRequisition() {
 impl Clone for _GtkRequisition {
     fn clone(&self) -> Self { *self }
 }
-pub use self::_GtkRequisition as GtkRequisition;
+pub type GtkRequisition = _GtkRequisition;
 #[repr(C)]
 #[derive(Debug, Copy)]
 pub struct _GtkWindow {
@@ -1183,7 +1208,7 @@ impl _GtkWindow {
             ((val as u32 as u32) << 30u32) & (1073741824usize as u32);
     }
 }
-pub use self::_GtkWindow as GtkWindow;
+pub type GtkWindow = _GtkWindow;
 /**
  * GtkAllocation:
  * @x: the X position of the widget's area relative to its parents allocation.
@@ -1195,7 +1220,7 @@ pub use self::_GtkWindow as GtkWindow;
  * widget by its parent. It is a subregion of its parents allocation. See
  * <xref linkend="size-allocation"/> for more information.
  */
-pub use self::GdkRectangle as GtkAllocation;
+pub type GtkAllocation = GdkRectangle;
 extern "C" {
     pub fn gtk_widget_show_all(widget: *mut GtkWidget);
 }
@@ -1288,7 +1313,7 @@ impl _GtkContainer {
             ((val as u32 as u32) << 20u32) & (1048576usize as u32);
     }
 }
-pub use self::_GtkContainer as GtkContainer;
+pub type GtkContainer = _GtkContainer;
 extern "C" {
     pub fn gtk_container_add(container: *mut GtkContainer,
                              widget: *mut GtkWidget);
@@ -1307,7 +1332,7 @@ fn bindgen_test_layout__GtkBin() {
 impl Clone for _GtkBin {
     fn clone(&self) -> Self { *self }
 }
-pub use self::_GtkBin as GtkBin;
+pub type GtkBin = _GtkBin;
 #[repr(C)]
 #[derive(Debug, Copy)]
 pub struct _GtkWindowGeometryInfo {
@@ -1316,7 +1341,7 @@ pub struct _GtkWindowGeometryInfo {
 impl Clone for _GtkWindowGeometryInfo {
     fn clone(&self) -> Self { *self }
 }
-pub use self::_GtkWindowGeometryInfo as GtkWindowGeometryInfo;
+pub type GtkWindowGeometryInfo = _GtkWindowGeometryInfo;
 #[repr(C)]
 #[derive(Debug, Copy)]
 pub struct _GtkWindowGroup {
@@ -1331,7 +1356,7 @@ fn bindgen_test_layout__GtkWindowGroup() {
 impl Clone for _GtkWindowGroup {
     fn clone(&self) -> Self { *self }
 }
-pub use self::_GtkWindowGroup as GtkWindowGroup;
+pub type GtkWindowGroup = _GtkWindowGroup;
 extern "C" {
     pub fn gtk_window_new(type_: GtkWindowType) -> *mut GtkWidget;
 }

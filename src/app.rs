@@ -9,25 +9,16 @@ use gtk2;
 use std;
 use std::ffi;
 
-static mut CTX: Option<cef::_cef_browser_process_handler_t> = Option::None;
+//static mut CTX: Option<cef::_cef_browser_process_handler_t> = Option::None;
 
 pub fn new() -> cef::cef_app_t {
-    let bph: cef::_cef_browser_process_handler_t = cef::_cef_browser_process_handler_t {
-        base: base::CefBase::new(std::mem::size_of::<cef::_cef_browser_process_handler_t>()),
-        on_context_initialized: Option::Some(on_context_initialized),
-        on_before_child_process_launch: Option::Some(on_before_child_process_launch),
-        on_render_process_thread_created: Option::Some(on_render_process_thread_created),
-        get_print_handler: Option::Some(get_print_handler),
-        on_schedule_message_pump_work: Option::Some(on_schedule_message_pump_work)
-    };
-
-    unsafe { CTX = Option::Some(bph) };
+//    unsafe { CTX = Option::Some(bph) };
 
     let app = cef::cef_app_t {
         base: base::CefBase::new(std::mem::size_of::<cef::cef_app_t>()),
         on_before_command_line_processing: Option::Some(on_before_command_line_processing),
-        //on_register_custom_schemes: Option::Some(on_register_custom_schemes),
-        on_register_custom_schemes: Option::None,
+        on_register_custom_schemes: Option::Some(on_register_custom_schemes),
+        //on_register_custom_schemes: Option::None,
         get_resource_bundle_handler: Option::Some(get_resource_bundle_handler),
         get_browser_process_handler: Option::Some(get_browser_process_handler),
         get_render_process_handler: Option::Some(get_render_process_handler)
@@ -38,15 +29,16 @@ pub fn new() -> cef::cef_app_t {
 pub fn create_browser() {
         // Create GTK window. You can pass a NULL handle 
     // to CEF and then it will create a window of its own.
-    initialize_gtk();
-    let hwnd = create_gtk_window(String::from("cefcapi example"), 1024, 768);
+    //initialize_gtk();
+    //let hwnd = create_gtk_window(String::from("cefcapi example"), 1024, 768);
     //let window_info = std::ptr::null();
     let window_info = cef::_cef_window_info_t {
         x: 0,
         y: 0,
         width: 1024,
         height: 768,
-        parent_window: unsafe {gtk2::gdk_x11_drawable_get_xid(gtk2::gtk_widget_get_window(hwnd)) },
+        //parent_window: unsafe {gtk2::gdk_x11_drawable_get_xid(gtk2::gtk_widget_get_window(hwnd)) },
+        parent_window: 0,
         windowless_rendering_enabled: 0,
         transparent_painting_enabled: 0,
         window: 0
@@ -58,17 +50,17 @@ pub fn create_browser() {
     let browser_settings = cef::_cef_browser_settings_t {
         size: std::mem::size_of::<cef::_cef_browser_settings_t>(),
         windowless_frame_rate: 0,
-        standard_font_family: empty_str(),
-        fixed_font_family: empty_str(),
-        serif_font_family: empty_str(),
-        sans_serif_font_family: empty_str(),
-        cursive_font_family: empty_str(),
-        fantasy_font_family: empty_str(),
+        standard_font_family: cefrust::cef_string_empty(),
+        fixed_font_family: cefrust::cef_string_empty(),
+        serif_font_family: cefrust::cef_string_empty(),
+        sans_serif_font_family: cefrust::cef_string_empty(),
+        cursive_font_family: cefrust::cef_string_empty(),
+        fantasy_font_family: cefrust::cef_string_empty(),
         default_font_size: 0,
         default_fixed_font_size: 0,
         minimum_font_size: 0,
         minimum_logical_font_size: 0,
-        default_encoding: empty_str(),
+        default_encoding: cefrust::cef_string_empty(),
         remote_fonts: cef::STATE_DEFAULT,
         javascript: cef::STATE_DEFAULT,
         javascript_open_windows: cef::STATE_DEFAULT,
@@ -89,7 +81,7 @@ pub fn create_browser() {
         application_cache: cef::STATE_DEFAULT,
         webgl: cef::STATE_DEFAULT,
         background_color: 0,
-        accept_language_list: empty_str()
+        accept_language_list: cefrust::cef_string_empty()
     };
 
     // Client handler and its callbacks.
@@ -99,16 +91,18 @@ pub fn create_browser() {
     let client = Box::new(client::new());
     let client = Box::into_raw(client);
 
-    let mut url_cef = cef::cef_string_t {str: std::ptr::null_mut(), length: 0, dtor: Option::None};
+    //let mut url_cef = cef::cef_string_t {str: std::ptr::null_mut(), length: 0, dtor: Option::None};
     let url = "http://www.google.com";
     //let url = "chrome://gpu";
-    unsafe {cef::cef_string_utf8_to_utf16(url.as_ptr() as *mut std::os::raw::c_char, url.len(), &mut url_cef) };
-    //unsafe { cef::cef_string_utf16_set("".as_ptr(), 0, &mut empty_str, 1) };
+    //unsafe {cef::cef_string_utf8_to_utf16(url.as_ptr() as *mut std::os::raw::c_char, url.len(), &mut url_cef) };
+    //unsafe { cef::cef_string_utf16_set("".as_ptr(), 0, &mut cefrust::cef_string_empty, 1) };
+
+    let url_cef = cefrust::cef_string(url);
 
     // Create browser.
     println!("Calling cef_browser_host_create_browser");
     if unsafe { cef::cef_browser_host_create_browser(&window_info, client, &url_cef, &browser_settings, std::ptr::null_mut()) } != 1 {
-        println!("Failed calling browserHostCreateBrowser");
+        println!("Failed calling  browserHostCreateBrowser");
     }
 }
 
@@ -175,7 +169,18 @@ unsafe extern "C" fn get_browser_process_handler(_: *mut cef::cef_app_t) -> *mut
     debug("In get_browser_process_handler");
 
     //&mut CTX.unwrap()
-    CTX.as_mut().expect("NULL CTX")
+    //CTX.as_mut().expect("NULL CTX")
+    let bph: cef::_cef_browser_process_handler_t = cef::_cef_browser_process_handler_t {
+        base: base::CefBase::new(std::mem::size_of::<cef::_cef_browser_process_handler_t>()),
+        on_context_initialized: Option::Some(on_context_initialized),
+        on_before_child_process_launch: Option::Some(on_before_child_process_launch),
+        on_render_process_thread_created: Option::Some(on_render_process_thread_created),
+        get_print_handler: Option::Some(get_print_handler),
+        on_schedule_message_pump_work: Option::Some(on_schedule_message_pump_work)
+    };
+    let bph = Box::new(bph);
+    let bph = Box::into_raw(bph);
+    bph
 }
 
 unsafe extern "C" fn get_render_process_handler(_:
@@ -211,7 +216,7 @@ fn create_gtk_window(title: std::string::String, width: i32, height: i32) -> *mu
     unsafe { gtk2::gtk_window_set_position(std::mem::transmute(window), gtk2::GTK_WIN_POS_CENTER) };
     
     // Title.
-    let c_title = ffi::CString::new(title).unwrap();
+    let c_title = ffi::CString::new(title).expect("empty title");
     unsafe { gtk2::gtk_window_set_title(std::mem::transmute(window), c_title.as_ptr()) };
     
     // TODO: focus
@@ -230,17 +235,4 @@ fn create_gtk_window(title: std::string::String, width: i32, height: i32) -> *mu
 
 fn debug(m: &str) {
     println!("{}", m);
-}
-
-fn empty_str() -> cef::cef_string_t {
-    let empty_str = cef::cef_string_t {
-        str: std::ptr::null_mut(), 
-        length: 0, 
-        dtor: Option::None
-    };
-    
-    //unsafe { cef::cef_string_utf16_set("".as_ptr(), 0, &mut empty_str, 1) };
-    //unsafe { cef::cef_string_utf8_to_utf16("".as_ptr() as *mut std::os::raw::c_char, 0, &mut empty_str);}
-
-    empty_str
 }
