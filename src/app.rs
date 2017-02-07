@@ -4,21 +4,23 @@ use cefrust::cef;
 
 use cefrust::base;
 use client;
-use gtk2;
+//use gtk2;
 
 use std;
 use std::ffi;
 
 //static mut CTX: Option<cef::_cef_browser_process_handler_t> = Option::None;
+static mut HWND: Option<std::os::raw::c_ulong> = Option::None;
 
-pub fn new() -> cef::cef_app_t {
+pub fn new(hwnd: std::os::raw::c_ulong) -> cef::cef_app_t {
 //    unsafe { CTX = Option::Some(bph) };
+    unsafe { HWND = Option::Some(hwnd) };
 
     let app = cef::cef_app_t {
         base: base::CefBase::new(std::mem::size_of::<cef::cef_app_t>()),
         on_before_command_line_processing: Option::Some(on_before_command_line_processing),
-        on_register_custom_schemes: Option::Some(on_register_custom_schemes),
-        //on_register_custom_schemes: Option::None,
+        //on_register_custom_schemes: Option::Some(on_register_custom_schemes),
+        on_register_custom_schemes: Option::None,
         get_resource_bundle_handler: Option::Some(get_resource_bundle_handler),
         get_browser_process_handler: Option::Some(get_browser_process_handler),
         get_render_process_handler: Option::Some(get_render_process_handler)
@@ -26,24 +28,60 @@ pub fn new() -> cef::cef_app_t {
     app
 }
 
-pub fn create_browser() {
-        // Create GTK window. You can pass a NULL handle 
+#[cfg(unix)]
+fn cef_window_info(hwnd: std::os::raw::c_ulong) -> cef::_cef_window_info_t {
+    // Create GTK window. You can pass a NULL handle 
     // to CEF and then it will create a window of its own.
-    initialize_gtk();
-    let hwnd = create_gtk_window(String::from("cefcapi example"), 1024, 768);
-    //let window_info = std::ptr::null();
+    //initialize_gtk();
+    //let hwnd = create_gtk_window(String::from("cefcapi example"), 1024, 768);
     let window_info = cef::_cef_window_info_t {
         x: 0,
         y: 0,
         width: 1024,
         height: 768,
-        parent_window: unsafe {gtk2::gdk_x11_drawable_get_xid(gtk2::gtk_widget_get_window(hwnd)) },
+        //parent_window: unsafe {gtk2::gdk_x11_drawable_get_xid(gtk2::gtk_widget_get_window(hwnd)) },
+        parent_window: hwnd,
         //parent_window: 0,
         windowless_rendering_enabled: 0,
         transparent_painting_enabled: 0,
         window: 0
     };
     println!("parent {}", window_info.parent_window);
+    window_info
+}
+
+#[cfg(windows)]
+fn cef_window_info(hwnd: std::os::raw::c_ulong) -> cef::_cef_window_info_t {
+    extern crate winapi;
+
+    let window_info = cef::_cef_window_info_t {
+        x: 0,
+        y: 0,
+        width: 1024,
+        height: 768,
+        parent_window: hwnd as cef::win::HWND,
+        //parent_window: std::ptr::null_mut() as cef::win::HWND,
+        windowless_rendering_enabled: 0,
+        transparent_painting_enabled: 0,
+        window: 0 as cef::win::HWND,
+        ex_style: 0,
+        window_name: cef::cef_string_t { str: std::ptr::null_mut(),  length: 0,  dtor: Option::None },
+        style: winapi::winuser::WS_CHILDWINDOW | winapi::winuser::WS_CLIPCHILDREN
+            | winapi::winuser::WS_CLIPSIBLINGS | winapi::winuser::WS_VISIBLE | winapi::winuser::WS_TABSTOP,
+        //style: winapi::winuser::WS_POPUP | winapi::winuser::WS_OVERLAPPEDWINDOW | winapi::winuser::WS_CHILDWINDOW | winapi::winuser::WS_CLIPCHILDREN
+        //    | winapi::winuser::WS_CLIPSIBLINGS | winapi::winuser::WS_VISIBLE,
+        menu: 0 as cef::win::HMENU
+    };
+    println!("parent {:?}", window_info.parent_window);
+    window_info
+}
+
+pub fn create_browser() {
+    let hwnd = unsafe { HWND.unwrap() };
+    println!("hwnd {}", hwnd);
+    //let hwnd = hwnd as *mut gtk2::GdkDrawable;
+    //let window_info = std::ptr::null();
+    let window_info = cef_window_info(hwnd);
 
     // Browser settings.
     // It is mandatory to set the "size" member.
@@ -92,8 +130,8 @@ pub fn create_browser() {
     let client = Box::into_raw(client);
 
     //let mut url_cef = cef::cef_string_t {str: std::ptr::null_mut(), length: 0, dtor: Option::None};
-    //let url = "http://www.google.com";
-    let url = "chrome://gpu";
+    let url = "http://www.google.com";
+    //let url = "chrome://gpu";
     //unsafe {cef::cef_string_utf8_to_utf16(url.as_ptr() as *mut std::os::raw::c_char, url.len(), &mut url_cef) };
     //unsafe { cef::cef_string_utf16_set("".as_ptr(), 0, &mut cefrust::cef_string_empty, 1) };
 
@@ -191,7 +229,7 @@ unsafe extern "C" fn get_render_process_handler(_:
     std::ptr::null_mut()
 }
 
-
+/*
 fn initialize_gtk() {
     println!("initialize_gtk");
     unsafe { gtk2::gtk_init(&mut 0, std::ptr::null_mut()); }
@@ -232,7 +270,7 @@ fn create_gtk_window(title: std::string::String, width: i32, height: i32) -> *mu
 
     vbox
 }
-
+*/
 fn debug(m: &str) {
     println!("{}", m);
 }

@@ -5,7 +5,13 @@ authors = ["Guillermo Zunino <guillez@gmail.com>"]
 build = "build.rs"
 
 [build-dependencies]
-bindgen = "0.20.5"
+bindgen = "0.20"
 
 [dependencies]
+
+[target.'cfg(linux)'.dependencies]
 x11 = "2.12.0"
+
+[target.'cfg(windows)'.dependencies]
+winapi = "0.2.8"
+kernel32-sys = "0.2.1"

@@ -3,6 +3,8 @@ name = "cefrust"
 version = "0.1.0"
 dependencies = [
  "bindgen 0.20.5 (registry+https://github.com/rust-lang/crates.io-index)",
+ "kernel32-sys 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "winapi 0.2.8 (registry+https://github.com/rust-lang/crates.io-index)",
  "x11 2.12.1 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 

@@ -3,55 +3,13 @@
 #![allow(dead_code)]
 #![allow(non_snake_case)]
 #![allow(non_camel_case_types)]
+#[cfg(unix)] pub mod linux;
+#[cfg(unix)] pub use self::linux::_cef_window_info_t;
+#[cfg(unix)] pub use self::linux::_cef_main_args_t;
+#[cfg(windows)] pub mod win;
+#[cfg(windows)] pub use self::win::_cef_window_info_t;
+#[cfg(windows)] pub use self::win::_cef_main_args_t;
 
-#[repr(C)]
-pub struct __BindgenUnionField<T>(::std::marker::PhantomData<T>);
-impl <T> __BindgenUnionField<T> {
-    #[inline]
-    pub fn new() -> Self { __BindgenUnionField(::std::marker::PhantomData) }
-    #[inline]
-    pub unsafe fn as_ref(&self) -> &T { ::std::mem::transmute(self) }
-    #[inline]
-    pub unsafe fn as_mut(&mut self) -> &mut T { ::std::mem::transmute(self) }
-}
-impl <T> ::std::default::Default for __BindgenUnionField<T> {
-    #[inline]
-    fn default() -> Self { Self::new() }
-}
-impl <T> ::std::clone::Clone for __BindgenUnionField<T> {
-    #[inline]
-    fn clone(&self) -> Self { Self::new() }
-}
-impl <T> ::std::marker::Copy for __BindgenUnionField<T> { }
-impl <T> ::std::fmt::Debug for __BindgenUnionField<T> {
-    fn fmt(&self, fmt: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
-        fmt.write_str("__BindgenUnionField")
-    }
-}
-#[repr(C)]
-#[derive(Debug, Copy)]
-pub struct _XEvent {
-    pub bindgen_union_field: [u8; 0usize],
-    pub _address: u8,
-}
-#[test]
-fn bindgen_test_layout__XEvent() {
-    assert_eq!(::std::mem::size_of::<_XEvent>() , 0usize);
-    assert_eq!(::std::mem::align_of::<_XEvent>() , 0usize);
-}
-impl Clone for _XEvent {
-    fn clone(&self) -> Self { *self }
-}
-pub type XEvent = _XEvent;
-#[repr(C)]
-#[derive(Debug, Copy)]
-pub struct _XDisplay {
-    pub _address: u8,
-}
-impl Clone for _XDisplay {
-    fn clone(&self) -> Self { *self }
-}
-pub type XDisplay = _XDisplay;
 pub type wchar_t = ::std::os::raw::c_int;
 pub type int64 = ::std::os::raw::c_long;
 pub type int32 = ::std::os::raw::c_int;
@@ -222,51 +180,6 @@ extern "C" {
     pub fn cef_string_userfree_utf16_free(str: cef_string_userfree_utf16_t);
 }
 pub type cef_string_t = cef_string_utf16_t;
-extern "C" {
-    ///
-    pub fn cef_get_xdisplay() -> *mut XDisplay;
-}
-///
-#[repr(C)]
-#[derive(Debug, Copy)]
-pub struct _cef_main_args_t {
-    pub argc: ::std::os::raw::c_int,
-    pub argv: *mut *mut ::std::os::raw::c_char,
-}
-#[test]
-fn bindgen_test_layout__cef_main_args_t() {
-    assert_eq!(::std::mem::size_of::<_cef_main_args_t>() , 16usize);
-    assert_eq!(::std::mem::align_of::<_cef_main_args_t>() , 8usize);
-}
-impl Clone for _cef_main_args_t {
-    fn clone(&self) -> Self { *self }
-}
-///
-#[repr(C)]
-#[derive(Debug, Copy)]
-pub struct _cef_window_info_t {
-    pub x: ::std::os::raw::c_uint,
-    pub y: ::std::os::raw::c_uint,
-    pub width: ::std::os::raw::c_uint,
-    pub height: ::std::os::raw::c_uint,
-    ///
-    pub parent_window: ::std::os::raw::c_ulong,
-    ///
-    pub windowless_rendering_enabled: ::std::os::raw::c_int,
-    ///
-    pub transparent_painting_enabled: ::std::os::raw::c_int,
-    ///
-    pub window: ::std::os::raw::c_ulong,
-}
-#[test]
-fn bindgen_test_layout__cef_window_info_t() {
-    assert_eq!(::std::mem::size_of::<_cef_window_info_t>() , 40usize);
-    assert_eq!(::std::mem::align_of::<_cef_window_info_t>() , 8usize);
-}
-impl Clone for _cef_window_info_t {
-    fn clone(&self) -> Self { *self }
-}
-pub type cef_window_info_t = _cef_window_info_t;
 ///
 pub type cef_string_list_t = *mut ::std::os::raw::c_void;
 extern "C" {
@@ -299,100 +212,6 @@ extern "C" {
 extern "C" {
     ///
     pub fn cef_string_list_copy(list: cef_string_list_t) -> cef_string_list_t;
-}
-///
-pub type cef_string_map_t = *mut ::std::os::raw::c_void;
-extern "C" {
-    ///
-    pub fn cef_string_map_alloc() -> cef_string_map_t;
-}
-extern "C" {
-    ///
-    pub fn cef_string_map_size(map: cef_string_map_t) -> usize;
-}
-extern "C" {
-    ///
-    pub fn cef_string_map_find(map: cef_string_map_t,
-                               key: *const cef_string_t,
-                               value: *mut cef_string_t)
-     -> ::std::os::raw::c_int;
-}
-extern "C" {
-    ///
-    pub fn cef_string_map_key(map: cef_string_map_t, index: usize,
-                              key: *mut cef_string_t)
-     -> ::std::os::raw::c_int;
-}
-extern "C" {
-    ///
-    pub fn cef_string_map_value(map: cef_string_map_t, index: usize,
-                                value: *mut cef_string_t)
-     -> ::std::os::raw::c_int;
-}
-extern "C" {
-    ///
-    pub fn cef_string_map_append(map: cef_string_map_t,
-                                 key: *const cef_string_t,
-                                 value: *const cef_string_t)
-     -> ::std::os::raw::c_int;
-}
-extern "C" {
-    ///
-    pub fn cef_string_map_clear(map: cef_string_map_t);
-}
-extern "C" {
-    ///
-    pub fn cef_string_map_free(map: cef_string_map_t);
-}
-///
-pub type cef_string_multimap_t = *mut ::std::os::raw::c_void;
-extern "C" {
-    ///
-    pub fn cef_string_multimap_alloc() -> cef_string_multimap_t;
-}
-extern "C" {
-    ///
-    pub fn cef_string_multimap_size(map: cef_string_multimap_t) -> usize;
-}
-extern "C" {
-    ///
-    pub fn cef_string_multimap_find_count(map: cef_string_multimap_t,
-                                          key: *const cef_string_t) -> usize;
-}
-extern "C" {
-    ///
-    pub fn cef_string_multimap_enumerate(map: cef_string_multimap_t,
-                                         key: *const cef_string_t,
-                                         value_index: usize,
-                                         value: *mut cef_string_t)
-     -> ::std::os::raw::c_int;
-}
-extern "C" {
-    ///
-    pub fn cef_string_multimap_key(map: cef_string_multimap_t, index: usize,
-                                   key: *mut cef_string_t)
-     -> ::std::os::raw::c_int;
-}
-extern "C" {
-    ///
-    pub fn cef_string_multimap_value(map: cef_string_multimap_t, index: usize,
-                                     value: *mut cef_string_t)
-     -> ::std::os::raw::c_int;
-}
-extern "C" {
-    ///
-    pub fn cef_string_multimap_append(map: cef_string_multimap_t,
-                                      key: *const cef_string_t,
-                                      value: *const cef_string_t)
-     -> ::std::os::raw::c_int;
-}
-extern "C" {
-    ///
-    pub fn cef_string_multimap_clear(map: cef_string_multimap_t);
-}
-extern "C" {
-    ///
-    pub fn cef_string_multimap_free(map: cef_string_multimap_t);
 }
 pub type __time_t = ::std::os::raw::c_long;
 pub type time_t = __time_t;
@@ -447,6 +266,19 @@ extern "C" {
                           delta: *mut ::std::os::raw::c_longlong)
      -> ::std::os::raw::c_int;
 }
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _XEvent([u8; 0]);
+pub type XEvent = _XEvent;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _XDisplay([u8; 0]);
+pub type XDisplay = _XDisplay;
+extern "C" {
+    ///
+    pub fn cef_get_xdisplay() -> *mut XDisplay;
+}
+pub type cef_window_info_t = _cef_window_info_t;
 pub type cef_color_t = uint32;
 pub const LOGSEVERITY_DEFAULT: _bindgen_ty_3 =
     _bindgen_ty_3::LOGSEVERITY_DEFAULT;
@@ -469,7 +301,7 @@ pub enum _bindgen_ty_3 {
     LOGSEVERITY_ERROR = 4,
     LOGSEVERITY_DISABLE = 99,
 }
-pub type cef_log_severity_t = _bindgen_ty_3;
+pub use self::_bindgen_ty_3 as cef_log_severity_t;
 pub const STATE_DEFAULT: _bindgen_ty_4 = _bindgen_ty_4::STATE_DEFAULT;
 pub const STATE_ENABLED: _bindgen_ty_4 = _bindgen_ty_4::STATE_ENABLED;
 pub const STATE_DISABLED: _bindgen_ty_4 = _bindgen_ty_4::STATE_DISABLED;
@@ -481,7 +313,7 @@ pub enum _bindgen_ty_4 {
     STATE_ENABLED = 1,
     STATE_DISABLED = 2,
 }
-pub type cef_state_t = _bindgen_ty_4;
+pub use self::_bindgen_ty_4 as cef_state_t;
 ///
 #[repr(C)]
 #[derive(Debug, Copy)]
@@ -709,7 +541,7 @@ pub enum _bindgen_ty_6 {
     TS_PROCESS_WAS_KILLED = 1,
     TS_PROCESS_CRASHED = 2,
 }
-pub type cef_termination_status_t = _bindgen_ty_6;
+pub use self::_bindgen_ty_6 as cef_termination_status_t;
 pub const ERR_NONE: _bindgen_ty_9 = _bindgen_ty_9::ERR_NONE;
 pub const ERR_FAILED: _bindgen_ty_9 = _bindgen_ty_9::ERR_FAILED;
 pub const ERR_ABORTED: _bindgen_ty_9 = _bindgen_ty_9::ERR_ABORTED;
@@ -865,7 +697,7 @@ pub enum _bindgen_ty_9 {
     ERR_CACHE_MISS = -400,
     ERR_INSECURE_RESPONSE = -501,
 }
-pub type cef_errorcode_t = _bindgen_ty_9;
+pub use self::_bindgen_ty_9 as cef_errorcode_t;
 pub const CERT_STATUS_NONE: _bindgen_ty_10 = _bindgen_ty_10::CERT_STATUS_NONE;
 pub const CERT_STATUS_COMMON_NAME_INVALID: _bindgen_ty_10 =
     _bindgen_ty_10::CERT_STATUS_COMMON_NAME_INVALID;
@@ -924,7 +756,7 @@ pub enum _bindgen_ty_10 {
     CERT_STATUS_SHA1_SIGNATURE_PRESENT = 524288,
     CERT_STATUS_CT_COMPLIANCE_FAILED = 1048576,
 }
-pub type cef_cert_status_t = _bindgen_ty_10;
+pub use self::_bindgen_ty_10 as cef_cert_status_t;
 pub const WOD_UNKNOWN: _bindgen_ty_11 = _bindgen_ty_11::WOD_UNKNOWN;
 pub const WOD_CURRENT_TAB: _bindgen_ty_11 = _bindgen_ty_11::WOD_CURRENT_TAB;
 pub const WOD_SINGLETON_TAB: _bindgen_ty_11 =
@@ -955,7 +787,7 @@ pub enum _bindgen_ty_11 {
     WOD_OFF_THE_RECORD = 8,
     WOD_IGNORE_ACTION = 9,
 }
-pub type cef_window_open_disposition_t = _bindgen_ty_11;
+pub use self::_bindgen_ty_11 as cef_window_open_disposition_t;
 pub const DRAG_OPERATION_NONE: _bindgen_ty_12 =
     _bindgen_ty_12::DRAG_OPERATION_NONE;
 pub const DRAG_OPERATION_COPY: _bindgen_ty_12 =
@@ -985,7 +817,7 @@ pub enum _bindgen_ty_12 {
     DRAG_OPERATION_DELETE = 32,
     DRAG_OPERATION_EVERY = 4294967295,
 }
-pub type cef_drag_operations_mask_t = _bindgen_ty_12;
+pub use self::_bindgen_ty_12 as cef_drag_operations_mask_t;
 pub const V8_ACCESS_CONTROL_DEFAULT: _bindgen_ty_13 =
     _bindgen_ty_13::V8_ACCESS_CONTROL_DEFAULT;
 pub const V8_ACCESS_CONTROL_ALL_CAN_READ: _bindgen_ty_13 =
@@ -1003,7 +835,7 @@ pub enum _bindgen_ty_13 {
     V8_ACCESS_CONTROL_ALL_CAN_WRITE = 2,
     V8_ACCESS_CONTROL_PROHIBITS_OVERWRITING = 4,
 }
-pub type cef_v8_accesscontrol_t = _bindgen_ty_13;
+pub use self::_bindgen_ty_13 as cef_v8_accesscontrol_t;
 pub const V8_PROPERTY_ATTRIBUTE_NONE: _bindgen_ty_14 =
     _bindgen_ty_14::V8_PROPERTY_ATTRIBUTE_NONE;
 pub const V8_PROPERTY_ATTRIBUTE_READONLY: _bindgen_ty_14 =
@@ -1021,7 +853,7 @@ pub enum _bindgen_ty_14 {
     V8_PROPERTY_ATTRIBUTE_DONTENUM = 2,
     V8_PROPERTY_ATTRIBUTE_DONTDELETE = 4,
 }
-pub type cef_v8_propertyattribute_t = _bindgen_ty_14;
+pub use self::_bindgen_ty_14 as cef_v8_propertyattribute_t;
 pub const PDE_TYPE_EMPTY: _bindgen_ty_15 = _bindgen_ty_15::PDE_TYPE_EMPTY;
 pub const PDE_TYPE_BYTES: _bindgen_ty_15 = _bindgen_ty_15::PDE_TYPE_BYTES;
 pub const PDE_TYPE_FILE: _bindgen_ty_15 = _bindgen_ty_15::PDE_TYPE_FILE;
@@ -1119,7 +951,7 @@ pub enum _bindgen_ty_17 {
     TT_IS_REDIRECT_MASK = 3221225472,
     TT_QUALIFIER_MASK = 4294967040,
 }
-pub type cef_transition_type_t = _bindgen_ty_17;
+pub use self::_bindgen_ty_17 as cef_transition_type_t;
 pub const UR_UNKNOWN: _bindgen_ty_19 = _bindgen_ty_19::UR_UNKNOWN;
 pub const UR_SUCCESS: _bindgen_ty_19 = _bindgen_ty_19::UR_SUCCESS;
 pub const UR_IO_PENDING: _bindgen_ty_19 = _bindgen_ty_19::UR_IO_PENDING;
@@ -1135,7 +967,7 @@ pub enum _bindgen_ty_19 {
     UR_CANCELED = 3,
     UR_FAILED = 4,
 }
-pub type cef_urlrequest_status_t = _bindgen_ty_19;
+pub use self::_bindgen_ty_19 as cef_urlrequest_status_t;
 ///
 #[repr(C)]
 #[derive(Debug, Copy)]
@@ -1226,7 +1058,7 @@ pub const PID_RENDERER: _bindgen_ty_20 = _bindgen_ty_20::PID_RENDERER;
 ///
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub enum _bindgen_ty_20 { PID_BROWSER = 0, PID_RENDERER = 1, }
-pub type cef_process_id_t = _bindgen_ty_20;
+pub use self::_bindgen_ty_20 as cef_process_id_t;
 pub const TID_UI: _bindgen_ty_21 = _bindgen_ty_21::TID_UI;
 pub const TID_DB: _bindgen_ty_21 = _bindgen_ty_21::TID_DB;
 pub const TID_FILE: _bindgen_ty_21 = _bindgen_ty_21::TID_FILE;
@@ -1250,7 +1082,7 @@ pub enum _bindgen_ty_21 {
     TID_IO = 6,
     TID_RENDERER = 7,
 }
-pub type cef_thread_id_t = _bindgen_ty_21;
+pub use self::_bindgen_ty_21 as cef_thread_id_t;
 pub const VTYPE_INVALID: _bindgen_ty_25 = _bindgen_ty_25::VTYPE_INVALID;
 pub const VTYPE_NULL: _bindgen_ty_25 = _bindgen_ty_25::VTYPE_NULL;
 pub const VTYPE_BOOL: _bindgen_ty_25 = _bindgen_ty_25::VTYPE_BOOL;
@@ -1288,7 +1120,7 @@ pub enum _bindgen_ty_26 {
     JSDIALOGTYPE_CONFIRM = 1,
     JSDIALOGTYPE_PROMPT = 2,
 }
-pub type cef_jsdialog_type_t = _bindgen_ty_26;
+pub use self::_bindgen_ty_26 as cef_jsdialog_type_t;
 ///
 #[repr(C)]
 #[derive(Debug, Copy)]
@@ -1321,7 +1153,7 @@ pub const MBT_RIGHT: _bindgen_ty_28 = _bindgen_ty_28::MBT_RIGHT;
 ///
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub enum _bindgen_ty_28 { MBT_LEFT = 0, MBT_MIDDLE = 1, MBT_RIGHT = 2, }
-pub type cef_mouse_button_type_t = _bindgen_ty_28;
+pub use self::_bindgen_ty_28 as cef_mouse_button_type_t;
 ///
 #[repr(C)]
 #[derive(Debug, Copy)]
@@ -1347,7 +1179,7 @@ pub const PET_POPUP: _bindgen_ty_29 = _bindgen_ty_29::PET_POPUP;
 ///
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub enum _bindgen_ty_29 { PET_VIEW = 0, PET_POPUP = 1, }
-pub type cef_paint_element_type_t = _bindgen_ty_29;
+pub use self::_bindgen_ty_29 as cef_paint_element_type_t;
 pub const EVENTFLAG_NONE: _bindgen_ty_30 = _bindgen_ty_30::EVENTFLAG_NONE;
 pub const EVENTFLAG_CAPS_LOCK_ON: _bindgen_ty_30 =
     _bindgen_ty_30::EVENTFLAG_CAPS_LOCK_ON;
@@ -1391,7 +1223,7 @@ pub enum _bindgen_ty_30 {
     EVENTFLAG_IS_LEFT = 1024,
     EVENTFLAG_IS_RIGHT = 2048,
 }
-pub type cef_event_flags_t = _bindgen_ty_30;
+pub use self::_bindgen_ty_30 as cef_event_flags_t;
 pub const MENUITEMTYPE_NONE: _bindgen_ty_31 =
     _bindgen_ty_31::MENUITEMTYPE_NONE;
 pub const MENUITEMTYPE_COMMAND: _bindgen_ty_31 =
@@ -1544,7 +1376,7 @@ pub enum _bindgen_ty_36 {
     KEYEVENT_KEYUP = 2,
     KEYEVENT_CHAR = 3,
 }
-pub type cef_key_event_type_t = _bindgen_ty_36;
+pub use self::_bindgen_ty_36 as cef_key_event_type_t;
 ///
 #[repr(C)]
 #[derive(Debug, Copy)]
@@ -1585,7 +1417,7 @@ pub enum _bindgen_ty_37 {
     FOCUS_SOURCE_NAVIGATION = 0,
     FOCUS_SOURCE_SYSTEM = 1,
 }
-pub type cef_focus_source_t = _bindgen_ty_37;
+pub use self::_bindgen_ty_37 as cef_focus_source_t;
 pub const NAVIGATION_LINK_CLICKED: _bindgen_ty_38 =
     _bindgen_ty_38::NAVIGATION_LINK_CLICKED;
 pub const NAVIGATION_FORM_SUBMITTED: _bindgen_ty_38 =
@@ -1608,7 +1440,7 @@ pub enum _bindgen_ty_38 {
     NAVIGATION_FORM_RESUBMITTED = 4,
     NAVIGATION_OTHER = 5,
 }
-pub type cef_navigation_type_t = _bindgen_ty_38;
+pub use self::_bindgen_ty_38 as cef_navigation_type_t;
 ///
 #[repr(C)]
 #[derive(Debug, Copy)]
@@ -1715,7 +1547,7 @@ pub enum _bindgen_ty_45 {
     FILE_DIALOG_OVERWRITEPROMPT_FLAG = 16777216,
     FILE_DIALOG_HIDEREADONLY_FLAG = 33554432,
 }
-pub type cef_file_dialog_mode_t = _bindgen_ty_45;
+pub use self::_bindgen_ty_45 as cef_file_dialog_mode_t;
 pub const COLOR_MODEL_UNKNOWN: _bindgen_ty_47 =
     _bindgen_ty_47::COLOR_MODEL_UNKNOWN;
 pub const COLOR_MODEL_GRAY: _bindgen_ty_47 = _bindgen_ty_47::COLOR_MODEL_GRAY;
@@ -1778,7 +1610,7 @@ pub enum _bindgen_ty_47 {
     COLOR_MODEL_PROCESSCOLORMODEL_GREYSCALE = 19,
     COLOR_MODEL_PROCESSCOLORMODEL_RGB = 20,
 }
-pub type cef_color_model_t = _bindgen_ty_47;
+pub use self::_bindgen_ty_47 as cef_color_model_t;
 pub const DUPLEX_MODE_UNKNOWN: _bindgen_ty_48 =
     _bindgen_ty_48::DUPLEX_MODE_UNKNOWN;
 pub const DUPLEX_MODE_SIMPLEX: _bindgen_ty_48 =
@@ -1796,7 +1628,7 @@ pub enum _bindgen_ty_48 {
     DUPLEX_MODE_LONG_EDGE = 1,
     DUPLEX_MODE_SHORT_EDGE = 2,
 }
-pub type cef_duplex_mode_t = _bindgen_ty_48;
+pub use self::_bindgen_ty_48 as cef_duplex_mode_t;
 pub const CT_POINTER: _bindgen_ty_49 = _bindgen_ty_49::CT_POINTER;
 pub const CT_CROSS: _bindgen_ty_49 = _bindgen_ty_49::CT_CROSS;
 pub const CT_HAND: _bindgen_ty_49 = _bindgen_ty_49::CT_HAND;
@@ -1902,7 +1734,7 @@ pub enum _bindgen_ty_49 {
     CT_GRABBING = 42,
     CT_CUSTOM = 43,
 }
-pub type cef_cursor_type_t = _bindgen_ty_49;
+pub use self::_bindgen_ty_49 as cef_cursor_type_t;
 ///
 #[repr(C)]
 #[derive(Debug, Copy)]
@@ -1937,7 +1769,7 @@ pub enum _bindgen_ty_54 {
     PDF_PRINT_MARGIN_MINIMUM = 2,
     PDF_PRINT_MARGIN_CUSTOM = 3,
 }
-pub type cef_pdf_print_margin_type_t = _bindgen_ty_54;
+pub use self::_bindgen_ty_54 as cef_pdf_print_margin_type_t;
 ///
 #[repr(C)]
 #[derive(Debug, Copy)]
@@ -2008,7 +1840,7 @@ pub enum _bindgen_ty_55 {
     SCALE_FACTOR_250P = 8,
     SCALE_FACTOR_300P = 9,
 }
-pub type cef_scale_factor_t = _bindgen_ty_55;
+pub use self::_bindgen_ty_55 as cef_scale_factor_t;
 pub const PLUGIN_POLICY_ALLOW: _bindgen_ty_56 =
     _bindgen_ty_56::PLUGIN_POLICY_ALLOW;
 pub const PLUGIN_POLICY_DETECT_IMPORTANT: _bindgen_ty_56 =
@@ -2026,7 +1858,7 @@ pub enum _bindgen_ty_56 {
     PLUGIN_POLICY_BLOCK = 2,
     PLUGIN_POLICY_DISABLE = 3,
 }
-pub type cef_plugin_policy_t = _bindgen_ty_56;
+pub use self::_bindgen_ty_56 as cef_plugin_policy_t;
 pub const REFERRER_POLICY_ALWAYS: _bindgen_ty_57 =
     _bindgen_ty_57::REFERRER_POLICY_ALWAYS;
 pub const REFERRER_POLICY_DEFAULT: _bindgen_ty_57 =
@@ -2050,7 +1882,7 @@ pub enum _bindgen_ty_57 {
     REFERRER_POLICY_ORIGIN = 4,
     REFERRER_POLICY_ORIGIN_WHEN_CROSS_ORIGIN = 5,
 }
-pub type cef_referrer_policy_t = _bindgen_ty_57;
+pub use self::_bindgen_ty_57 as cef_referrer_policy_t;
 pub const RESPONSE_FILTER_NEED_MORE_DATA: _bindgen_ty_58 =
     _bindgen_ty_58::RESPONSE_FILTER_NEED_MORE_DATA;
 pub const RESPONSE_FILTER_DONE: _bindgen_ty_58 =
@@ -2076,7 +1908,7 @@ pub enum _bindgen_ty_59 {
     CEF_COLOR_TYPE_RGBA_8888 = 0,
     CEF_COLOR_TYPE_BGRA_8888 = 1,
 }
-pub type cef_color_type_t = _bindgen_ty_59;
+pub use self::_bindgen_ty_59 as cef_color_type_t;
 pub const CEF_ALPHA_TYPE_OPAQUE: _bindgen_ty_60 =
     _bindgen_ty_60::CEF_ALPHA_TYPE_OPAQUE;
 pub const CEF_ALPHA_TYPE_PREMULTIPLIED: _bindgen_ty_60 =
@@ -2091,7 +1923,7 @@ pub enum _bindgen_ty_60 {
     CEF_ALPHA_TYPE_PREMULTIPLIED = 1,
     CEF_ALPHA_TYPE_POSTMULTIPLIED = 2,
 }
-pub type cef_alpha_type_t = _bindgen_ty_60;
+pub use self::_bindgen_ty_60 as cef_alpha_type_t;
 pub const SSL_CONNECTION_VERSION_UNKNOWN: _bindgen_ty_67 =
     _bindgen_ty_67::SSL_CONNECTION_VERSION_UNKNOWN;
 pub const SSL_CONNECTION_VERSION_SSL2: _bindgen_ty_67 =
@@ -2147,7 +1979,7 @@ pub enum _bindgen_ty_69 {
     CEF_CDM_REGISTRATION_ERROR_INCOMPATIBLE = 2,
     CEF_CDM_REGISTRATION_ERROR_NOT_SUPPORTED = 3,
 }
-pub type cef_cdm_registration_error_t = _bindgen_ty_69;
+pub use self::_bindgen_ty_69 as cef_cdm_registration_error_t;
 ///
 #[repr(C)]
 #[derive(Debug, Copy)]
@@ -2172,6 +2004,100 @@ impl Clone for _cef_composition_underline_t {
     fn clone(&self) -> Self { *self }
 }
 pub type cef_composition_underline_t = _cef_composition_underline_t;
+///
+pub type cef_string_map_t = *mut ::std::os::raw::c_void;
+extern "C" {
+    ///
+    pub fn cef_string_map_alloc() -> cef_string_map_t;
+}
+extern "C" {
+    ///
+    pub fn cef_string_map_size(map: cef_string_map_t) -> usize;
+}
+extern "C" {
+    ///
+    pub fn cef_string_map_find(map: cef_string_map_t,
+                               key: *const cef_string_t,
+                               value: *mut cef_string_t)
+     -> ::std::os::raw::c_int;
+}
+extern "C" {
+    ///
+    pub fn cef_string_map_key(map: cef_string_map_t, index: usize,
+                              key: *mut cef_string_t)
+     -> ::std::os::raw::c_int;
+}
+extern "C" {
+    ///
+    pub fn cef_string_map_value(map: cef_string_map_t, index: usize,
+                                value: *mut cef_string_t)
+     -> ::std::os::raw::c_int;
+}
+extern "C" {
+    ///
+    pub fn cef_string_map_append(map: cef_string_map_t,
+                                 key: *const cef_string_t,
+                                 value: *const cef_string_t)
+     -> ::std::os::raw::c_int;
+}
+extern "C" {
+    ///
+    pub fn cef_string_map_clear(map: cef_string_map_t);
+}
+extern "C" {
+    ///
+    pub fn cef_string_map_free(map: cef_string_map_t);
+}
+///
+pub type cef_string_multimap_t = *mut ::std::os::raw::c_void;
+extern "C" {
+    ///
+    pub fn cef_string_multimap_alloc() -> cef_string_multimap_t;
+}
+extern "C" {
+    ///
+    pub fn cef_string_multimap_size(map: cef_string_multimap_t) -> usize;
+}
+extern "C" {
+    ///
+    pub fn cef_string_multimap_find_count(map: cef_string_multimap_t,
+                                          key: *const cef_string_t) -> usize;
+}
+extern "C" {
+    ///
+    pub fn cef_string_multimap_enumerate(map: cef_string_multimap_t,
+                                         key: *const cef_string_t,
+                                         value_index: usize,
+                                         value: *mut cef_string_t)
+     -> ::std::os::raw::c_int;
+}
+extern "C" {
+    ///
+    pub fn cef_string_multimap_key(map: cef_string_multimap_t, index: usize,
+                                   key: *mut cef_string_t)
+     -> ::std::os::raw::c_int;
+}
+extern "C" {
+    ///
+    pub fn cef_string_multimap_value(map: cef_string_multimap_t, index: usize,
+                                     value: *mut cef_string_t)
+     -> ::std::os::raw::c_int;
+}
+extern "C" {
+    ///
+    pub fn cef_string_multimap_append(map: cef_string_multimap_t,
+                                      key: *const cef_string_t,
+                                      value: *const cef_string_t)
+     -> ::std::os::raw::c_int;
+}
+extern "C" {
+    ///
+    pub fn cef_string_multimap_clear(map: cef_string_multimap_t);
+}
+extern "C" {
+    ///
+    pub fn cef_string_multimap_free(map: cef_string_multimap_t);
+}
 ///
 #[repr(C)]
 #[derive(Debug, Copy)]
@@ -2202,125 +2128,562 @@ pub type cef_base_t = _cef_base_t;
 ///
 #[repr(C)]
 #[derive(Debug, Copy)]
-pub struct _cef_command_line_t {
+pub struct _cef_binary_value_t {
     ///
     pub base: cef_base_t,
     ///
     pub is_valid: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                 *mut _cef_command_line_t)
+                                                                 *mut _cef_binary_value_t)
+                                            -> ::std::os::raw::c_int>,
+    ///
+    pub is_owned: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                 *mut _cef_binary_value_t)
+                                            -> ::std::os::raw::c_int>,
+    ///
+    pub is_same: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                *mut _cef_binary_value_t,
+                                                            that:
+                                                                *mut _cef_binary_value_t)
+                                           -> ::std::os::raw::c_int>,
+    ///
+    pub is_equal: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                 *mut _cef_binary_value_t,
+                                                             that:
+                                                                 *mut _cef_binary_value_t)
+                                            -> ::std::os::raw::c_int>,
+    ///
+    pub copy: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                             *mut _cef_binary_value_t)
+                                        -> *mut _cef_binary_value_t>,
+    ///
+    pub get_size: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                 *mut _cef_binary_value_t)
+                                            -> ::std::os::raw::c_ulong>,
+    ///
+    pub get_data: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                 *mut _cef_binary_value_t,
+                                                             buffer:
+                                                                 *mut ::std::os::raw::c_void,
+                                                             buffer_size:
+                                                                 usize,
+                                                             data_offset:
+                                                                 usize)
+                                            -> ::std::os::raw::c_ulong>,
+}
+#[test]
+fn bindgen_test_layout__cef_binary_value_t() {
+    assert_eq!(::std::mem::size_of::<_cef_binary_value_t>() , 88usize);
+    assert_eq!(::std::mem::align_of::<_cef_binary_value_t>() , 8usize);
+}
+impl Clone for _cef_binary_value_t {
+    fn clone(&self) -> Self { *self }
+}
+///
+#[repr(C)]
+#[derive(Debug, Copy)]
+pub struct _cef_dictionary_value_t {
+    ///
+    pub base: cef_base_t,
+    ///
+    pub is_valid: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                 *mut _cef_dictionary_value_t)
+                                            -> ::std::os::raw::c_int>,
+    ///
+    pub is_owned: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                 *mut _cef_dictionary_value_t)
                                             -> ::std::os::raw::c_int>,
     ///
     pub is_read_only: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                     *mut _cef_command_line_t)
+                                                                     *mut _cef_dictionary_value_t)
                                                 -> ::std::os::raw::c_int>,
+    ///
+    pub is_same: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                *mut _cef_dictionary_value_t,
+                                                            that:
+                                                                *mut _cef_dictionary_value_t)
+                                           -> ::std::os::raw::c_int>,
+    ///
+    pub is_equal: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                 *mut _cef_dictionary_value_t,
+                                                             that:
+                                                                 *mut _cef_dictionary_value_t)
+                                            -> ::std::os::raw::c_int>,
     ///
     pub copy: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                             *mut _cef_command_line_t)
-                                        -> *mut _cef_command_line_t>,
+                                                             *mut _cef_dictionary_value_t,
+                                                         exclude_empty_children:
+                                                             ::std::os::raw::c_int)
+                                        -> *mut _cef_dictionary_value_t>,
     ///
-    pub init_from_argv: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                       *mut _cef_command_line_t,
-                                                                   argc:
-                                                                       ::std::os::raw::c_int,
-                                                                   argv:
-                                                                       *const *const ::std::os::raw::c_char)>,
+    pub get_size: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                 *mut _cef_dictionary_value_t)
+                                            -> ::std::os::raw::c_ulong>,
     ///
-    pub init_from_string: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                         *mut _cef_command_line_t,
-                                                                     command_line:
-                                                                         *const cef_string_t)>,
+    pub clear: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                              *mut _cef_dictionary_value_t)
+                                         -> ::std::os::raw::c_int>,
     ///
-    pub reset: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                              *mut _cef_command_line_t)>,
+    pub has_key: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                *mut _cef_dictionary_value_t,
+                                                            key:
+                                                                *const cef_string_t)
+                                           -> ::std::os::raw::c_int>,
     ///
-    pub get_argv: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                 *mut _cef_command_line_t,
-                                                             argv:
-                                                                 cef_string_list_t)>,
+    pub get_keys: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                 *mut _cef_dictionary_value_t,
+                                                             keys:
+                                                                 cef_string_list_t)
+                                            -> ::std::os::raw::c_int>,
     ///
-    pub get_command_line_string: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                                *mut _cef_command_line_t)
-                                                           ->
-                                                               *mut _cef_string_utf16_t>,
+    pub remove: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                               *mut _cef_dictionary_value_t,
+                                                           key:
+                                                               *const cef_string_t)
+                                          -> ::std::os::raw::c_int>,
     ///
-    pub get_program: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                    *mut _cef_command_line_t)
-                                               -> *mut _cef_string_utf16_t>,
+    pub get_type: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                 *mut _cef_dictionary_value_t,
+                                                             key:
+                                                                 *const cef_string_t)
+                                            -> _bindgen_ty_25>,
     ///
-    pub set_program: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                    *mut _cef_command_line_t,
-                                                                program:
-                                                                    *const cef_string_t)>,
+    pub get_value: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                  *mut _cef_dictionary_value_t,
+                                                              key:
+                                                                  *const cef_string_t)
+                                             -> *mut _cef_value_t>,
     ///
-    pub has_switches: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                     *mut _cef_command_line_t)
-                                                -> ::std::os::raw::c_int>,
+    pub get_bool: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                 *mut _cef_dictionary_value_t,
+                                                             key:
+                                                                 *const cef_string_t)
+                                            -> ::std::os::raw::c_int>,
     ///
-    pub has_switch: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                   *mut _cef_command_line_t,
-                                                               name:
+    pub get_int: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                *mut _cef_dictionary_value_t,
+                                                            key:
+                                                                *const cef_string_t)
+                                           -> ::std::os::raw::c_int>,
+    ///
+    pub get_double: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                   *mut _cef_dictionary_value_t,
+                                                               key:
+                                                                   *const cef_string_t)
+                                              -> f64>,
+    ///
+    pub get_string: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                   *mut _cef_dictionary_value_t,
+                                                               key:
+                                                                   *const cef_string_t)
+                                              -> *mut _cef_string_utf16_t>,
+    ///
+    pub get_binary: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                   *mut _cef_dictionary_value_t,
+                                                               key:
+                                                                   *const cef_string_t)
+                                              -> *mut _cef_binary_value_t>,
+    ///
+    pub get_dictionary: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                       *mut _cef_dictionary_value_t,
+                                                                   key:
+                                                                       *const cef_string_t)
+                                                  ->
+                                                      *mut _cef_dictionary_value_t>,
+    ///
+    pub get_list: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                 *mut _cef_dictionary_value_t,
+                                                             key:
+                                                                 *const cef_string_t)
+                                            -> *mut _cef_list_value_t>,
+    ///
+    pub set_value: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                  *mut _cef_dictionary_value_t,
+                                                              key:
+                                                                  *const cef_string_t,
+                                                              value:
+                                                                  *mut _cef_value_t)
+                                             -> ::std::os::raw::c_int>,
+    ///
+    pub set_null: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                 *mut _cef_dictionary_value_t,
+                                                             key:
+                                                                 *const cef_string_t)
+                                            -> ::std::os::raw::c_int>,
+    ///
+    pub set_bool: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                 *mut _cef_dictionary_value_t,
+                                                             key:
+                                                                 *const cef_string_t,
+                                                             value:
+                                                                 ::std::os::raw::c_int)
+                                            -> ::std::os::raw::c_int>,
+    ///
+    pub set_int: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                *mut _cef_dictionary_value_t,
+                                                            key:
+                                                                *const cef_string_t,
+                                                            value:
+                                                                ::std::os::raw::c_int)
+                                           -> ::std::os::raw::c_int>,
+    ///
+    pub set_double: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                   *mut _cef_dictionary_value_t,
+                                                               key:
+                                                                   *const cef_string_t,
+                                                               value: f64)
+                                              -> ::std::os::raw::c_int>,
+    ///
+    pub set_string: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                   *mut _cef_dictionary_value_t,
+                                                               key:
+                                                                   *const cef_string_t,
+                                                               value:
                                                                    *const cef_string_t)
                                               -> ::std::os::raw::c_int>,
     ///
-    pub get_switch_value: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                         *mut _cef_command_line_t,
-                                                                     name:
-                                                                         *const cef_string_t)
-                                                    ->
-                                                        *mut _cef_string_utf16_t>,
+    pub set_binary: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                   *mut _cef_dictionary_value_t,
+                                                               key:
+                                                                   *const cef_string_t,
+                                                               value:
+                                                                   *mut _cef_binary_value_t)
+                                              -> ::std::os::raw::c_int>,
     ///
-    pub get_switches: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                     *mut _cef_command_line_t,
-                                                                 switches:
-                                                                     cef_string_map_t)>,
+    pub set_dictionary: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                       *mut _cef_dictionary_value_t,
+                                                                   key:
+                                                                       *const cef_string_t,
+                                                                   value:
+                                                                       *mut _cef_dictionary_value_t)
+                                                  -> ::std::os::raw::c_int>,
     ///
-    pub append_switch: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                      *mut _cef_command_line_t,
-                                                                  name:
-                                                                      *const cef_string_t)>,
-    ///
-    pub append_switch_with_value: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                                 *mut _cef_command_line_t,
-                                                                             name:
-                                                                                 *const cef_string_t,
-                                                                             value:
-                                                                                 *const cef_string_t)>,
-    ///
-    pub has_arguments: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                      *mut _cef_command_line_t)
-                                                 -> ::std::os::raw::c_int>,
-    ///
-    pub get_arguments: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                      *mut _cef_command_line_t,
-                                                                  arguments:
-                                                                      cef_string_list_t)>,
-    ///
-    pub append_argument: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                        *mut _cef_command_line_t,
-                                                                    argument:
-                                                                        *const cef_string_t)>,
-    ///
-    pub prepend_wrapper: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                        *mut _cef_command_line_t,
-                                                                    wrapper:
-                                                                        *const cef_string_t)>,
+    pub set_list: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                 *mut _cef_dictionary_value_t,
+                                                             key:
+                                                                 *const cef_string_t,
+                                                             value:
+                                                                 *mut _cef_list_value_t)
+                                            -> ::std::os::raw::c_int>,
 }
 #[test]
-fn bindgen_test_layout__cef_command_line_t() {
-    assert_eq!(::std::mem::size_of::<_cef_command_line_t>() , 192usize);
-    assert_eq!(::std::mem::align_of::<_cef_command_line_t>() , 8usize);
+fn bindgen_test_layout__cef_dictionary_value_t() {
+    assert_eq!(::std::mem::size_of::<_cef_dictionary_value_t>() , 264usize);
+    assert_eq!(::std::mem::align_of::<_cef_dictionary_value_t>() , 8usize);
 }
-impl Clone for _cef_command_line_t {
+impl Clone for _cef_dictionary_value_t {
     fn clone(&self) -> Self { *self }
 }
-pub type cef_command_line_t = _cef_command_line_t;
-extern "C" {
+///
+#[repr(C)]
+#[derive(Debug, Copy)]
+pub struct _cef_list_value_t {
     ///
-    pub fn cef_command_line_create() -> *mut cef_command_line_t;
+    pub base: cef_base_t,
+    ///
+    pub is_valid: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                 *mut _cef_list_value_t)
+                                            -> ::std::os::raw::c_int>,
+    ///
+    pub is_owned: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                 *mut _cef_list_value_t)
+                                            -> ::std::os::raw::c_int>,
+    ///
+    pub is_read_only: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                     *mut _cef_list_value_t)
+                                                -> ::std::os::raw::c_int>,
+    ///
+    pub is_same: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                *mut _cef_list_value_t,
+                                                            that:
+                                                                *mut _cef_list_value_t)
+                                           -> ::std::os::raw::c_int>,
+    ///
+    pub is_equal: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                 *mut _cef_list_value_t,
+                                                             that:
+                                                                 *mut _cef_list_value_t)
+                                            -> ::std::os::raw::c_int>,
+    ///
+    pub copy: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                             *mut _cef_list_value_t)
+                                        -> *mut _cef_list_value_t>,
+    ///
+    pub set_size: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                 *mut _cef_list_value_t,
+                                                             size: usize)
+                                            -> ::std::os::raw::c_int>,
+    ///
+    pub get_size: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                 *mut _cef_list_value_t)
+                                            -> ::std::os::raw::c_ulong>,
+    ///
+    pub clear: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                              *mut _cef_list_value_t)
+                                         -> ::std::os::raw::c_int>,
+    ///
+    pub remove: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                               *mut _cef_list_value_t,
+                                                           index: usize)
+                                          -> ::std::os::raw::c_int>,
+    ///
+    pub get_type: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                 *mut _cef_list_value_t,
+                                                             index: usize)
+                                            -> _bindgen_ty_25>,
+    ///
+    pub get_value: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                  *mut _cef_list_value_t,
+                                                              index: usize)
+                                             -> *mut _cef_value_t>,
+    ///
+    pub get_bool: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                 *mut _cef_list_value_t,
+                                                             index: usize)
+                                            -> ::std::os::raw::c_int>,
+    ///
+    pub get_int: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                *mut _cef_list_value_t,
+                                                            index: usize)
+                                           -> ::std::os::raw::c_int>,
+    ///
+    pub get_double: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                   *mut _cef_list_value_t,
+                                                               index: usize)
+                                              -> f64>,
+    ///
+    pub get_string: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                   *mut _cef_list_value_t,
+                                                               index: usize)
+                                              -> *mut _cef_string_utf16_t>,
+    ///
+    pub get_binary: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                   *mut _cef_list_value_t,
+                                                               index: usize)
+                                              -> *mut _cef_binary_value_t>,
+    ///
+    pub get_dictionary: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                       *mut _cef_list_value_t,
+                                                                   index:
+                                                                       usize)
+                                                  ->
+                                                      *mut _cef_dictionary_value_t>,
+    ///
+    pub get_list: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                 *mut _cef_list_value_t,
+                                                             index: usize)
+                                            -> *mut _cef_list_value_t>,
+    ///
+    pub set_value: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                  *mut _cef_list_value_t,
+                                                              index: usize,
+                                                              value:
+                                                                  *mut _cef_value_t)
+                                             -> ::std::os::raw::c_int>,
+    ///
+    pub set_null: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                 *mut _cef_list_value_t,
+                                                             index: usize)
+                                            -> ::std::os::raw::c_int>,
+    ///
+    pub set_bool: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                 *mut _cef_list_value_t,
+                                                             index: usize,
+                                                             value:
+                                                                 ::std::os::raw::c_int)
+                                            -> ::std::os::raw::c_int>,
+    ///
+    pub set_int: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                *mut _cef_list_value_t,
+                                                            index: usize,
+                                                            value:
+                                                                ::std::os::raw::c_int)
+                                           -> ::std::os::raw::c_int>,
+    ///
+    pub set_double: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                   *mut _cef_list_value_t,
+                                                               index: usize,
+                                                               value: f64)
+                                              -> ::std::os::raw::c_int>,
+    ///
+    pub set_string: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                   *mut _cef_list_value_t,
+                                                               index: usize,
+                                                               value:
+                                                                   *const cef_string_t)
+                                              -> ::std::os::raw::c_int>,
+    ///
+    pub set_binary: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                   *mut _cef_list_value_t,
+                                                               index: usize,
+                                                               value:
+                                                                   *mut _cef_binary_value_t)
+                                              -> ::std::os::raw::c_int>,
+    ///
+    pub set_dictionary: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                       *mut _cef_list_value_t,
+                                                                   index:
+                                                                       usize,
+                                                                   value:
+                                                                       *mut _cef_dictionary_value_t)
+                                                  -> ::std::os::raw::c_int>,
+    ///
+    pub set_list: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                 *mut _cef_list_value_t,
+                                                             index: usize,
+                                                             value:
+                                                                 *mut _cef_list_value_t)
+                                            -> ::std::os::raw::c_int>,
 }
+#[test]
+fn bindgen_test_layout__cef_list_value_t() {
+    assert_eq!(::std::mem::size_of::<_cef_list_value_t>() , 256usize);
+    assert_eq!(::std::mem::align_of::<_cef_list_value_t>() , 8usize);
+}
+impl Clone for _cef_list_value_t {
+    fn clone(&self) -> Self { *self }
+}
+///
+#[repr(C)]
+#[derive(Debug, Copy)]
+pub struct _cef_value_t {
+    ///
+    pub base: cef_base_t,
+    ///
+    pub is_valid: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                 *mut _cef_value_t)
+                                            -> ::std::os::raw::c_int>,
+    ///
+    pub is_owned: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                 *mut _cef_value_t)
+                                            -> ::std::os::raw::c_int>,
+    ///
+    pub is_read_only: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                     *mut _cef_value_t)
+                                                -> ::std::os::raw::c_int>,
+    ///
+    pub is_same: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                *mut _cef_value_t,
+                                                            that:
+                                                                *mut _cef_value_t)
+                                           -> ::std::os::raw::c_int>,
+    ///
+    pub is_equal: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                 *mut _cef_value_t,
+                                                             that:
+                                                                 *mut _cef_value_t)
+                                            -> ::std::os::raw::c_int>,
+    ///
+    pub copy: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                             *mut _cef_value_t)
+                                        -> *mut _cef_value_t>,
+    ///
+    pub get_type: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                 *mut _cef_value_t)
+                                            -> _bindgen_ty_25>,
+    ///
+    pub get_bool: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                 *mut _cef_value_t)
+                                            -> ::std::os::raw::c_int>,
+    ///
+    pub get_int: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                *mut _cef_value_t)
+                                           -> ::std::os::raw::c_int>,
+    ///
+    pub get_double: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                   *mut _cef_value_t)
+                                              -> f64>,
+    ///
+    pub get_string: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                   *mut _cef_value_t)
+                                              -> *mut _cef_string_utf16_t>,
+    ///
+    pub get_binary: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                   *mut _cef_value_t)
+                                              -> *mut _cef_binary_value_t>,
+    ///
+    pub get_dictionary: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                       *mut _cef_value_t)
+                                                  ->
+                                                      *mut _cef_dictionary_value_t>,
+    ///
+    pub get_list: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                 *mut _cef_value_t)
+                                            -> *mut _cef_list_value_t>,
+    ///
+    pub set_null: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                 *mut _cef_value_t)
+                                            -> ::std::os::raw::c_int>,
+    ///
+    pub set_bool: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                 *mut _cef_value_t,
+                                                             value:
+                                                                 ::std::os::raw::c_int)
+                                            -> ::std::os::raw::c_int>,
+    ///
+    pub set_int: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                *mut _cef_value_t,
+                                                            value:
+                                                                ::std::os::raw::c_int)
+                                           -> ::std::os::raw::c_int>,
+    ///
+    pub set_double: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                   *mut _cef_value_t,
+                                                               value: f64)
+                                              -> ::std::os::raw::c_int>,
+    ///
+    pub set_string: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                   *mut _cef_value_t,
+                                                               value:
+                                                                   *const cef_string_t)
+                                              -> ::std::os::raw::c_int>,
+    ///
+    pub set_binary: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                   *mut _cef_value_t,
+                                                               value:
+                                                                   *mut _cef_binary_value_t)
+                                              -> ::std::os::raw::c_int>,
+    ///
+    pub set_dictionary: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                       *mut _cef_value_t,
+                                                                   value:
+                                                                       *mut _cef_dictionary_value_t)
+                                                  -> ::std::os::raw::c_int>,
+    ///
+    pub set_list: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                 *mut _cef_value_t,
+                                                             value:
+                                                                 *mut _cef_list_value_t)
+                                            -> ::std::os::raw::c_int>,
+}
+#[test]
+fn bindgen_test_layout__cef_value_t() {
+    assert_eq!(::std::mem::size_of::<_cef_value_t>() , 208usize);
+    assert_eq!(::std::mem::align_of::<_cef_value_t>() , 8usize);
+}
+impl Clone for _cef_value_t {
+    fn clone(&self) -> Self { *self }
+}
+pub type cef_value_t = _cef_value_t;
 extern "C" {
     ///
-    pub fn cef_command_line_get_global() -> *mut cef_command_line_t;
+    pub fn cef_value_create() -> *mut cef_value_t;
+}
+pub type cef_binary_value_t = _cef_binary_value_t;
+extern "C" {
+    ///
+    pub fn cef_binary_value_create(data: *const ::std::os::raw::c_void,
+                                   data_size: usize)
+     -> *mut cef_binary_value_t;
+}
+pub type cef_dictionary_value_t = _cef_dictionary_value_t;
+extern "C" {
+    ///
+    pub fn cef_dictionary_value_create() -> *mut cef_dictionary_value_t;
+}
+pub type cef_list_value_t = _cef_list_value_t;
+extern "C" {
+    ///
+    pub fn cef_list_value_create() -> *mut cef_list_value_t;
 }
 ///
 #[repr(C)]
@@ -3436,566 +3799,6 @@ impl Clone for _cef_frame_t {
 ///
 #[repr(C)]
 #[derive(Debug, Copy)]
-pub struct _cef_binary_value_t {
-    ///
-    pub base: cef_base_t,
-    ///
-    pub is_valid: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                 *mut _cef_binary_value_t)
-                                            -> ::std::os::raw::c_int>,
-    ///
-    pub is_owned: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                 *mut _cef_binary_value_t)
-                                            -> ::std::os::raw::c_int>,
-    ///
-    pub is_same: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                *mut _cef_binary_value_t,
-                                                            that:
-                                                                *mut _cef_binary_value_t)
-                                           -> ::std::os::raw::c_int>,
-    ///
-    pub is_equal: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                 *mut _cef_binary_value_t,
-                                                             that:
-                                                                 *mut _cef_binary_value_t)
-                                            -> ::std::os::raw::c_int>,
-    ///
-    pub copy: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                             *mut _cef_binary_value_t)
-                                        -> *mut _cef_binary_value_t>,
-    ///
-    pub get_size: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                 *mut _cef_binary_value_t)
-                                            -> ::std::os::raw::c_ulong>,
-    ///
-    pub get_data: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                 *mut _cef_binary_value_t,
-                                                             buffer:
-                                                                 *mut ::std::os::raw::c_void,
-                                                             buffer_size:
-                                                                 usize,
-                                                             data_offset:
-                                                                 usize)
-                                            -> ::std::os::raw::c_ulong>,
-}
-#[test]
-fn bindgen_test_layout__cef_binary_value_t() {
-    assert_eq!(::std::mem::size_of::<_cef_binary_value_t>() , 88usize);
-    assert_eq!(::std::mem::align_of::<_cef_binary_value_t>() , 8usize);
-}
-impl Clone for _cef_binary_value_t {
-    fn clone(&self) -> Self { *self }
-}
-///
-#[repr(C)]
-#[derive(Debug, Copy)]
-pub struct _cef_dictionary_value_t {
-    ///
-    pub base: cef_base_t,
-    ///
-    pub is_valid: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                 *mut _cef_dictionary_value_t)
-                                            -> ::std::os::raw::c_int>,
-    ///
-    pub is_owned: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                 *mut _cef_dictionary_value_t)
-                                            -> ::std::os::raw::c_int>,
-    ///
-    pub is_read_only: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                     *mut _cef_dictionary_value_t)
-                                                -> ::std::os::raw::c_int>,
-    ///
-    pub is_same: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                *mut _cef_dictionary_value_t,
-                                                            that:
-                                                                *mut _cef_dictionary_value_t)
-                                           -> ::std::os::raw::c_int>,
-    ///
-    pub is_equal: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                 *mut _cef_dictionary_value_t,
-                                                             that:
-                                                                 *mut _cef_dictionary_value_t)
-                                            -> ::std::os::raw::c_int>,
-    ///
-    pub copy: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                             *mut _cef_dictionary_value_t,
-                                                         exclude_empty_children:
-                                                             ::std::os::raw::c_int)
-                                        -> *mut _cef_dictionary_value_t>,
-    ///
-    pub get_size: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                 *mut _cef_dictionary_value_t)
-                                            -> ::std::os::raw::c_ulong>,
-    ///
-    pub clear: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                              *mut _cef_dictionary_value_t)
-                                         -> ::std::os::raw::c_int>,
-    ///
-    pub has_key: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                *mut _cef_dictionary_value_t,
-                                                            key:
-                                                                *const cef_string_t)
-                                           -> ::std::os::raw::c_int>,
-    ///
-    pub get_keys: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                 *mut _cef_dictionary_value_t,
-                                                             keys:
-                                                                 cef_string_list_t)
-                                            -> ::std::os::raw::c_int>,
-    ///
-    pub remove: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                               *mut _cef_dictionary_value_t,
-                                                           key:
-                                                               *const cef_string_t)
-                                          -> ::std::os::raw::c_int>,
-    ///
-    pub get_type: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                 *mut _cef_dictionary_value_t,
-                                                             key:
-                                                                 *const cef_string_t)
-                                            -> _bindgen_ty_25>,
-    ///
-    pub get_value: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                  *mut _cef_dictionary_value_t,
-                                                              key:
-                                                                  *const cef_string_t)
-                                             -> *mut _cef_value_t>,
-    ///
-    pub get_bool: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                 *mut _cef_dictionary_value_t,
-                                                             key:
-                                                                 *const cef_string_t)
-                                            -> ::std::os::raw::c_int>,
-    ///
-    pub get_int: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                *mut _cef_dictionary_value_t,
-                                                            key:
-                                                                *const cef_string_t)
-                                           -> ::std::os::raw::c_int>,
-    ///
-    pub get_double: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                   *mut _cef_dictionary_value_t,
-                                                               key:
-                                                                   *const cef_string_t)
-                                              -> f64>,
-    ///
-    pub get_string: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                   *mut _cef_dictionary_value_t,
-                                                               key:
-                                                                   *const cef_string_t)
-                                              -> *mut _cef_string_utf16_t>,
-    ///
-    pub get_binary: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                   *mut _cef_dictionary_value_t,
-                                                               key:
-                                                                   *const cef_string_t)
-                                              -> *mut _cef_binary_value_t>,
-    ///
-    pub get_dictionary: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                       *mut _cef_dictionary_value_t,
-                                                                   key:
-                                                                       *const cef_string_t)
-                                                  ->
-                                                      *mut _cef_dictionary_value_t>,
-    ///
-    pub get_list: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                 *mut _cef_dictionary_value_t,
-                                                             key:
-                                                                 *const cef_string_t)
-                                            -> *mut _cef_list_value_t>,
-    ///
-    pub set_value: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                  *mut _cef_dictionary_value_t,
-                                                              key:
-                                                                  *const cef_string_t,
-                                                              value:
-                                                                  *mut _cef_value_t)
-                                             -> ::std::os::raw::c_int>,
-    ///
-    pub set_null: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                 *mut _cef_dictionary_value_t,
-                                                             key:
-                                                                 *const cef_string_t)
-                                            -> ::std::os::raw::c_int>,
-    ///
-    pub set_bool: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                 *mut _cef_dictionary_value_t,
-                                                             key:
-                                                                 *const cef_string_t,
-                                                             value:
-                                                                 ::std::os::raw::c_int)
-                                            -> ::std::os::raw::c_int>,
-    ///
-    pub set_int: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                *mut _cef_dictionary_value_t,
-                                                            key:
-                                                                *const cef_string_t,
-                                                            value:
-                                                                ::std::os::raw::c_int)
-                                           -> ::std::os::raw::c_int>,
-    ///
-    pub set_double: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                   *mut _cef_dictionary_value_t,
-                                                               key:
-                                                                   *const cef_string_t,
-                                                               value: f64)
-                                              -> ::std::os::raw::c_int>,
-    ///
-    pub set_string: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                   *mut _cef_dictionary_value_t,
-                                                               key:
-                                                                   *const cef_string_t,
-                                                               value:
-                                                                   *const cef_string_t)
-                                              -> ::std::os::raw::c_int>,
-    ///
-    pub set_binary: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                   *mut _cef_dictionary_value_t,
-                                                               key:
-                                                                   *const cef_string_t,
-                                                               value:
-                                                                   *mut _cef_binary_value_t)
-                                              -> ::std::os::raw::c_int>,
-    ///
-    pub set_dictionary: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                       *mut _cef_dictionary_value_t,
-                                                                   key:
-                                                                       *const cef_string_t,
-                                                                   value:
-                                                                       *mut _cef_dictionary_value_t)
-                                                  -> ::std::os::raw::c_int>,
-    ///
-    pub set_list: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                 *mut _cef_dictionary_value_t,
-                                                             key:
-                                                                 *const cef_string_t,
-                                                             value:
-                                                                 *mut _cef_list_value_t)
-                                            -> ::std::os::raw::c_int>,
-}
-#[test]
-fn bindgen_test_layout__cef_dictionary_value_t() {
-    assert_eq!(::std::mem::size_of::<_cef_dictionary_value_t>() , 264usize);
-    assert_eq!(::std::mem::align_of::<_cef_dictionary_value_t>() , 8usize);
-}
-impl Clone for _cef_dictionary_value_t {
-    fn clone(&self) -> Self { *self }
-}
-///
-#[repr(C)]
-#[derive(Debug, Copy)]
-pub struct _cef_list_value_t {
-    ///
-    pub base: cef_base_t,
-    ///
-    pub is_valid: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                 *mut _cef_list_value_t)
-                                            -> ::std::os::raw::c_int>,
-    ///
-    pub is_owned: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                 *mut _cef_list_value_t)
-                                            -> ::std::os::raw::c_int>,
-    ///
-    pub is_read_only: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                     *mut _cef_list_value_t)
-                                                -> ::std::os::raw::c_int>,
-    ///
-    pub is_same: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                *mut _cef_list_value_t,
-                                                            that:
-                                                                *mut _cef_list_value_t)
-                                           -> ::std::os::raw::c_int>,
-    ///
-    pub is_equal: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                 *mut _cef_list_value_t,
-                                                             that:
-                                                                 *mut _cef_list_value_t)
-                                            -> ::std::os::raw::c_int>,
-    ///
-    pub copy: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                             *mut _cef_list_value_t)
-                                        -> *mut _cef_list_value_t>,
-    ///
-    pub set_size: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                 *mut _cef_list_value_t,
-                                                             size: usize)
-                                            -> ::std::os::raw::c_int>,
-    ///
-    pub get_size: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                 *mut _cef_list_value_t)
-                                            -> ::std::os::raw::c_ulong>,
-    ///
-    pub clear: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                              *mut _cef_list_value_t)
-                                         -> ::std::os::raw::c_int>,
-    ///
-    pub remove: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                               *mut _cef_list_value_t,
-                                                           index: usize)
-                                          -> ::std::os::raw::c_int>,
-    ///
-    pub get_type: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                 *mut _cef_list_value_t,
-                                                             index: usize)
-                                            -> _bindgen_ty_25>,
-    ///
-    pub get_value: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                  *mut _cef_list_value_t,
-                                                              index: usize)
-                                             -> *mut _cef_value_t>,
-    ///
-    pub get_bool: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                 *mut _cef_list_value_t,
-                                                             index: usize)
-                                            -> ::std::os::raw::c_int>,
-    ///
-    pub get_int: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                *mut _cef_list_value_t,
-                                                            index: usize)
-                                           -> ::std::os::raw::c_int>,
-    ///
-    pub get_double: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                   *mut _cef_list_value_t,
-                                                               index: usize)
-                                              -> f64>,
-    ///
-    pub get_string: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                   *mut _cef_list_value_t,
-                                                               index: usize)
-                                              -> *mut _cef_string_utf16_t>,
-    ///
-    pub get_binary: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                   *mut _cef_list_value_t,
-                                                               index: usize)
-                                              -> *mut _cef_binary_value_t>,
-    ///
-    pub get_dictionary: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                       *mut _cef_list_value_t,
-                                                                   index:
-                                                                       usize)
-                                                  ->
-                                                      *mut _cef_dictionary_value_t>,
-    ///
-    pub get_list: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                 *mut _cef_list_value_t,
-                                                             index: usize)
-                                            -> *mut _cef_list_value_t>,
-    ///
-    pub set_value: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                  *mut _cef_list_value_t,
-                                                              index: usize,
-                                                              value:
-                                                                  *mut _cef_value_t)
-                                             -> ::std::os::raw::c_int>,
-    ///
-    pub set_null: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                 *mut _cef_list_value_t,
-                                                             index: usize)
-                                            -> ::std::os::raw::c_int>,
-    ///
-    pub set_bool: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                 *mut _cef_list_value_t,
-                                                             index: usize,
-                                                             value:
-                                                                 ::std::os::raw::c_int)
-                                            -> ::std::os::raw::c_int>,
-    ///
-    pub set_int: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                *mut _cef_list_value_t,
-                                                            index: usize,
-                                                            value:
-                                                                ::std::os::raw::c_int)
-                                           -> ::std::os::raw::c_int>,
-    ///
-    pub set_double: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                   *mut _cef_list_value_t,
-                                                               index: usize,
-                                                               value: f64)
-                                              -> ::std::os::raw::c_int>,
-    ///
-    pub set_string: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                   *mut _cef_list_value_t,
-                                                               index: usize,
-                                                               value:
-                                                                   *const cef_string_t)
-                                              -> ::std::os::raw::c_int>,
-    ///
-    pub set_binary: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                   *mut _cef_list_value_t,
-                                                               index: usize,
-                                                               value:
-                                                                   *mut _cef_binary_value_t)
-                                              -> ::std::os::raw::c_int>,
-    ///
-    pub set_dictionary: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                       *mut _cef_list_value_t,
-                                                                   index:
-                                                                       usize,
-                                                                   value:
-                                                                       *mut _cef_dictionary_value_t)
-                                                  -> ::std::os::raw::c_int>,
-    ///
-    pub set_list: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                 *mut _cef_list_value_t,
-                                                             index: usize,
-                                                             value:
-                                                                 *mut _cef_list_value_t)
-                                            -> ::std::os::raw::c_int>,
-}
-#[test]
-fn bindgen_test_layout__cef_list_value_t() {
-    assert_eq!(::std::mem::size_of::<_cef_list_value_t>() , 256usize);
-    assert_eq!(::std::mem::align_of::<_cef_list_value_t>() , 8usize);
-}
-impl Clone for _cef_list_value_t {
-    fn clone(&self) -> Self { *self }
-}
-///
-#[repr(C)]
-#[derive(Debug, Copy)]
-pub struct _cef_value_t {
-    ///
-    pub base: cef_base_t,
-    ///
-    pub is_valid: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                 *mut _cef_value_t)
-                                            -> ::std::os::raw::c_int>,
-    ///
-    pub is_owned: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                 *mut _cef_value_t)
-                                            -> ::std::os::raw::c_int>,
-    ///
-    pub is_read_only: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                     *mut _cef_value_t)
-                                                -> ::std::os::raw::c_int>,
-    ///
-    pub is_same: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                *mut _cef_value_t,
-                                                            that:
-                                                                *mut _cef_value_t)
-                                           -> ::std::os::raw::c_int>,
-    ///
-    pub is_equal: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                 *mut _cef_value_t,
-                                                             that:
-                                                                 *mut _cef_value_t)
-                                            -> ::std::os::raw::c_int>,
-    ///
-    pub copy: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                             *mut _cef_value_t)
-                                        -> *mut _cef_value_t>,
-    ///
-    pub get_type: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                 *mut _cef_value_t)
-                                            -> _bindgen_ty_25>,
-    ///
-    pub get_bool: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                 *mut _cef_value_t)
-                                            -> ::std::os::raw::c_int>,
-    ///
-    pub get_int: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                *mut _cef_value_t)
-                                           -> ::std::os::raw::c_int>,
-    ///
-    pub get_double: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                   *mut _cef_value_t)
-                                              -> f64>,
-    ///
-    pub get_string: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                   *mut _cef_value_t)
-                                              -> *mut _cef_string_utf16_t>,
-    ///
-    pub get_binary: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                   *mut _cef_value_t)
-                                              -> *mut _cef_binary_value_t>,
-    ///
-    pub get_dictionary: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                       *mut _cef_value_t)
-                                                  ->
-                                                      *mut _cef_dictionary_value_t>,
-    ///
-    pub get_list: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                 *mut _cef_value_t)
-                                            -> *mut _cef_list_value_t>,
-    ///
-    pub set_null: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                 *mut _cef_value_t)
-                                            -> ::std::os::raw::c_int>,
-    ///
-    pub set_bool: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                 *mut _cef_value_t,
-                                                             value:
-                                                                 ::std::os::raw::c_int)
-                                            -> ::std::os::raw::c_int>,
-    ///
-    pub set_int: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                *mut _cef_value_t,
-                                                            value:
-                                                                ::std::os::raw::c_int)
-                                           -> ::std::os::raw::c_int>,
-    ///
-    pub set_double: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                   *mut _cef_value_t,
-                                                               value: f64)
-                                              -> ::std::os::raw::c_int>,
-    ///
-    pub set_string: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                   *mut _cef_value_t,
-                                                               value:
-                                                                   *const cef_string_t)
-                                              -> ::std::os::raw::c_int>,
-    ///
-    pub set_binary: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                   *mut _cef_value_t,
-                                                               value:
-                                                                   *mut _cef_binary_value_t)
-                                              -> ::std::os::raw::c_int>,
-    ///
-    pub set_dictionary: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                       *mut _cef_value_t,
-                                                                   value:
-                                                                       *mut _cef_dictionary_value_t)
-                                                  -> ::std::os::raw::c_int>,
-    ///
-    pub set_list: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                 *mut _cef_value_t,
-                                                             value:
-                                                                 *mut _cef_list_value_t)
-                                            -> ::std::os::raw::c_int>,
-}
-#[test]
-fn bindgen_test_layout__cef_value_t() {
-    assert_eq!(::std::mem::size_of::<_cef_value_t>() , 208usize);
-    assert_eq!(::std::mem::align_of::<_cef_value_t>() , 8usize);
-}
-impl Clone for _cef_value_t {
-    fn clone(&self) -> Self { *self }
-}
-pub type cef_value_t = _cef_value_t;
-extern "C" {
-    ///
-    pub fn cef_value_create() -> *mut cef_value_t;
-}
-pub type cef_binary_value_t = _cef_binary_value_t;
-extern "C" {
-    ///
-    pub fn cef_binary_value_create(data: *const ::std::os::raw::c_void,
-                                   data_size: usize)
-     -> *mut cef_binary_value_t;
-}
-pub type cef_dictionary_value_t = _cef_dictionary_value_t;
-extern "C" {
-    ///
-    pub fn cef_dictionary_value_create() -> *mut cef_dictionary_value_t;
-}
-pub type cef_list_value_t = _cef_list_value_t;
-extern "C" {
-    ///
-    pub fn cef_list_value_create() -> *mut cef_list_value_t;
-}
-///
-#[repr(C)]
-#[derive(Debug, Copy)]
 pub struct _cef_image_t {
     ///
     pub base: cef_base_t,
@@ -4755,6 +4558,8 @@ pub struct _cef_request_context_handler_t {
                                                                               *const cef_string_t,
                                                                           plugin_url:
                                                                               *const cef_string_t,
+                                                                          is_main_frame:
+                                                                              ::std::os::raw::c_int,
                                                                           top_origin_url:
                                                                               *const cef_string_t,
                                                                           plugin_info:
@@ -5747,6 +5552,775 @@ fn bindgen_test_layout__cef_print_handler_t() {
 }
 impl Clone for _cef_print_handler_t {
     fn clone(&self) -> Self { *self }
+}
+///
+#[repr(C)]
+#[derive(Debug, Copy)]
+pub struct _cef_menu_model_t {
+    ///
+    pub base: cef_base_t,
+    ///
+    pub clear: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                              *mut _cef_menu_model_t)
+                                         -> ::std::os::raw::c_int>,
+    ///
+    pub get_count: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                  *mut _cef_menu_model_t)
+                                             -> ::std::os::raw::c_int>,
+    ///
+    pub add_separator: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                      *mut _cef_menu_model_t)
+                                                 -> ::std::os::raw::c_int>,
+    ///
+    pub add_item: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                 *mut _cef_menu_model_t,
+                                                             command_id:
+                                                                 ::std::os::raw::c_int,
+                                                             label:
+                                                                 *const cef_string_t)
+                                            -> ::std::os::raw::c_int>,
+    ///
+    pub add_check_item: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                       *mut _cef_menu_model_t,
+                                                                   command_id:
+                                                                       ::std::os::raw::c_int,
+                                                                   label:
+                                                                       *const cef_string_t)
+                                                  -> ::std::os::raw::c_int>,
+    ///
+    pub add_radio_item: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                       *mut _cef_menu_model_t,
+                                                                   command_id:
+                                                                       ::std::os::raw::c_int,
+                                                                   label:
+                                                                       *const cef_string_t,
+                                                                   group_id:
+                                                                       ::std::os::raw::c_int)
+                                                  -> ::std::os::raw::c_int>,
+    ///
+    pub add_sub_menu: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                     *mut _cef_menu_model_t,
+                                                                 command_id:
+                                                                     ::std::os::raw::c_int,
+                                                                 label:
+                                                                     *const cef_string_t)
+                                                -> *mut _cef_menu_model_t>,
+    ///
+    pub insert_separator_at: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                            *mut _cef_menu_model_t,
+                                                                        index:
+                                                                            ::std::os::raw::c_int)
+                                                       ->
+                                                           ::std::os::raw::c_int>,
+    ///
+    pub insert_item_at: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                       *mut _cef_menu_model_t,
+                                                                   index:
+                                                                       ::std::os::raw::c_int,
+                                                                   command_id:
+                                                                       ::std::os::raw::c_int,
+                                                                   label:
+                                                                       *const cef_string_t)
+                                                  -> ::std::os::raw::c_int>,
+    ///
+    pub insert_check_item_at: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                             *mut _cef_menu_model_t,
+                                                                         index:
+                                                                             ::std::os::raw::c_int,
+                                                                         command_id:
+                                                                             ::std::os::raw::c_int,
+                                                                         label:
+                                                                             *const cef_string_t)
+                                                        ->
+                                                            ::std::os::raw::c_int>,
+    ///
+    pub insert_radio_item_at: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                             *mut _cef_menu_model_t,
+                                                                         index:
+                                                                             ::std::os::raw::c_int,
+                                                                         command_id:
+                                                                             ::std::os::raw::c_int,
+                                                                         label:
+                                                                             *const cef_string_t,
+                                                                         group_id:
+                                                                             ::std::os::raw::c_int)
+                                                        ->
+                                                            ::std::os::raw::c_int>,
+    ///
+    pub insert_sub_menu_at: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                           *mut _cef_menu_model_t,
+                                                                       index:
+                                                                           ::std::os::raw::c_int,
+                                                                       command_id:
+                                                                           ::std::os::raw::c_int,
+                                                                       label:
+                                                                           *const cef_string_t)
+                                                      ->
+                                                          *mut _cef_menu_model_t>,
+    ///
+    pub remove: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                               *mut _cef_menu_model_t,
+                                                           command_id:
+                                                               ::std::os::raw::c_int)
+                                          -> ::std::os::raw::c_int>,
+    ///
+    pub remove_at: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                  *mut _cef_menu_model_t,
+                                                              index:
+                                                                  ::std::os::raw::c_int)
+                                             -> ::std::os::raw::c_int>,
+    ///
+    pub get_index_of: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                     *mut _cef_menu_model_t,
+                                                                 command_id:
+                                                                     ::std::os::raw::c_int)
+                                                -> ::std::os::raw::c_int>,
+    ///
+    pub get_command_id_at: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                          *mut _cef_menu_model_t,
+                                                                      index:
+                                                                          ::std::os::raw::c_int)
+                                                     ->
+                                                         ::std::os::raw::c_int>,
+    ///
+    pub set_command_id_at: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                          *mut _cef_menu_model_t,
+                                                                      index:
+                                                                          ::std::os::raw::c_int,
+                                                                      command_id:
+                                                                          ::std::os::raw::c_int)
+                                                     ->
+                                                         ::std::os::raw::c_int>,
+    ///
+    pub get_label: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                  *mut _cef_menu_model_t,
+                                                              command_id:
+                                                                  ::std::os::raw::c_int)
+                                             -> *mut _cef_string_utf16_t>,
+    ///
+    pub get_label_at: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                     *mut _cef_menu_model_t,
+                                                                 index:
+                                                                     ::std::os::raw::c_int)
+                                                -> *mut _cef_string_utf16_t>,
+    ///
+    pub set_label: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                  *mut _cef_menu_model_t,
+                                                              command_id:
+                                                                  ::std::os::raw::c_int,
+                                                              label:
+                                                                  *const cef_string_t)
+                                             -> ::std::os::raw::c_int>,
+    ///
+    pub set_label_at: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                     *mut _cef_menu_model_t,
+                                                                 index:
+                                                                     ::std::os::raw::c_int,
+                                                                 label:
+                                                                     *const cef_string_t)
+                                                -> ::std::os::raw::c_int>,
+    ///
+    pub get_type: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                 *mut _cef_menu_model_t,
+                                                             command_id:
+                                                                 ::std::os::raw::c_int)
+                                            -> _bindgen_ty_31>,
+    ///
+    pub get_type_at: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                    *mut _cef_menu_model_t,
+                                                                index:
+                                                                    ::std::os::raw::c_int)
+                                               -> _bindgen_ty_31>,
+    ///
+    pub get_group_id: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                     *mut _cef_menu_model_t,
+                                                                 command_id:
+                                                                     ::std::os::raw::c_int)
+                                                -> ::std::os::raw::c_int>,
+    ///
+    pub get_group_id_at: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                        *mut _cef_menu_model_t,
+                                                                    index:
+                                                                        ::std::os::raw::c_int)
+                                                   -> ::std::os::raw::c_int>,
+    ///
+    pub set_group_id: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                     *mut _cef_menu_model_t,
+                                                                 command_id:
+                                                                     ::std::os::raw::c_int,
+                                                                 group_id:
+                                                                     ::std::os::raw::c_int)
+                                                -> ::std::os::raw::c_int>,
+    ///
+    pub set_group_id_at: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                        *mut _cef_menu_model_t,
+                                                                    index:
+                                                                        ::std::os::raw::c_int,
+                                                                    group_id:
+                                                                        ::std::os::raw::c_int)
+                                                   -> ::std::os::raw::c_int>,
+    ///
+    pub get_sub_menu: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                     *mut _cef_menu_model_t,
+                                                                 command_id:
+                                                                     ::std::os::raw::c_int)
+                                                -> *mut _cef_menu_model_t>,
+    ///
+    pub get_sub_menu_at: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                        *mut _cef_menu_model_t,
+                                                                    index:
+                                                                        ::std::os::raw::c_int)
+                                                   -> *mut _cef_menu_model_t>,
+    ///
+    pub is_visible: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                   *mut _cef_menu_model_t,
+                                                               command_id:
+                                                                   ::std::os::raw::c_int)
+                                              -> ::std::os::raw::c_int>,
+    ///
+    pub is_visible_at: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                      *mut _cef_menu_model_t,
+                                                                  index:
+                                                                      ::std::os::raw::c_int)
+                                                 -> ::std::os::raw::c_int>,
+    ///
+    pub set_visible: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                    *mut _cef_menu_model_t,
+                                                                command_id:
+                                                                    ::std::os::raw::c_int,
+                                                                visible:
+                                                                    ::std::os::raw::c_int)
+                                               -> ::std::os::raw::c_int>,
+    ///
+    pub set_visible_at: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                       *mut _cef_menu_model_t,
+                                                                   index:
+                                                                       ::std::os::raw::c_int,
+                                                                   visible:
+                                                                       ::std::os::raw::c_int)
+                                                  -> ::std::os::raw::c_int>,
+    ///
+    pub is_enabled: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                   *mut _cef_menu_model_t,
+                                                               command_id:
+                                                                   ::std::os::raw::c_int)
+                                              -> ::std::os::raw::c_int>,
+    ///
+    pub is_enabled_at: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                      *mut _cef_menu_model_t,
+                                                                  index:
+                                                                      ::std::os::raw::c_int)
+                                                 -> ::std::os::raw::c_int>,
+    ///
+    pub set_enabled: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                    *mut _cef_menu_model_t,
+                                                                command_id:
+                                                                    ::std::os::raw::c_int,
+                                                                enabled:
+                                                                    ::std::os::raw::c_int)
+                                               -> ::std::os::raw::c_int>,
+    ///
+    pub set_enabled_at: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                       *mut _cef_menu_model_t,
+                                                                   index:
+                                                                       ::std::os::raw::c_int,
+                                                                   enabled:
+                                                                       ::std::os::raw::c_int)
+                                                  -> ::std::os::raw::c_int>,
+    ///
+    pub is_checked: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                   *mut _cef_menu_model_t,
+                                                               command_id:
+                                                                   ::std::os::raw::c_int)
+                                              -> ::std::os::raw::c_int>,
+    ///
+    pub is_checked_at: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                      *mut _cef_menu_model_t,
+                                                                  index:
+                                                                      ::std::os::raw::c_int)
+                                                 -> ::std::os::raw::c_int>,
+    ///
+    pub set_checked: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                    *mut _cef_menu_model_t,
+                                                                command_id:
+                                                                    ::std::os::raw::c_int,
+                                                                checked:
+                                                                    ::std::os::raw::c_int)
+                                               -> ::std::os::raw::c_int>,
+    ///
+    pub set_checked_at: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                       *mut _cef_menu_model_t,
+                                                                   index:
+                                                                       ::std::os::raw::c_int,
+                                                                   checked:
+                                                                       ::std::os::raw::c_int)
+                                                  -> ::std::os::raw::c_int>,
+    ///
+    pub has_accelerator: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                        *mut _cef_menu_model_t,
+                                                                    command_id:
+                                                                        ::std::os::raw::c_int)
+                                                   -> ::std::os::raw::c_int>,
+    ///
+    pub has_accelerator_at: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                           *mut _cef_menu_model_t,
+                                                                       index:
+                                                                           ::std::os::raw::c_int)
+                                                      ->
+                                                          ::std::os::raw::c_int>,
+    ///
+    pub set_accelerator: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                        *mut _cef_menu_model_t,
+                                                                    command_id:
+                                                                        ::std::os::raw::c_int,
+                                                                    key_code:
+                                                                        ::std::os::raw::c_int,
+                                                                    shift_pressed:
+                                                                        ::std::os::raw::c_int,
+                                                                    ctrl_pressed:
+                                                                        ::std::os::raw::c_int,
+                                                                    alt_pressed:
+                                                                        ::std::os::raw::c_int)
+                                                   -> ::std::os::raw::c_int>,
+    ///
+    pub set_accelerator_at: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                           *mut _cef_menu_model_t,
+                                                                       index:
+                                                                           ::std::os::raw::c_int,
+                                                                       key_code:
+                                                                           ::std::os::raw::c_int,
+                                                                       shift_pressed:
+                                                                           ::std::os::raw::c_int,
+                                                                       ctrl_pressed:
+                                                                           ::std::os::raw::c_int,
+                                                                       alt_pressed:
+                                                                           ::std::os::raw::c_int)
+                                                      ->
+                                                          ::std::os::raw::c_int>,
+    ///
+    pub remove_accelerator: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                           *mut _cef_menu_model_t,
+                                                                       command_id:
+                                                                           ::std::os::raw::c_int)
+                                                      ->
+                                                          ::std::os::raw::c_int>,
+    ///
+    pub remove_accelerator_at: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                              *mut _cef_menu_model_t,
+                                                                          index:
+                                                                              ::std::os::raw::c_int)
+                                                         ->
+                                                             ::std::os::raw::c_int>,
+    ///
+    pub get_accelerator: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                        *mut _cef_menu_model_t,
+                                                                    command_id:
+                                                                        ::std::os::raw::c_int,
+                                                                    key_code:
+                                                                        *mut ::std::os::raw::c_int,
+                                                                    shift_pressed:
+                                                                        *mut ::std::os::raw::c_int,
+                                                                    ctrl_pressed:
+                                                                        *mut ::std::os::raw::c_int,
+                                                                    alt_pressed:
+                                                                        *mut ::std::os::raw::c_int)
+                                                   -> ::std::os::raw::c_int>,
+    ///
+    pub get_accelerator_at: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                           *mut _cef_menu_model_t,
+                                                                       index:
+                                                                           ::std::os::raw::c_int,
+                                                                       key_code:
+                                                                           *mut ::std::os::raw::c_int,
+                                                                       shift_pressed:
+                                                                           *mut ::std::os::raw::c_int,
+                                                                       ctrl_pressed:
+                                                                           *mut ::std::os::raw::c_int,
+                                                                       alt_pressed:
+                                                                           *mut ::std::os::raw::c_int)
+                                                      ->
+                                                          ::std::os::raw::c_int>,
+}
+#[test]
+fn bindgen_test_layout__cef_menu_model_t() {
+    assert_eq!(::std::mem::size_of::<_cef_menu_model_t>() , 424usize);
+    assert_eq!(::std::mem::align_of::<_cef_menu_model_t>() , 8usize);
+}
+impl Clone for _cef_menu_model_t {
+    fn clone(&self) -> Self { *self }
+}
+///
+#[repr(C)]
+#[derive(Debug, Copy)]
+pub struct _cef_menu_model_delegate_t {
+    ///
+    pub base: cef_base_t,
+    ///
+    pub execute_command: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                        *mut _cef_menu_model_delegate_t,
+                                                                    menu_model:
+                                                                        *mut _cef_menu_model_t,
+                                                                    command_id:
+                                                                        ::std::os::raw::c_int,
+                                                                    event_flags:
+                                                                        cef_event_flags_t)>,
+    ///
+    pub menu_will_show: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                       *mut _cef_menu_model_delegate_t,
+                                                                   menu_model:
+                                                                       *mut _cef_menu_model_t)>,
+    ///
+    pub menu_closed: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                    *mut _cef_menu_model_delegate_t,
+                                                                menu_model:
+                                                                    *mut _cef_menu_model_t)>,
+    ///
+    pub format_label: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                     *mut _cef_menu_model_delegate_t,
+                                                                 menu_model:
+                                                                     *mut _cef_menu_model_t,
+                                                                 label:
+                                                                     *mut cef_string_t)
+                                                -> ::std::os::raw::c_int>,
+}
+#[test]
+fn bindgen_test_layout__cef_menu_model_delegate_t() {
+    assert_eq!(::std::mem::size_of::<_cef_menu_model_delegate_t>() , 64usize);
+    assert_eq!(::std::mem::align_of::<_cef_menu_model_delegate_t>() , 8usize);
+}
+impl Clone for _cef_menu_model_delegate_t {
+    fn clone(&self) -> Self { *self }
+}
+pub type cef_menu_model_t = _cef_menu_model_t;
+extern "C" {
+    ///
+    pub fn cef_menu_model_create(delegate: *mut _cef_menu_model_delegate_t)
+     -> *mut cef_menu_model_t;
+}
+///
+#[repr(C)]
+#[derive(Debug, Copy)]
+pub struct _cef_context_menu_params_t {
+    ///
+    pub base: cef_base_t,
+    ///
+    pub get_xcoord: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                   *mut _cef_context_menu_params_t)
+                                              -> ::std::os::raw::c_int>,
+    ///
+    pub get_ycoord: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                   *mut _cef_context_menu_params_t)
+                                              -> ::std::os::raw::c_int>,
+    ///
+    pub get_type_flags: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                       *mut _cef_context_menu_params_t)
+                                                  -> _bindgen_ty_32>,
+    ///
+    pub get_link_url: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                     *mut _cef_context_menu_params_t)
+                                                -> *mut _cef_string_utf16_t>,
+    ///
+    pub get_unfiltered_link_url: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                                *mut _cef_context_menu_params_t)
+                                                           ->
+                                                               *mut _cef_string_utf16_t>,
+    ///
+    pub get_source_url: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                       *mut _cef_context_menu_params_t)
+                                                  ->
+                                                      *mut _cef_string_utf16_t>,
+    ///
+    pub has_image_contents: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                           *mut _cef_context_menu_params_t)
+                                                      ->
+                                                          ::std::os::raw::c_int>,
+    ///
+    pub get_title_text: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                       *mut _cef_context_menu_params_t)
+                                                  ->
+                                                      *mut _cef_string_utf16_t>,
+    ///
+    pub get_page_url: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                     *mut _cef_context_menu_params_t)
+                                                -> *mut _cef_string_utf16_t>,
+    ///
+    pub get_frame_url: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                      *mut _cef_context_menu_params_t)
+                                                 -> *mut _cef_string_utf16_t>,
+    ///
+    pub get_frame_charset: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                          *mut _cef_context_menu_params_t)
+                                                     ->
+                                                         *mut _cef_string_utf16_t>,
+    ///
+    pub get_media_type: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                       *mut _cef_context_menu_params_t)
+                                                  -> _bindgen_ty_33>,
+    ///
+    pub get_media_state_flags: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                              *mut _cef_context_menu_params_t)
+                                                         -> _bindgen_ty_34>,
+    ///
+    pub get_selection_text: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                           *mut _cef_context_menu_params_t)
+                                                      ->
+                                                          *mut _cef_string_utf16_t>,
+    ///
+    pub get_misspelled_word: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                            *mut _cef_context_menu_params_t)
+                                                       ->
+                                                           *mut _cef_string_utf16_t>,
+    ///
+    pub get_dictionary_suggestions: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                                   *mut _cef_context_menu_params_t,
+                                                                               suggestions:
+                                                                                   cef_string_list_t)
+                                                              ->
+                                                                  ::std::os::raw::c_int>,
+    ///
+    pub is_editable: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                    *mut _cef_context_menu_params_t)
+                                               -> ::std::os::raw::c_int>,
+    ///
+    pub is_spell_check_enabled: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                               *mut _cef_context_menu_params_t)
+                                                          ->
+                                                              ::std::os::raw::c_int>,
+    ///
+    pub get_edit_state_flags: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                             *mut _cef_context_menu_params_t)
+                                                        -> _bindgen_ty_35>,
+    ///
+    pub is_custom_menu: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                       *mut _cef_context_menu_params_t)
+                                                  -> ::std::os::raw::c_int>,
+    ///
+    pub is_pepper_menu: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                       *mut _cef_context_menu_params_t)
+                                                  -> ::std::os::raw::c_int>,
+}
+#[test]
+fn bindgen_test_layout__cef_context_menu_params_t() {
+    assert_eq!(::std::mem::size_of::<_cef_context_menu_params_t>() ,
+               200usize);
+    assert_eq!(::std::mem::align_of::<_cef_context_menu_params_t>() , 8usize);
+}
+impl Clone for _cef_context_menu_params_t {
+    fn clone(&self) -> Self { *self }
+}
+///
+#[repr(C)]
+#[derive(Debug, Copy)]
+pub struct _cef_run_context_menu_callback_t {
+    ///
+    pub base: cef_base_t,
+    ///
+    pub cont: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                             *mut _cef_run_context_menu_callback_t,
+                                                         command_id:
+                                                             ::std::os::raw::c_int,
+                                                         event_flags:
+                                                             cef_event_flags_t)>,
+    ///
+    pub cancel: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                               *mut _cef_run_context_menu_callback_t)>,
+}
+#[test]
+fn bindgen_test_layout__cef_run_context_menu_callback_t() {
+    assert_eq!(::std::mem::size_of::<_cef_run_context_menu_callback_t>() ,
+               48usize);
+    assert_eq!(::std::mem::align_of::<_cef_run_context_menu_callback_t>() ,
+               8usize);
+}
+impl Clone for _cef_run_context_menu_callback_t {
+    fn clone(&self) -> Self { *self }
+}
+///
+#[repr(C)]
+#[derive(Debug, Copy)]
+pub struct _cef_context_menu_handler_t {
+    ///
+    pub base: cef_base_t,
+    ///
+    pub on_before_context_menu: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                               *mut _cef_context_menu_handler_t,
+                                                                           browser:
+                                                                               *mut _cef_browser_t,
+                                                                           frame:
+                                                                               *mut _cef_frame_t,
+                                                                           params:
+                                                                               *mut _cef_context_menu_params_t,
+                                                                           model:
+                                                                               *mut _cef_menu_model_t)>,
+    ///
+    pub run_context_menu: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                         *mut _cef_context_menu_handler_t,
+                                                                     browser:
+                                                                         *mut _cef_browser_t,
+                                                                     frame:
+                                                                         *mut _cef_frame_t,
+                                                                     params:
+                                                                         *mut _cef_context_menu_params_t,
+                                                                     model:
+                                                                         *mut _cef_menu_model_t,
+                                                                     callback:
+                                                                         *mut _cef_run_context_menu_callback_t)
+                                                    -> ::std::os::raw::c_int>,
+    ///
+    pub on_context_menu_command: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                                *mut _cef_context_menu_handler_t,
+                                                                            browser:
+                                                                                *mut _cef_browser_t,
+                                                                            frame:
+                                                                                *mut _cef_frame_t,
+                                                                            params:
+                                                                                *mut _cef_context_menu_params_t,
+                                                                            command_id:
+                                                                                ::std::os::raw::c_int,
+                                                                            event_flags:
+                                                                                cef_event_flags_t)
+                                                           ->
+                                                               ::std::os::raw::c_int>,
+    ///
+    pub on_context_menu_dismissed: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                                  *mut _cef_context_menu_handler_t,
+                                                                              browser:
+                                                                                  *mut _cef_browser_t,
+                                                                              frame:
+                                                                                  *mut _cef_frame_t)>,
+}
+#[test]
+fn bindgen_test_layout__cef_context_menu_handler_t() {
+    assert_eq!(::std::mem::size_of::<_cef_context_menu_handler_t>() ,
+               64usize);
+    assert_eq!(::std::mem::align_of::<_cef_context_menu_handler_t>() ,
+               8usize);
+}
+impl Clone for _cef_context_menu_handler_t {
+    fn clone(&self) -> Self { *self }
+}
+///
+#[repr(C)]
+#[derive(Debug, Copy)]
+pub struct _cef_command_line_t {
+    ///
+    pub base: cef_base_t,
+    ///
+    pub is_valid: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                 *mut _cef_command_line_t)
+                                            -> ::std::os::raw::c_int>,
+    ///
+    pub is_read_only: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                     *mut _cef_command_line_t)
+                                                -> ::std::os::raw::c_int>,
+    ///
+    pub copy: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                             *mut _cef_command_line_t)
+                                        -> *mut _cef_command_line_t>,
+    ///
+    pub init_from_argv: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                       *mut _cef_command_line_t,
+                                                                   argc:
+                                                                       ::std::os::raw::c_int,
+                                                                   argv:
+                                                                       *const *const ::std::os::raw::c_char)>,
+    ///
+    pub init_from_string: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                         *mut _cef_command_line_t,
+                                                                     command_line:
+                                                                         *const cef_string_t)>,
+    ///
+    pub reset: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                              *mut _cef_command_line_t)>,
+    ///
+    pub get_argv: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                 *mut _cef_command_line_t,
+                                                             argv:
+                                                                 cef_string_list_t)>,
+    ///
+    pub get_command_line_string: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                                *mut _cef_command_line_t)
+                                                           ->
+                                                               *mut _cef_string_utf16_t>,
+    ///
+    pub get_program: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                    *mut _cef_command_line_t)
+                                               -> *mut _cef_string_utf16_t>,
+    ///
+    pub set_program: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                    *mut _cef_command_line_t,
+                                                                program:
+                                                                    *const cef_string_t)>,
+    ///
+    pub has_switches: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                     *mut _cef_command_line_t)
+                                                -> ::std::os::raw::c_int>,
+    ///
+    pub has_switch: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                   *mut _cef_command_line_t,
+                                                               name:
+                                                                   *const cef_string_t)
+                                              -> ::std::os::raw::c_int>,
+    ///
+    pub get_switch_value: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                         *mut _cef_command_line_t,
+                                                                     name:
+                                                                         *const cef_string_t)
+                                                    ->
+                                                        *mut _cef_string_utf16_t>,
+    ///
+    pub get_switches: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                     *mut _cef_command_line_t,
+                                                                 switches:
+                                                                     cef_string_map_t)>,
+    ///
+    pub append_switch: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                      *mut _cef_command_line_t,
+                                                                  name:
+                                                                      *const cef_string_t)>,
+    ///
+    pub append_switch_with_value: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                                 *mut _cef_command_line_t,
+                                                                             name:
+                                                                                 *const cef_string_t,
+                                                                             value:
+                                                                                 *const cef_string_t)>,
+    ///
+    pub has_arguments: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                      *mut _cef_command_line_t)
+                                                 -> ::std::os::raw::c_int>,
+    ///
+    pub get_arguments: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                      *mut _cef_command_line_t,
+                                                                  arguments:
+                                                                      cef_string_list_t)>,
+    ///
+    pub append_argument: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                        *mut _cef_command_line_t,
+                                                                    argument:
+                                                                        *const cef_string_t)>,
+    ///
+    pub prepend_wrapper: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                        *mut _cef_command_line_t,
+                                                                    wrapper:
+                                                                        *const cef_string_t)>,
+}
+#[test]
+fn bindgen_test_layout__cef_command_line_t() {
+    assert_eq!(::std::mem::size_of::<_cef_command_line_t>() , 192usize);
+    assert_eq!(::std::mem::align_of::<_cef_command_line_t>() , 8usize);
+}
+impl Clone for _cef_command_line_t {
+    fn clone(&self) -> Self { *self }
+}
+pub type cef_command_line_t = _cef_command_line_t;
+extern "C" {
+    ///
+    pub fn cef_command_line_create() -> *mut cef_command_line_t;
+}
+extern "C" {
+    ///
+    pub fn cef_command_line_get_global() -> *mut cef_command_line_t;
 }
 ///
 #[repr(C)]
@@ -6955,647 +7529,6 @@ extern "C" {
 extern "C" {
     ///
     pub fn cef_enable_highdpi_support();
-}
-///
-#[repr(C)]
-#[derive(Debug, Copy)]
-pub struct _cef_menu_model_t {
-    ///
-    pub base: cef_base_t,
-    ///
-    pub clear: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                              *mut _cef_menu_model_t)
-                                         -> ::std::os::raw::c_int>,
-    ///
-    pub get_count: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                  *mut _cef_menu_model_t)
-                                             -> ::std::os::raw::c_int>,
-    ///
-    pub add_separator: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                      *mut _cef_menu_model_t)
-                                                 -> ::std::os::raw::c_int>,
-    ///
-    pub add_item: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                 *mut _cef_menu_model_t,
-                                                             command_id:
-                                                                 ::std::os::raw::c_int,
-                                                             label:
-                                                                 *const cef_string_t)
-                                            -> ::std::os::raw::c_int>,
-    ///
-    pub add_check_item: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                       *mut _cef_menu_model_t,
-                                                                   command_id:
-                                                                       ::std::os::raw::c_int,
-                                                                   label:
-                                                                       *const cef_string_t)
-                                                  -> ::std::os::raw::c_int>,
-    ///
-    pub add_radio_item: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                       *mut _cef_menu_model_t,
-                                                                   command_id:
-                                                                       ::std::os::raw::c_int,
-                                                                   label:
-                                                                       *const cef_string_t,
-                                                                   group_id:
-                                                                       ::std::os::raw::c_int)
-                                                  -> ::std::os::raw::c_int>,
-    ///
-    pub add_sub_menu: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                     *mut _cef_menu_model_t,
-                                                                 command_id:
-                                                                     ::std::os::raw::c_int,
-                                                                 label:
-                                                                     *const cef_string_t)
-                                                -> *mut _cef_menu_model_t>,
-    ///
-    pub insert_separator_at: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                            *mut _cef_menu_model_t,
-                                                                        index:
-                                                                            ::std::os::raw::c_int)
-                                                       ->
-                                                           ::std::os::raw::c_int>,
-    ///
-    pub insert_item_at: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                       *mut _cef_menu_model_t,
-                                                                   index:
-                                                                       ::std::os::raw::c_int,
-                                                                   command_id:
-                                                                       ::std::os::raw::c_int,
-                                                                   label:
-                                                                       *const cef_string_t)
-                                                  -> ::std::os::raw::c_int>,
-    ///
-    pub insert_check_item_at: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                             *mut _cef_menu_model_t,
-                                                                         index:
-                                                                             ::std::os::raw::c_int,
-                                                                         command_id:
-                                                                             ::std::os::raw::c_int,
-                                                                         label:
-                                                                             *const cef_string_t)
-                                                        ->
-                                                            ::std::os::raw::c_int>,
-    ///
-    pub insert_radio_item_at: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                             *mut _cef_menu_model_t,
-                                                                         index:
-                                                                             ::std::os::raw::c_int,
-                                                                         command_id:
-                                                                             ::std::os::raw::c_int,
-                                                                         label:
-                                                                             *const cef_string_t,
-                                                                         group_id:
-                                                                             ::std::os::raw::c_int)
-                                                        ->
-                                                            ::std::os::raw::c_int>,
-    ///
-    pub insert_sub_menu_at: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                           *mut _cef_menu_model_t,
-                                                                       index:
-                                                                           ::std::os::raw::c_int,
-                                                                       command_id:
-                                                                           ::std::os::raw::c_int,
-                                                                       label:
-                                                                           *const cef_string_t)
-                                                      ->
-                                                          *mut _cef_menu_model_t>,
-    ///
-    pub remove: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                               *mut _cef_menu_model_t,
-                                                           command_id:
-                                                               ::std::os::raw::c_int)
-                                          -> ::std::os::raw::c_int>,
-    ///
-    pub remove_at: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                  *mut _cef_menu_model_t,
-                                                              index:
-                                                                  ::std::os::raw::c_int)
-                                             -> ::std::os::raw::c_int>,
-    ///
-    pub get_index_of: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                     *mut _cef_menu_model_t,
-                                                                 command_id:
-                                                                     ::std::os::raw::c_int)
-                                                -> ::std::os::raw::c_int>,
-    ///
-    pub get_command_id_at: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                          *mut _cef_menu_model_t,
-                                                                      index:
-                                                                          ::std::os::raw::c_int)
-                                                     ->
-                                                         ::std::os::raw::c_int>,
-    ///
-    pub set_command_id_at: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                          *mut _cef_menu_model_t,
-                                                                      index:
-                                                                          ::std::os::raw::c_int,
-                                                                      command_id:
-                                                                          ::std::os::raw::c_int)
-                                                     ->
-                                                         ::std::os::raw::c_int>,
-    ///
-    pub get_label: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                  *mut _cef_menu_model_t,
-                                                              command_id:
-                                                                  ::std::os::raw::c_int)
-                                             -> *mut _cef_string_utf16_t>,
-    ///
-    pub get_label_at: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                     *mut _cef_menu_model_t,
-                                                                 index:
-                                                                     ::std::os::raw::c_int)
-                                                -> *mut _cef_string_utf16_t>,
-    ///
-    pub set_label: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                  *mut _cef_menu_model_t,
-                                                              command_id:
-                                                                  ::std::os::raw::c_int,
-                                                              label:
-                                                                  *const cef_string_t)
-                                             -> ::std::os::raw::c_int>,
-    ///
-    pub set_label_at: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                     *mut _cef_menu_model_t,
-                                                                 index:
-                                                                     ::std::os::raw::c_int,
-                                                                 label:
-                                                                     *const cef_string_t)
-                                                -> ::std::os::raw::c_int>,
-    ///
-    pub get_type: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                 *mut _cef_menu_model_t,
-                                                             command_id:
-                                                                 ::std::os::raw::c_int)
-                                            -> _bindgen_ty_31>,
-    ///
-    pub get_type_at: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                    *mut _cef_menu_model_t,
-                                                                index:
-                                                                    ::std::os::raw::c_int)
-                                               -> _bindgen_ty_31>,
-    ///
-    pub get_group_id: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                     *mut _cef_menu_model_t,
-                                                                 command_id:
-                                                                     ::std::os::raw::c_int)
-                                                -> ::std::os::raw::c_int>,
-    ///
-    pub get_group_id_at: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                        *mut _cef_menu_model_t,
-                                                                    index:
-                                                                        ::std::os::raw::c_int)
-                                                   -> ::std::os::raw::c_int>,
-    ///
-    pub set_group_id: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                     *mut _cef_menu_model_t,
-                                                                 command_id:
-                                                                     ::std::os::raw::c_int,
-                                                                 group_id:
-                                                                     ::std::os::raw::c_int)
-                                                -> ::std::os::raw::c_int>,
-    ///
-    pub set_group_id_at: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                        *mut _cef_menu_model_t,
-                                                                    index:
-                                                                        ::std::os::raw::c_int,
-                                                                    group_id:
-                                                                        ::std::os::raw::c_int)
-                                                   -> ::std::os::raw::c_int>,
-    ///
-    pub get_sub_menu: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                     *mut _cef_menu_model_t,
-                                                                 command_id:
-                                                                     ::std::os::raw::c_int)
-                                                -> *mut _cef_menu_model_t>,
-    ///
-    pub get_sub_menu_at: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                        *mut _cef_menu_model_t,
-                                                                    index:
-                                                                        ::std::os::raw::c_int)
-                                                   -> *mut _cef_menu_model_t>,
-    ///
-    pub is_visible: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                   *mut _cef_menu_model_t,
-                                                               command_id:
-                                                                   ::std::os::raw::c_int)
-                                              -> ::std::os::raw::c_int>,
-    ///
-    pub is_visible_at: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                      *mut _cef_menu_model_t,
-                                                                  index:
-                                                                      ::std::os::raw::c_int)
-                                                 -> ::std::os::raw::c_int>,
-    ///
-    pub set_visible: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                    *mut _cef_menu_model_t,
-                                                                command_id:
-                                                                    ::std::os::raw::c_int,
-                                                                visible:
-                                                                    ::std::os::raw::c_int)
-                                               -> ::std::os::raw::c_int>,
-    ///
-    pub set_visible_at: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                       *mut _cef_menu_model_t,
-                                                                   index:
-                                                                       ::std::os::raw::c_int,
-                                                                   visible:
-                                                                       ::std::os::raw::c_int)
-                                                  -> ::std::os::raw::c_int>,
-    ///
-    pub is_enabled: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                   *mut _cef_menu_model_t,
-                                                               command_id:
-                                                                   ::std::os::raw::c_int)
-                                              -> ::std::os::raw::c_int>,
-    ///
-    pub is_enabled_at: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                      *mut _cef_menu_model_t,
-                                                                  index:
-                                                                      ::std::os::raw::c_int)
-                                                 -> ::std::os::raw::c_int>,
-    ///
-    pub set_enabled: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                    *mut _cef_menu_model_t,
-                                                                command_id:
-                                                                    ::std::os::raw::c_int,
-                                                                enabled:
-                                                                    ::std::os::raw::c_int)
-                                               -> ::std::os::raw::c_int>,
-    ///
-    pub set_enabled_at: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                       *mut _cef_menu_model_t,
-                                                                   index:
-                                                                       ::std::os::raw::c_int,
-                                                                   enabled:
-                                                                       ::std::os::raw::c_int)
-                                                  -> ::std::os::raw::c_int>,
-    ///
-    pub is_checked: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                   *mut _cef_menu_model_t,
-                                                               command_id:
-                                                                   ::std::os::raw::c_int)
-                                              -> ::std::os::raw::c_int>,
-    ///
-    pub is_checked_at: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                      *mut _cef_menu_model_t,
-                                                                  index:
-                                                                      ::std::os::raw::c_int)
-                                                 -> ::std::os::raw::c_int>,
-    ///
-    pub set_checked: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                    *mut _cef_menu_model_t,
-                                                                command_id:
-                                                                    ::std::os::raw::c_int,
-                                                                checked:
-                                                                    ::std::os::raw::c_int)
-                                               -> ::std::os::raw::c_int>,
-    ///
-    pub set_checked_at: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                       *mut _cef_menu_model_t,
-                                                                   index:
-                                                                       ::std::os::raw::c_int,
-                                                                   checked:
-                                                                       ::std::os::raw::c_int)
-                                                  -> ::std::os::raw::c_int>,
-    ///
-    pub has_accelerator: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                        *mut _cef_menu_model_t,
-                                                                    command_id:
-                                                                        ::std::os::raw::c_int)
-                                                   -> ::std::os::raw::c_int>,
-    ///
-    pub has_accelerator_at: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                           *mut _cef_menu_model_t,
-                                                                       index:
-                                                                           ::std::os::raw::c_int)
-                                                      ->
-                                                          ::std::os::raw::c_int>,
-    ///
-    pub set_accelerator: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                        *mut _cef_menu_model_t,
-                                                                    command_id:
-                                                                        ::std::os::raw::c_int,
-                                                                    key_code:
-                                                                        ::std::os::raw::c_int,
-                                                                    shift_pressed:
-                                                                        ::std::os::raw::c_int,
-                                                                    ctrl_pressed:
-                                                                        ::std::os::raw::c_int,
-                                                                    alt_pressed:
-                                                                        ::std::os::raw::c_int)
-                                                   -> ::std::os::raw::c_int>,
-    ///
-    pub set_accelerator_at: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                           *mut _cef_menu_model_t,
-                                                                       index:
-                                                                           ::std::os::raw::c_int,
-                                                                       key_code:
-                                                                           ::std::os::raw::c_int,
-                                                                       shift_pressed:
-                                                                           ::std::os::raw::c_int,
-                                                                       ctrl_pressed:
-                                                                           ::std::os::raw::c_int,
-                                                                       alt_pressed:
-                                                                           ::std::os::raw::c_int)
-                                                      ->
-                                                          ::std::os::raw::c_int>,
-    ///
-    pub remove_accelerator: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                           *mut _cef_menu_model_t,
-                                                                       command_id:
-                                                                           ::std::os::raw::c_int)
-                                                      ->
-                                                          ::std::os::raw::c_int>,
-    ///
-    pub remove_accelerator_at: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                              *mut _cef_menu_model_t,
-                                                                          index:
-                                                                              ::std::os::raw::c_int)
-                                                         ->
-                                                             ::std::os::raw::c_int>,
-    ///
-    pub get_accelerator: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                        *mut _cef_menu_model_t,
-                                                                    command_id:
-                                                                        ::std::os::raw::c_int,
-                                                                    key_code:
-                                                                        *mut ::std::os::raw::c_int,
-                                                                    shift_pressed:
-                                                                        *mut ::std::os::raw::c_int,
-                                                                    ctrl_pressed:
-                                                                        *mut ::std::os::raw::c_int,
-                                                                    alt_pressed:
-                                                                        *mut ::std::os::raw::c_int)
-                                                   -> ::std::os::raw::c_int>,
-    ///
-    pub get_accelerator_at: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                           *mut _cef_menu_model_t,
-                                                                       index:
-                                                                           ::std::os::raw::c_int,
-                                                                       key_code:
-                                                                           *mut ::std::os::raw::c_int,
-                                                                       shift_pressed:
-                                                                           *mut ::std::os::raw::c_int,
-                                                                       ctrl_pressed:
-                                                                           *mut ::std::os::raw::c_int,
-                                                                       alt_pressed:
-                                                                           *mut ::std::os::raw::c_int)
-                                                      ->
-                                                          ::std::os::raw::c_int>,
-}
-#[test]
-fn bindgen_test_layout__cef_menu_model_t() {
-    assert_eq!(::std::mem::size_of::<_cef_menu_model_t>() , 424usize);
-    assert_eq!(::std::mem::align_of::<_cef_menu_model_t>() , 8usize);
-}
-impl Clone for _cef_menu_model_t {
-    fn clone(&self) -> Self { *self }
-}
-///
-#[repr(C)]
-#[derive(Debug, Copy)]
-pub struct _cef_menu_model_delegate_t {
-    ///
-    pub base: cef_base_t,
-    ///
-    pub execute_command: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                        *mut _cef_menu_model_delegate_t,
-                                                                    menu_model:
-                                                                        *mut _cef_menu_model_t,
-                                                                    command_id:
-                                                                        ::std::os::raw::c_int,
-                                                                    event_flags:
-                                                                        cef_event_flags_t)>,
-    ///
-    pub menu_will_show: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                       *mut _cef_menu_model_delegate_t,
-                                                                   menu_model:
-                                                                       *mut _cef_menu_model_t)>,
-    ///
-    pub menu_closed: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                    *mut _cef_menu_model_delegate_t,
-                                                                menu_model:
-                                                                    *mut _cef_menu_model_t)>,
-    ///
-    pub format_label: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                     *mut _cef_menu_model_delegate_t,
-                                                                 menu_model:
-                                                                     *mut _cef_menu_model_t,
-                                                                 label:
-                                                                     *mut cef_string_t)
-                                                -> ::std::os::raw::c_int>,
-}
-#[test]
-fn bindgen_test_layout__cef_menu_model_delegate_t() {
-    assert_eq!(::std::mem::size_of::<_cef_menu_model_delegate_t>() , 64usize);
-    assert_eq!(::std::mem::align_of::<_cef_menu_model_delegate_t>() , 8usize);
-}
-impl Clone for _cef_menu_model_delegate_t {
-    fn clone(&self) -> Self { *self }
-}
-pub type cef_menu_model_t = _cef_menu_model_t;
-extern "C" {
-    ///
-    pub fn cef_menu_model_create(delegate: *mut _cef_menu_model_delegate_t)
-     -> *mut cef_menu_model_t;
-}
-///
-#[repr(C)]
-#[derive(Debug, Copy)]
-pub struct _cef_context_menu_params_t {
-    ///
-    pub base: cef_base_t,
-    ///
-    pub get_xcoord: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                   *mut _cef_context_menu_params_t)
-                                              -> ::std::os::raw::c_int>,
-    ///
-    pub get_ycoord: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                   *mut _cef_context_menu_params_t)
-                                              -> ::std::os::raw::c_int>,
-    ///
-    pub get_type_flags: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                       *mut _cef_context_menu_params_t)
-                                                  -> _bindgen_ty_32>,
-    ///
-    pub get_link_url: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                     *mut _cef_context_menu_params_t)
-                                                -> *mut _cef_string_utf16_t>,
-    ///
-    pub get_unfiltered_link_url: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                                *mut _cef_context_menu_params_t)
-                                                           ->
-                                                               *mut _cef_string_utf16_t>,
-    ///
-    pub get_source_url: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                       *mut _cef_context_menu_params_t)
-                                                  ->
-                                                      *mut _cef_string_utf16_t>,
-    ///
-    pub has_image_contents: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                           *mut _cef_context_menu_params_t)
-                                                      ->
-                                                          ::std::os::raw::c_int>,
-    ///
-    pub get_page_url: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                     *mut _cef_context_menu_params_t)
-                                                -> *mut _cef_string_utf16_t>,
-    ///
-    pub get_frame_url: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                      *mut _cef_context_menu_params_t)
-                                                 -> *mut _cef_string_utf16_t>,
-    ///
-    pub get_frame_charset: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                          *mut _cef_context_menu_params_t)
-                                                     ->
-                                                         *mut _cef_string_utf16_t>,
-    ///
-    pub get_media_type: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                       *mut _cef_context_menu_params_t)
-                                                  -> _bindgen_ty_33>,
-    ///
-    pub get_media_state_flags: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                              *mut _cef_context_menu_params_t)
-                                                         -> _bindgen_ty_34>,
-    ///
-    pub get_selection_text: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                           *mut _cef_context_menu_params_t)
-                                                      ->
-                                                          *mut _cef_string_utf16_t>,
-    ///
-    pub get_misspelled_word: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                            *mut _cef_context_menu_params_t)
-                                                       ->
-                                                           *mut _cef_string_utf16_t>,
-    ///
-    pub get_dictionary_suggestions: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                                   *mut _cef_context_menu_params_t,
-                                                                               suggestions:
-                                                                                   cef_string_list_t)
-                                                              ->
-                                                                  ::std::os::raw::c_int>,
-    ///
-    pub is_editable: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                    *mut _cef_context_menu_params_t)
-                                               -> ::std::os::raw::c_int>,
-    ///
-    pub is_spell_check_enabled: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                               *mut _cef_context_menu_params_t)
-                                                          ->
-                                                              ::std::os::raw::c_int>,
-    ///
-    pub get_edit_state_flags: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                             *mut _cef_context_menu_params_t)
-                                                        -> _bindgen_ty_35>,
-    ///
-    pub is_custom_menu: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                       *mut _cef_context_menu_params_t)
-                                                  -> ::std::os::raw::c_int>,
-    ///
-    pub is_pepper_menu: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                       *mut _cef_context_menu_params_t)
-                                                  -> ::std::os::raw::c_int>,
-}
-#[test]
-fn bindgen_test_layout__cef_context_menu_params_t() {
-    assert_eq!(::std::mem::size_of::<_cef_context_menu_params_t>() ,
-               192usize);
-    assert_eq!(::std::mem::align_of::<_cef_context_menu_params_t>() , 8usize);
-}
-impl Clone for _cef_context_menu_params_t {
-    fn clone(&self) -> Self { *self }
-}
-///
-#[repr(C)]
-#[derive(Debug, Copy)]
-pub struct _cef_run_context_menu_callback_t {
-    ///
-    pub base: cef_base_t,
-    ///
-    pub cont: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                             *mut _cef_run_context_menu_callback_t,
-                                                         command_id:
-                                                             ::std::os::raw::c_int,
-                                                         event_flags:
-                                                             cef_event_flags_t)>,
-    ///
-    pub cancel: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                               *mut _cef_run_context_menu_callback_t)>,
-}
-#[test]
-fn bindgen_test_layout__cef_run_context_menu_callback_t() {
-    assert_eq!(::std::mem::size_of::<_cef_run_context_menu_callback_t>() ,
-               48usize);
-    assert_eq!(::std::mem::align_of::<_cef_run_context_menu_callback_t>() ,
-               8usize);
-}
-impl Clone for _cef_run_context_menu_callback_t {
-    fn clone(&self) -> Self { *self }
-}
-///
-#[repr(C)]
-#[derive(Debug, Copy)]
-pub struct _cef_context_menu_handler_t {
-    ///
-    pub base: cef_base_t,
-    ///
-    pub on_before_context_menu: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                               *mut _cef_context_menu_handler_t,
-                                                                           browser:
-                                                                               *mut _cef_browser_t,
-                                                                           frame:
-                                                                               *mut _cef_frame_t,
-                                                                           params:
-                                                                               *mut _cef_context_menu_params_t,
-                                                                           model:
-                                                                               *mut _cef_menu_model_t)>,
-    ///
-    pub run_context_menu: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                         *mut _cef_context_menu_handler_t,
-                                                                     browser:
-                                                                         *mut _cef_browser_t,
-                                                                     frame:
-                                                                         *mut _cef_frame_t,
-                                                                     params:
-                                                                         *mut _cef_context_menu_params_t,
-                                                                     model:
-                                                                         *mut _cef_menu_model_t,
-                                                                     callback:
-                                                                         *mut _cef_run_context_menu_callback_t)
-                                                    -> ::std::os::raw::c_int>,
-    ///
-    pub on_context_menu_command: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                                *mut _cef_context_menu_handler_t,
-                                                                            browser:
-                                                                                *mut _cef_browser_t,
-                                                                            frame:
-                                                                                *mut _cef_frame_t,
-                                                                            params:
-                                                                                *mut _cef_context_menu_params_t,
-                                                                            command_id:
-                                                                                ::std::os::raw::c_int,
-                                                                            event_flags:
-                                                                                cef_event_flags_t)
-                                                           ->
-                                                               ::std::os::raw::c_int>,
-    ///
-    pub on_context_menu_dismissed: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                                  *mut _cef_context_menu_handler_t,
-                                                                              browser:
-                                                                                  *mut _cef_browser_t,
-                                                                              frame:
-                                                                                  *mut _cef_frame_t)>,
-}
-#[test]
-fn bindgen_test_layout__cef_context_menu_handler_t() {
-    assert_eq!(::std::mem::size_of::<_cef_context_menu_handler_t>() ,
-               64usize);
-    assert_eq!(::std::mem::align_of::<_cef_context_menu_handler_t>() ,
-               8usize);
-}
-impl Clone for _cef_context_menu_handler_t {
-    fn clone(&self) -> Self { *self }
 }
 ///
 #[repr(C)]

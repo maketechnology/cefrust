@@ -1,5 +1,5 @@
 //include!(concat!(env!("OUT_DIR"), "/cef.rs"));
-extern crate x11;
+//extern crate x11;
 extern crate cefrust;
 
 use cefrust::cef;
@@ -14,9 +14,10 @@ use std::os::raw;
 use std::option::Option;
 use std::env;
 //use std::path::Path;
+use std::str::FromStr;
 
-use x11::xlib;
-
+//use x11::xlib;
+/*
 unsafe extern fn xerror_handler_impl(_: *mut xlib::Display, event: *mut xlib::XErrorEvent) -> raw::c_int {
     print!("X error received: ");
     println!("type {}, serial {}, error_code {}, request_code {}, minor_code {}", 
@@ -27,7 +28,7 @@ unsafe extern fn xerror_handler_impl(_: *mut xlib::Display, event: *mut xlib::XE
 unsafe extern fn xioerror_handler_impl(_: *mut xlib::Display) -> raw::c_int {
     print!("XUI error received");
     0
-}
+}*/
 
 fn cef() {
     //let main_args = cefrust::prepare_args();
@@ -46,8 +47,8 @@ fn cef() {
     //     std::process::exit(exit_code);
     // }
 
-    unsafe { xlib::XSetErrorHandler(Option::Some(xerror_handler_impl)) };
-    unsafe { xlib::XSetIOErrorHandler(Option::Some(xioerror_handler_impl)) };
+    //unsafe { xlib::XSetErrorHandler(Option::Some(xerror_handler_impl)) };
+    //unsafe { xlib::XSetIOErrorHandler(Option::Some(xioerror_handler_impl)) };
 
     //let out_dir = env::var("OUT_DIR").unwrap();
     let cwd_path = env::current_exe().unwrap();
@@ -63,7 +64,7 @@ fn cef() {
     let resources = resources_path.to_str().unwrap();
     unsafe {cef::cef_string_utf8_to_utf16(resources.as_ptr() as *mut std::os::raw::c_char, resources.len(), &mut resources_cef);}
 */
-    let subp_path = cwd.join("cefrust_subp");
+    let subp_path = if cfg!(target_family = "windows") { cwd.join("cefrust_subp.exe") } else { cwd.join("cefrust_subp") };
     let subp = subp_path.to_str().unwrap();
     println!("subp: {:?}", subp);
     let subp_cef = cefrust::cef_string(subp);
@@ -103,8 +104,14 @@ fn cef() {
         accept_language_list: cefrust::cef_string_empty()
     };
 
+    let hwnd = std::env::args().nth(1);
+    let hwnd = hwnd.unwrap_or("0".to_string());
+    //let hwnd: usize = usize::from_str(&hwnd).unwrap();
+    let hwnd = std::os::raw::c_ulong::from_str(&hwnd).unwrap();
+    println!("main hwnd: {}", hwnd);
+
     // Initialize CEF in the main process.
-    let mut app = app::new();
+    let mut app = app::new(hwnd);
     
     //let ten_millis = std::time::Duration::from_millis(3000);
     //std::thread::sleep(ten_millis);

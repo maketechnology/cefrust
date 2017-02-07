@@ -1,3 +1,8 @@
+#[cfg(windows)]
+extern crate winapi;
+#[cfg(windows)]
+extern crate kernel32;
+
 pub mod cef;
 pub mod base;
 
@@ -5,6 +10,7 @@ use std::ffi;
 //use std::os::unix::ffi::OsStrExt;
 use std::os::raw;
 
+#[cfg(unix)]
 pub fn prepare_args() -> cef::_cef_main_args_t {
     let mut args: Vec<*mut raw::c_char> = std::env::args().map(|arg| {
         println!("arg: {:?}", arg);
@@ -26,6 +32,16 @@ pub fn prepare_args() -> cef::_cef_main_args_t {
     };
     println!("Hello CEF, ARGS: {:?}", main_args.argc);
 
+    main_args
+}
+
+#[cfg(windows)]
+pub fn prepare_args() -> cef::_cef_main_args_t {
+    let h_instance: winapi::HMODULE = unsafe { kernel32::GetModuleHandleA(0 as winapi::winnt::LPCSTR) };
+    let main_args = cef::_cef_main_args_t {
+        instance: unsafe { std::mem::transmute(h_instance) }
+    };
+    println!("Hello CEF, hinstance: {:?}", main_args.instance);
     main_args
 }
 
