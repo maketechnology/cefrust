@@ -3,6 +3,7 @@
 #![allow(dead_code)]
 #![allow(non_snake_case)]
 #![allow(non_camel_case_types)]
+use cef::cef_string_t;
 
 ///
 #[repr(C)]
@@ -23,22 +24,25 @@ impl Clone for _cef_main_args_t {
 #[repr(C)]
 #[derive(Debug, Copy)]
 pub struct _cef_window_info_t {
-    pub x: ::std::os::raw::c_uint,
-    pub y: ::std::os::raw::c_uint,
-    pub width: ::std::os::raw::c_uint,
-    pub height: ::std::os::raw::c_uint,
+    pub window_name: cef_string_t,
+    pub x: ::std::os::raw::c_int,
+    pub y: ::std::os::raw::c_int,
+    pub width: ::std::os::raw::c_int,
+    pub height: ::std::os::raw::c_int,
     ///
-    pub parent_window: ::std::os::raw::c_ulong,
+    pub hidden: ::std::os::raw::c_int,
+    ///
+    pub parent_view: *mut ::std::os::raw::c_void,
     ///
     pub windowless_rendering_enabled: ::std::os::raw::c_int,
     ///
     pub transparent_painting_enabled: ::std::os::raw::c_int,
     ///
-    pub window: ::std::os::raw::c_ulong,
+    pub view: *mut ::std::os::raw::c_void,
 }
 #[test]
 fn bindgen_test_layout__cef_window_info_t() {
-    assert_eq!(::std::mem::size_of::<_cef_window_info_t>() , 40usize);
+    assert_eq!(::std::mem::size_of::<_cef_window_info_t>() , 72usize);
     assert_eq!(::std::mem::align_of::<_cef_window_info_t>() , 8usize);
 }
 impl Clone for _cef_window_info_t {

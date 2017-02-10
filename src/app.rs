@@ -28,7 +28,7 @@ pub fn new(hwnd: std::os::raw::c_ulong) -> cef::cef_app_t {
     app
 }
 
-#[cfg(unix)]
+#[cfg(target_os = "linux")]
 fn cef_window_info(hwnd: std::os::raw::c_ulong) -> cef::_cef_window_info_t {
     // Create GTK window. You can pass a NULL handle 
     // to CEF and then it will create a window of its own.
@@ -47,6 +47,26 @@ fn cef_window_info(hwnd: std::os::raw::c_ulong) -> cef::_cef_window_info_t {
         window: 0
     };
     println!("parent {}", window_info.parent_window);
+    window_info
+}
+
+#[cfg(target_os = "macos")]
+fn cef_window_info(hwnd: std::os::raw::c_ulong) -> cef::_cef_window_info_t {
+    let window_info = cef::_cef_window_info_t {
+        x: 0,
+        y: 0,
+        width: 1024,
+        height: 768,
+        //parent_window: unsafe {gtk2::gdk_x11_drawable_get_xid(gtk2::gtk_widget_get_window(hwnd)) },
+        parent_view: hwnd as *mut std::os::raw::c_void,
+        //parent_window: 0,
+        windowless_rendering_enabled: 0,
+        transparent_painting_enabled: 0,
+        view: 0 as *mut std::os::raw::c_void,
+        hidden: 0,
+        window_name: cef::cef_string_t { str: std::ptr::null_mut(),  length: 0,  dtor: Option::None }
+    };
+    println!("parent {:?}", window_info.parent_view);
     window_info
 }
 

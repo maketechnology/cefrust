@@ -14,29 +14,41 @@ fn main() {
   let cwd = std::env::current_dir().unwrap();
   let mut cef_path = cwd.clone();
   
-  if cfg!(target_family = "unix") {
+  if cfg!(target_os = "macos") {
+    cef_path.push("cef_mac");
+  } 
+  else if cfg!(target_os = "linux") {
     cef_path.push("cef_linux");
   } 
-  else if cfg!(target_family = "windows") {
+  else if cfg!(target_os = "windows") {
     cef_path.push("cef_win");
   }
 
   // Tell cargo to tell rustc to link the system shared library.
   let mut cef_bin = cef_path.clone();
   cef_bin.push(CEF_TARGET);
-  println!("cargo:rustc-link-search={}", cef_bin.display());
-  let lib = if cfg!(target_family = "unix") { "cef" } else { "libcef" };
+  let lib = if cfg!(target_os = "windows") {
+    println!("cargo:rustc-link-search={}", cef_bin.display()); 
+    "libcef" 
+  } else if cfg!(target_os = "macos") {
+    println!("cargo:rustc-link-search=framework={}", cef_bin.display());
+    "framework=Chromium Embedded Framework"
+  } else { 
+    println!("cargo:rustc-link-search={}", cef_bin.display());
+    "cef" 
+  };
   println!("cargo:rustc-link-lib={}", lib);
 
   //gen_cef(cef_path.display());
-  //gen_os(cef_path.display());
+  gen_os(cef_path.display());
   
-  let mut cef_path_linux = cwd.clone();
-  cef_path_linux.push("cef_linux");
+  //let mut cef_path_linux = cwd.clone();
+  //cef_path_linux.push("cef_linux");
   //create_links_linux(cef_path_linux.clone());
-  let mut cef_path_win = cwd.clone();
-  cef_path_win.push("cef_win");
-  create_links_win(cef_path_win.clone());
+  //let mut cef_path_win = cwd.clone();
+  //cef_path_win.push("cef_win");
+  //create_links_win(cef_path_win.clone());
+  create_links(cef_path.clone());
 
   //println!("cargo:rustc-link-lib=gtk-x11-2.0");
   //println!("cargo:rustc-link-lib=gdk-x11-2.0");
@@ -45,8 +57,8 @@ fn main() {
   //gen_gtk();
 }
 
-//#[cfg(unix)]
-fn create_links_linux(mut cef_path: path::PathBuf) {
+#[cfg(unix)]
+fn create_links(mut cef_path: path::PathBuf) {
   //link(cef_path.clone(), "Resources");
   cef_path.push("Resources");
   link_dir(cef_path.clone(), "locales");
@@ -64,8 +76,8 @@ fn create_links_linux(mut cef_path: path::PathBuf) {
   link(cef_path.clone(), "snapshot_blob.bin");
 }
 
-//#[cfg(windows)]
-fn create_links_win(mut cef_path: path::PathBuf) {
+#[cfg(windows)]
+fn create_links(mut cef_path: path::PathBuf) {
   //link(cef_path.clone(), "Resources");
   cef_path.push("Resources");
   link_dir(cef_path.clone(), "locales");
@@ -88,14 +100,58 @@ fn create_links_win(mut cef_path: path::PathBuf) {
   link(cef_path.clone(), "snapshot_blob.bin");
 }
 
+#[cfg(target_os = "macos")]
+fn create_links(mut cef_path: path::PathBuf) {
+  extern crate fs_extra;
+
+  cef_path.push(CEF_TARGET);  
+  
+  let profile = env::var("PROFILE").unwrap();
+  let mut out_path = path::PathBuf::from("target");
+  out_path.push(profile);
+
+  let mut app_path = out_path.clone();
+  app_path.push("cefrust.app/Contents");  
+  let mut contents_path = app_path.clone();
+  std::fs::create_dir_all(&app_path).ok();
+
+  app_path.push("Frameworks");
+  std::fs::create_dir(&app_path).ok();
+
+  let mut opts = fs_extra::dir::CopyOptions::new();
+  opts.skip_exist = true;
+  fs_extra::dir::copy(cef_path.join("Chromium Embedded Framework.framework"), & app_path, &opts).unwrap();
+  //link_gen(cef_path.clone(), app_path.clone(), "Chromium Embedded Framework.framework");
+
+  app_path.push("cefrust_subp.app/Contents");
+  std::fs::create_dir_all(&app_path).ok();
+
+  std::fs::copy(path::PathBuf::new().join("PkgInfo"), app_path.join("PkgInfo")).ok();
+  std::fs::copy(path::PathBuf::new().join("Info_subp.plist"), app_path.join("Info.plist")).ok();
+
+  app_path.push("MacOS");
+  std::fs::create_dir(&app_path).ok();
+  //link_gen(out_path.clone(), app_path.clone(), "cefrust_subp");
+  
+  std::fs::copy(path::PathBuf::new().join("PkgInfo"), contents_path.join("PkgInfo")).ok();
+  std::fs::copy(path::PathBuf::new().join("Info.plist"), contents_path.join("Info.plist")).ok();
+
+  contents_path.push("MacOS");
+  std::fs::create_dir_all(&contents_path).ok();
+  //link_gen(out_path.clone(), contents_path.clone(), "cefrust");
+}
+
+#[allow(dead_code)]
 fn link_dir(cef_path: path::PathBuf, file: &str) {
   _link(cef_path, file, false);
 }
 
+#[allow(dead_code)]
 fn link(cef_path: path::PathBuf, file: &str) {
   _link(cef_path, file, true);
 }
 
+#[allow(dead_code)]
 fn _link(mut cef_path: path::PathBuf, file: &str, dir: bool) {
   let profile = env::var("PROFILE").unwrap();
   let mut out_path = path::PathBuf::from("target");
@@ -105,6 +161,14 @@ fn _link(mut cef_path: path::PathBuf, file: &str, dir: bool) {
   out_path.push(file);
   //std::fs::remove_file(&out_path).ok();
   do_link(cef_path, out_path, dir);
+}
+
+#[allow(dead_code)]
+fn link_gen(mut src: path::PathBuf, mut dst: path::PathBuf, file: &str) {
+  src.push(file);
+  dst.push(file);
+  //std::fs::remove_file(&out_path).ok();
+  do_link(src, dst, false);
 }
 
 #[cfg(windows)]
@@ -121,7 +185,7 @@ fn do_link(cef_path: path::PathBuf, out_path: path::PathBuf, _: bool) {
     std::os::unix::fs::symlink(cef_path, out_path).ok();
 }
 
-#[cfg(windows)]
+#[cfg(target_os = "windows")]
 fn gen_os(cef_path: path::Display) {
   let _ = generator(cef_path)
     .header("cef_win.h")
@@ -130,19 +194,29 @@ fn gen_os(cef_path: path::Display) {
     .hide_type(".*string.*")
     .raw_line("use cef::cef_string_t;")
     .generate().expect("Failed to gencef win")
-    //.write_to_file(Path::new(&out_dir).join("cef.rs"));
     .write_to_file(path::Path::new("src").join("cef").join("win.rs"));
 }
 
-#[cfg(unix)]
+#[cfg(target_os = "linux")]
 fn gen_os(cef_path: path::Display) {
   let _ = generator(cef_path)
     .header("cef_linux.h")
     .whitelisted_type("_cef_main_args_t")
     .whitelisted_type("_cef_window_info_t")
     .generate().expect("Failed to gencef linux")
-    //.write_to_file(Path::new(&out_dir).join("cef.rs"));
     .write_to_file(path::Path::new("src").join("cef").join("linux.rs"));
+}
+
+#[cfg(target_os = "macos")]
+fn gen_os(cef_path: path::Display) {
+  let _ = generator(cef_path)
+    .header("cef_mac.h")
+    .whitelisted_type("_cef_main_args_t")
+    .whitelisted_type("_cef_window_info_t")
+    .hide_type(".*string.*")
+    .raw_line("use cef::cef_string_t;")
+    .generate().expect("Failed to gencef mac")
+    .write_to_file(path::Path::new("src").join("cef").join("mac.rs"));
 }
 
 #[allow(dead_code)]
@@ -162,14 +236,16 @@ fn gen_cef(cef_path: path::Display) {
     .whitelisted_function("cef_.*")
     .hide_type("_cef_main_args_t")
     .hide_type("_cef_window_info_t")
-    .raw_line("#[cfg(unix)] pub mod linux;")
-    .raw_line("#[cfg(unix)] pub use self::linux::_cef_window_info_t;")
-    .raw_line("#[cfg(unix)] pub use self::linux::_cef_main_args_t;")
+    .raw_line("#[cfg(target_os = \"linux\")] pub mod linux;")
+    .raw_line("#[cfg(target_os = \"linux\")] pub use self::linux::_cef_window_info_t;")
+    .raw_line("#[cfg(target_os = \"linux\")] pub use self::linux::_cef_main_args_t;")
+    .raw_line("#[cfg(target_os = \"macos\")] pub mod mac;")
+    .raw_line("#[cfg(target_os = \"macos\")] pub use self::mac::_cef_window_info_t;")
+    .raw_line("#[cfg(target_os = \"macos\")] pub use self::mac::_cef_main_args_t;")
     .raw_line("#[cfg(windows)] pub mod win;")
     .raw_line("#[cfg(windows)] pub use self::win::_cef_window_info_t;")
     .raw_line("#[cfg(windows)] pub use self::win::_cef_main_args_t;")
     .generate().expect("Failed to gencef")
-    //.write_to_file(Path::new(&out_dir).join("cef.rs"));
     .write_to_file(path::Path::new("src").join("cef").join("mod.rs"));
 }
 

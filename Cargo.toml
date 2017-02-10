@@ -6,12 +6,16 @@ build = "build.rs"
 
 [build-dependencies]
 bindgen = "0.20"
+fs_extra = "0.1.0"
 
 [dependencies]
 
-[target.'cfg(linux)'.dependencies]
+[target.'cfg(targetlinux)'.dependencies]
 x11 = "2.12.0"
 
 [target.'cfg(windows)'.dependencies]
 winapi = "0.2.8"
 kernel32-sys = "0.2.1"
+
+[target.'cfg(target_os = "macos")'.dependencies]
+cocoa = "0.7.0"

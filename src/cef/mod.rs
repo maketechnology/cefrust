@@ -3,9 +3,12 @@
 #![allow(dead_code)]
 #![allow(non_snake_case)]
 #![allow(non_camel_case_types)]
-#[cfg(unix)] pub mod linux;
-#[cfg(unix)] pub use self::linux::_cef_window_info_t;
-#[cfg(unix)] pub use self::linux::_cef_main_args_t;
+#[cfg(target_os = "linux")] pub mod linux;
+#[cfg(target_os = "linux")] pub use self::linux::_cef_window_info_t;
+#[cfg(target_os = "linux")] pub use self::linux::_cef_main_args_t;
+#[cfg(target_os = "macos")] pub mod mac;
+#[cfg(target_os = "macos")] pub use self::mac::_cef_window_info_t;
+#[cfg(target_os = "macos")] pub use self::mac::_cef_main_args_t;
 #[cfg(windows)] pub mod win;
 #[cfg(windows)] pub use self::win::_cef_window_info_t;
 #[cfg(windows)] pub use self::win::_cef_main_args_t;

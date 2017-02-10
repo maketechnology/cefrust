@@ -64,7 +64,13 @@ fn cef() {
     let resources = resources_path.to_str().unwrap();
     unsafe {cef::cef_string_utf8_to_utf16(resources.as_ptr() as *mut std::os::raw::c_char, resources.len(), &mut resources_cef);}
 */
-    let subp_path = if cfg!(target_family = "windows") { cwd.join("cefrust_subp.exe") } else { cwd.join("cefrust_subp") };
+    let subp_path = if cfg!(target_os = "windows") { 
+        cwd.join("cefrust_subp.exe")
+    } else if cfg!(target_os = "macos") {
+        cwd.join("../Frameworks/cefrust_subp.app/Contents/MacOS/cefrust_subp")
+    } else { 
+        cwd.join("cefrust_subp") 
+    };
     let subp = subp_path.to_str().unwrap();
     println!("subp: {:?}", subp);
     let subp_cef = cefrust::cef_string(subp);
