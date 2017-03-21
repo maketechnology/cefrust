@@ -87,7 +87,7 @@ fn cef() {
         multi_threaded_message_loop: 0,
         external_message_pump: 0,
         windowless_rendering_enabled: 0,
-        command_line_args_disabled: 1,
+        command_line_args_disabled: 0,
         cache_path: cefrust::cef_string_empty(),
         user_data_path: cefrust::cef_string_empty(),
         persist_session_cookies: 0,

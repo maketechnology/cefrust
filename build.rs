@@ -40,7 +40,7 @@ fn main() {
   println!("cargo:rustc-link-lib={}", lib);
 
   //gen_cef(cef_path.display());
-  gen_os(cef_path.display());
+  //gen_os(cef_path.display());
   
   //let mut cef_path_linux = cwd.clone();
   //cef_path_linux.push("cef_linux");
@@ -143,12 +143,12 @@ fn create_links(mut cef_path: path::PathBuf) {
 
 #[allow(dead_code)]
 fn link_dir(cef_path: path::PathBuf, file: &str) {
-  _link(cef_path, file, false);
+  _link(cef_path, file, true);
 }
 
 #[allow(dead_code)]
 fn link(cef_path: path::PathBuf, file: &str) {
-  _link(cef_path, file, true);
+  _link(cef_path, file, false);
 }
 
 #[allow(dead_code)]

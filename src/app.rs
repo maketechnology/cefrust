@@ -86,10 +86,10 @@ fn cef_window_info(hwnd: std::os::raw::c_ulong) -> cef::_cef_window_info_t {
         window: 0 as cef::win::HWND,
         ex_style: 0,
         window_name: cef::cef_string_t { str: std::ptr::null_mut(),  length: 0,  dtor: Option::None },
-        style: winapi::winuser::WS_CHILDWINDOW | winapi::winuser::WS_CLIPCHILDREN
-            | winapi::winuser::WS_CLIPSIBLINGS | winapi::winuser::WS_VISIBLE | winapi::winuser::WS_TABSTOP,
-        //style: winapi::winuser::WS_POPUP | winapi::winuser::WS_OVERLAPPEDWINDOW | winapi::winuser::WS_CHILDWINDOW | winapi::winuser::WS_CLIPCHILDREN
-        //    | winapi::winuser::WS_CLIPSIBLINGS | winapi::winuser::WS_VISIBLE,
+        //style: winapi::winuser::WS_CHILDWINDOW | winapi::winuser::WS_CLIPCHILDREN
+        //    | winapi::winuser::WS_CLIPSIBLINGS | winapi::winuser::WS_VISIBLE | winapi::winuser::WS_TABSTOP,
+        style: winapi::winuser::WS_POPUP | winapi::winuser::WS_OVERLAPPEDWINDOW | winapi::winuser::WS_CHILDWINDOW | winapi::winuser::WS_CLIPCHILDREN
+            | winapi::winuser::WS_CLIPSIBLINGS | winapi::winuser::WS_VISIBLE,
         menu: 0 as cef::win::HMENU
     };
     println!("parent {:?}", window_info.parent_window);
