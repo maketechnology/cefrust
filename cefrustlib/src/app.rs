@@ -5,6 +5,7 @@ use cefrust::cef;
 
 use cefrust::base;
 use client;
+#[cfg(target_os = "linux")]
 use gtk2;
 
 use std;
@@ -38,7 +39,7 @@ pub unsafe extern "C" fn window_focus_in(widget: *mut libc::c_void, event: *mut 
   1
 }
 
-pub fn create_browser(canvas_hwnd: u64, url: &str, jclient: &mut cef::_cef_client_t) -> *const cef::cef_browser_t {
+pub fn create_browser(canvas_hwnd: std::os::raw::c_ulong, url: &str, jclient: &mut cef::_cef_client_t) -> *const cef::cef_browser_t {
         // Create GTK window. You can pass a NULL handle 
     // to CEF and then it will create a window of its own.
     println!("create_browser in {}", canvas_hwnd);
@@ -52,20 +53,8 @@ pub fn create_browser(canvas_hwnd: u64, url: &str, jclient: &mut cef::_cef_clien
     //unsafe { gtk2::g_signal_connect_data(vbox as *mut libc::c_void, event.as_ptr(), 
     //    Option::Some(window_focus_in), std::ptr::null_mut(), Option::None, gtk2::G_CONNECT_SWAPPED) };
 
-    let window_info = cef::_cef_window_info_t {
-        x: 0,
-        y: 0,
-        width: 0,
-        height: 0,
-        //parent_window: 0,
-        parent_window: unsafe {gtk2::gdk_x11_drawable_get_xid(gtk2::gtk_widget_get_window(canvas_hwnd as *mut libc::c_void)) },
-        //parent_window: unsafe {gtk2::gdk_x11_drawable_get_xid(gtk2::gtk_widget_get_window(vbox as *mut libc::c_void)) },
-        windowless_rendering_enabled: 0,
-        transparent_painting_enabled: 0,
-        window: 0
-        //window: unsafe {gtk2::gdk_x11_drawable_get_xid(gtk2::gtk_widget_get_window(vbox as *mut libc::c_void)) }
-    };
-    println!("parent {}", window_info.parent_window);
+    let window_info = cef_window_info(canvas_hwnd);
+    println!("parent {:?}", window_info.parent_window);
     //self.vbox_hwnd = vbox;
 
     // Browser settings.
@@ -126,6 +115,76 @@ pub fn create_browser(canvas_hwnd: u64, url: &str, jclient: &mut cef::_cef_clien
     //}
     let browser: *mut cef::cef_browser_t = unsafe { cef::cef_browser_host_create_browser_sync(&window_info, client, &url_cef, &browser_settings, std::ptr::null_mut()) };
     browser
+}
+
+
+#[cfg(target_os = "linux")]
+fn cef_window_info(hwnd: std::os::raw::c_ulong) -> cef::_cef_window_info_t {
+    // Create GTK window. You can pass a NULL handle 
+    // to CEF and then it will create a window of its own.
+    //initialize_gtk();
+    //let hwnd = create_gtk_window(String::from("cefcapi example"), 1024, 768);
+    let window_info = cef::_cef_window_info_t {
+        x: 0,
+        y: 0,
+        width: 1024,
+        height: 768,
+        //parent_window: unsafe {gtk2::gdk_x11_drawable_get_xid(gtk2::gtk_widget_get_window(hwnd)) },
+        parent_window: unsafe {gtk2::gdk_x11_drawable_get_xid(gtk2::gtk_widget_get_window(hwnd as *mut libc::c_void))},
+        //parent_window: hwnd,
+        //parent_window: 0,
+        windowless_rendering_enabled: 0,
+        transparent_painting_enabled: 0,
+        window: 0
+    };
+    println!("parent {}", window_info.parent_window);
+    window_info
+}
+
+#[cfg(target_os = "macos")]
+fn cef_window_info(hwnd: std::os::raw::c_ulong) -> cef::_cef_window_info_t {
+    let window_info = cef::_cef_window_info_t {
+        x: 0,
+        y: 0,
+        width: 1024,
+        height: 768,
+        //parent_window: unsafe {gtk2::gdk_x11_drawable_get_xid(gtk2::gtk_widget_get_window(hwnd)) },
+        parent_view: hwnd as *mut std::os::raw::c_void,
+        //parent_window: 0,
+        windowless_rendering_enabled: 0,
+        transparent_painting_enabled: 0,
+        view: 0 as *mut std::os::raw::c_void,
+        hidden: 0,
+        window_name: cef::cef_string_t { str: std::ptr::null_mut(),  length: 0,  dtor: Option::None }
+    };
+    println!("parent {:?}", window_info.parent_view);
+    window_info
+}
+
+#[cfg(windows)]
+fn cef_window_info(hwnd: std::os::raw::c_ulong) -> cef::_cef_window_info_t {
+    extern crate winapi;
+
+    let window_info = cef::_cef_window_info_t {
+        x: 0,
+        y: 0,
+        width: 1024,
+        height: 768,
+        parent_window: hwnd as cef::win::HWND,
+        //parent_window: std::ptr::null_mut() as cef::win::HWND,
+        windowless_rendering_enabled: 0,
+        transparent_painting_enabled: 0,
+        window: 0 as cef::win::HWND,
+        ex_style: 0,
+        window_name: cef::cef_string_t { str: std::ptr::null_mut(),  length: 0,  dtor: Option::None },
+        style: winapi::winuser::WS_CHILDWINDOW | winapi::winuser::WS_CLIPCHILDREN
+            | winapi::winuser::WS_CLIPSIBLINGS | winapi::winuser::WS_VISIBLE | winapi::winuser::WS_TABSTOP,
+        //style: winapi::winuser::WS_POPUP | winapi::winuser::WS_OVERLAPPEDWINDOW | winapi::winuser::WS_CHILDWINDOW | winapi::winuser::WS_CLIPCHILDREN
+        //    | winapi::winuser::WS_CLIPSIBLINGS | winapi::winuser::WS_VISIBLE,
+        menu: 0 as cef::win::HMENU
+    };
+    println!("parent {:?}", window_info.parent_window);
+    window_info
 }
 
 unsafe extern "C" fn on_context_initialized(_: *mut cef::_cef_browser_process_handler_t) {

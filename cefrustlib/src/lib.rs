@@ -1,15 +1,15 @@
 extern crate cefrust;
 extern crate libc;
-extern crate x11;
 
 mod app;
 mod client;
+#[cfg(target_os = "linux")]
 mod gtk2;
 
 use cefrust::cef;
-use x11::xlib;
-//use std::env;
 
+//use std::env;
+/*
 unsafe extern fn xerror_handler_impl(_: *mut xlib::Display, event: *mut xlib::XErrorEvent) -> libc::c_int {
     print!("X error received: ");
     println!("type {}, serial {}, error_code {}, request_code {}, minor_code {}", 
@@ -21,26 +21,29 @@ unsafe extern fn xioerror_handler_impl(_: *mut xlib::Display) -> libc::c_int {
     println!("XUI error received");
     0
 }
-
+*/
 #[no_mangle]
-pub extern fn init(japp: *const cef::cef_app_t) -> *const cef::cef_app_t {
+pub extern fn init(japp: *const cef::cef_app_t, cefrust_path: *const libc::c_char) -> *const cef::cef_app_t {
     println!("DLL init");
+    let cefrust_path = str_from_c(cefrust_path);
 
     //println!("sizeof: {}", std::mem::size_of::<app::App>());
 
     let main_args = cefrust::prepare_args();
 
-    unsafe { xlib::XSetErrorHandler(Option::Some(xerror_handler_impl)) };
-    unsafe { xlib::XSetIOErrorHandler(Option::Some(xioerror_handler_impl)) };
+    //unsafe { xlib::XSetErrorHandler(Option::Some(xerror_handler_impl)) };
+    //unsafe { xlib::XSetIOErrorHandler(Option::Some(xioerror_handler_impl)) };
 
-    //let subp_path = cwd.join("cefrust_subp");
-    //let subp = subp_path.to_str().unwrap();
-    //println!("subp: {:?}", subp);
-
-    let locales_cef = cefrust::cef_string("/home/guille/workspaces/rust/cefrust/target/debug/locales");
-    let resources_cef = cefrust::cef_string("/home/guille/workspaces/rust/cefrust/target/debug/Resources");
-    let subp_cef = cefrust::cef_string("/home/guille/workspaces/rust/cefrust/target/debug/cefrust_subp");
-    let logfile_cef = cefrust::cef_string("/home/guille/workspaces/rust/cefrust/target/debug/lib.log");
+    //let cefrust_dir = "/home/guille/workspaces/rust/cefrust/target/debug";
+    let cefrust_dir = std::path::Path::new(&cefrust_path);
+    let subp = cefrust::subp_path(cefrust_dir);
+    let subp_cef = cefrust::cef_string(&subp);
+    
+    //let cefrust_dir = cefrust_dir.to_str().unwrap();
+    let locales_cef = cefrust::cef_string(cefrust_dir.join("locales").to_str().unwrap());
+    //let resources_cef = cefrust::cef_string(cefrust_dir.join("Resources").to_str().unwrap());
+    let resources_cef = cefrust::cef_string_empty();
+    let logfile_cef = cefrust::cef_string(cefrust_dir.join("lib.log").to_str().unwrap());
 
     let settings = cef::_cef_settings_t {
         size: std::mem::size_of::<cef::_cef_settings_t>(),
@@ -94,7 +97,7 @@ fn str_from_c(cstr: *const libc::c_char) -> &'static str {
 }
 
 #[no_mangle]
-pub extern fn create_browser(hwnd: u64, url: *const libc::c_char, client: &mut cef::_cef_client_t) -> *const cef::cef_browser_t {
+pub extern fn create_browser(hwnd: std::os::raw::c_ulong, url: *const libc::c_char, client: &mut cef::_cef_client_t) -> *const cef::cef_browser_t {
     println!("create_browser");
 
     println!("hwnd: {}", hwnd);
@@ -168,6 +171,14 @@ pub extern fn resized(browser: *mut cef::cef_browser_t, width: i32, height: i32)
     //println!("win: {:?}", gtk_win);
     //unsafe { gtk2::gdk_window_resize(gtk_win, width, height) };
     //unsafe { gtk2::gtk_widget_set_size_request((*app).vbox_hwnd as *mut libc::c_void, width, height) };
+    do_resize(win_handle);
+}
+
+#[cfg(target_os = "linux")]
+fn do_resize(win_handle: std::os::raw::c_ulong) {
+    extern crate x11;
+    use x11::xlib;
+
     let xwindow = win_handle;
     let xdisplay = unsafe { cef::cef_get_xdisplay() };
     let mut changes = xlib::XWindowChanges {
@@ -181,6 +192,11 @@ pub extern fn resized(browser: *mut cef::cef_browser_t, width: i32, height: i32)
     };
     unsafe { xlib::XConfigureWindow(std::mem::transmute(xdisplay), xwindow,
         (xlib::CWX | xlib::CWY | xlib::CWHeight | xlib::CWWidth) as u32, &mut changes) };
+}
+
+#[cfg(target_family = "windows")]
+fn do_resize(win_handle: std::os::raw::c_ulong) {
+    //TODO
 }
 
 #[no_mangle]
@@ -213,12 +229,22 @@ pub extern fn set_focus(browser: *mut cef::cef_browser_t, set: bool, parent: *mu
     };
     println!("<<<<<<<< set_focus {}", focus);
     unsafe { focus_fn(browser_host, focus) };
-    if !set && parent as u64 != 0 {
-        let root = unsafe { gtk2::gtk_widget_get_toplevel(parent) };
-        println!("<<<<<<<< set_focus {} {:?} {:?}", focus, parent, root);
-        // workaround to actually remove focus from cef inputs
-        unsafe { gtk2::gtk_window_present(root) };
+    if !set && parent as std::os::raw::c_ulong != 0 {
+        do_set_focus(parent, focus);
     }
+}
+
+#[cfg(target_os = "linux")]
+fn do_set_focus(parent: *mut libc::c_void, focus: i32) {
+    let root = unsafe { gtk2::gtk_widget_get_toplevel(parent) };
+    println!("<<<<<<<< set_focus {} {:?} {:?}", focus, parent, root);
+    // workaround to actually remove focus from cef inputs
+    unsafe { gtk2::gtk_window_present(root) };
+}
+
+#[cfg(target_family = "windows")]
+fn do_set_focus(parent: *mut libc::c_void, focus: i32) {
+    // TODO
 }
 
 #[no_mangle]

@@ -13,3 +13,9 @@ cargo build --release
 ## Run sample app
 
 cargo run --bin cefrust
+
+## Build shared lib
+
+cd cefrustlib
+cargo build
+cp target/debug/cefrustlib* ../target/debug/

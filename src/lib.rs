@@ -6,9 +6,22 @@ extern crate kernel32;
 pub mod cef;
 pub mod base;
 
-use std::ffi;
+//use std::ffi;
 //use std::os::unix::ffi::OsStrExt;
-use std::os::raw;
+//use std::os::raw;
+
+pub fn subp_path(cwd: &std::path::Path) -> String {
+    let subp_path = if cfg!(target_os = "windows") { 
+        cwd.join("cefrust_subp.exe")
+    } else if cfg!(target_os = "macos") {
+        cwd.join("../Frameworks/cefrust_subp.app/Contents/MacOS/cefrust_subp")
+    } else { 
+        cwd.join("cefrust_subp") 
+    };
+    let subp = subp_path.to_str().unwrap();
+    println!("subp: {:?}", subp);
+    String::from(subp)
+}
 
 #[cfg(unix)]
 pub fn prepare_args() -> cef::_cef_main_args_t {
@@ -40,6 +53,7 @@ pub fn prepare_args() -> cef::_cef_main_args_t {
     let h_instance: winapi::HMODULE = unsafe { kernel32::GetModuleHandleA(0 as winapi::winnt::LPCSTR) };
     let main_args = cef::_cef_main_args_t {
         instance: unsafe { std::mem::transmute(h_instance) }
+        //instance: unsafe { std::mem::transmute(0 as i64) }
     };
     println!("Hello CEF, hinstance: {:?}", main_args.instance);
     main_args

@@ -10,8 +10,8 @@ mod app;
 mod client;
 mod gtk2;
 
-use std::os::raw;
-use std::option::Option;
+//use std::os::raw;
+//use std::option::Option;
 use std::env;
 //use std::path::Path;
 use std::str::FromStr;
@@ -51,8 +51,6 @@ fn cef() {
     //unsafe { xlib::XSetIOErrorHandler(Option::Some(xioerror_handler_impl)) };
 
     //let out_dir = env::var("OUT_DIR").unwrap();
-    let cwd_path = env::current_exe().unwrap();
-    let cwd = cwd_path.parent().unwrap();
 /*
     let mut locales_cef = cef::cef_string_t {str: std::ptr::null_mut(), length: 0, dtor: Option::None};
     let locales_path = cwd.join("locales");
@@ -64,16 +62,10 @@ fn cef() {
     let resources = resources_path.to_str().unwrap();
     unsafe {cef::cef_string_utf8_to_utf16(resources.as_ptr() as *mut std::os::raw::c_char, resources.len(), &mut resources_cef);}
 */
-    let subp_path = if cfg!(target_os = "windows") { 
-        cwd.join("cefrust_subp.exe")
-    } else if cfg!(target_os = "macos") {
-        cwd.join("../Frameworks/cefrust_subp.app/Contents/MacOS/cefrust_subp")
-    } else { 
-        cwd.join("cefrust_subp") 
-    };
-    let subp = subp_path.to_str().unwrap();
-    println!("subp: {:?}", subp);
-    let subp_cef = cefrust::cef_string(subp);
+    let cwd_path = env::current_exe().unwrap();
+    let cwd = cwd_path.parent().unwrap();
+    let subp = cefrust::subp_path(cwd);
+    let subp_cef = cefrust::cef_string(&subp);
 
     let resources_cef = cefrust::cef_string_empty();
     let locales_cef = cefrust::cef_string_empty();

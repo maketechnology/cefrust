@@ -6,7 +6,12 @@ authors = ["Guillermo Zunino <guillez@gmail.com>"]
 [dependencies]
 cefrust = { path = "..", version = "0.1.0" }
 libc = "0.2.20"
+
+[target.'cfg(targetlinux)'.dependencies]
 x11 = "2.12.0"
+
+[target.'cfg(windows)'.dependencies]
+winapi = "0.2.8"
 
 [lib]
 name = "cefrustlib"

@@ -7,7 +7,7 @@ use client;
 //use gtk2;
 
 use std;
-use std::ffi;
+//use std::ffi;
 
 //static mut CTX: Option<cef::_cef_browser_process_handler_t> = Option::None;
 static mut HWND: Option<std::os::raw::c_ulong> = Option::None;
