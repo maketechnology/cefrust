@@ -171,11 +171,11 @@ pub extern fn resized(browser: *mut cef::cef_browser_t, width: i32, height: i32)
     //println!("win: {:?}", gtk_win);
     //unsafe { gtk2::gdk_window_resize(gtk_win, width, height) };
     //unsafe { gtk2::gtk_widget_set_size_request((*app).vbox_hwnd as *mut libc::c_void, width, height) };
-    do_resize(win_handle);
+    do_resize(win_handle, width, height);
 }
 
 #[cfg(target_os = "linux")]
-fn do_resize(win_handle: std::os::raw::c_ulong) {
+fn do_resize(win_handle: std::os::raw::c_ulong, width: i32, height: i32) {
     extern crate x11;
     use x11::xlib;
 
@@ -195,8 +195,15 @@ fn do_resize(win_handle: std::os::raw::c_ulong) {
 }
 
 #[cfg(target_family = "windows")]
-fn do_resize(win_handle: std::os::raw::c_ulong) {
-    //TODO
+fn do_resize(win_handle: std::os::raw::c_ulong, width: i32, height: i32) {
+    extern crate winapi;
+    extern crate user32;
+
+    let x = 0;
+    let y = 0;
+    unsafe { user32::SetWindowPos(win_handle as *mut winapi::HWND__, std::ptr::null_mut(), x, y,
+                 width, height,
+                 winapi::winuser::SWP_NOZORDER) };
 }
 
 #[no_mangle]
