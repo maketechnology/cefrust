@@ -19,3 +19,8 @@ cargo run --bin cefrust
 cd cefrustlib
 cargo build
 cp target/debug/cefrustlib* ../target/debug/
+
+### For release
+
+cargo build --release
+cp target/release/cefrustlib* ../target/release/

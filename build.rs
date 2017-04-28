@@ -21,7 +21,7 @@ fn main() {
     cef_path.push("cef_linux");
   } 
   else if cfg!(target_os = "windows") {
-    cef_path.push("cef_win");
+    cef_path.push("cef_windows");
   }
 
   // Tell cargo to tell rustc to link the system shared library.
@@ -46,7 +46,7 @@ fn main() {
   //cef_path_linux.push("cef_linux");
   //create_links_linux(cef_path_linux.clone());
   //let mut cef_path_win = cwd.clone();
-  //cef_path_win.push("cef_win");
+  //cef_path_win.push("cef_windows");
   //create_links_win(cef_path_win.clone());
   create_links(cef_path.clone());
 
