@@ -9,8 +9,9 @@ bindgen = "0.20"
 fs_extra = "0.1.0"
 
 [dependencies]
+libc = "0.2.20"
 
-[target.'cfg(targetlinux)'.dependencies]
+[target.'cfg(target_os = "linux")'.dependencies]
 x11 = "2.12.0"
 
 [target.'cfg(windows)'.dependencies]

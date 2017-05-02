@@ -1,5 +1,7 @@
 extern crate cefrust;
 extern crate libc;
+#[cfg(target_os = "linux")]
+extern crate x11;
 
 mod app;
 mod client;
@@ -8,41 +10,51 @@ mod gtk2;
 
 use cefrust::cef;
 
-//use std::env;
-/*
-unsafe extern fn xerror_handler_impl(_: *mut xlib::Display, event: *mut xlib::XErrorEvent) -> libc::c_int {
+use std::env;
+
+#[cfg(target_os = "linux")]
+unsafe extern fn xerror_handler_impl(_: *mut x11::xlib::Display, event: *mut x11::xlib::XErrorEvent) -> libc::c_int {
     print!("X error received: ");
     println!("type {}, serial {}, error_code {}, request_code {}, minor_code {}", 
         (*event).type_, (*event).serial, (*event).error_code, (*event).request_code, (*event).minor_code);
     0
 }
-
-unsafe extern fn xioerror_handler_impl(_: *mut xlib::Display) -> libc::c_int {
+#[cfg(target_os = "linux")]
+unsafe extern fn xioerror_handler_impl(_: *mut x11::xlib::Display) -> libc::c_int {
     println!("XUI error received");
     0
 }
-*/
+
 #[no_mangle]
 pub extern fn init(japp: *const cef::cef_app_t, cefrust_path: *const libc::c_char) -> *const cef::cef_app_t {
     println!("DLL init");
+
     let cefrust_path = str_from_c(cefrust_path);
+
+    let key = "LD_LIBRARY_PATH";
+    env::set_var(key, cefrust_path);
+    assert_eq!(env::var(key), Ok("/home/guille/.swtcef/3.2785.1486.g8c4ba9f/linux-x86_64".to_string()));
 
     //println!("sizeof: {}", std::mem::size_of::<app::App>());
 
     let main_args = cefrust::prepare_args();
 
-    //unsafe { xlib::XSetErrorHandler(Option::Some(xerror_handler_impl)) };
-    //unsafe { xlib::XSetIOErrorHandler(Option::Some(xioerror_handler_impl)) };
-
     //let cefrust_dir = "/home/guille/workspaces/rust/cefrust/target/debug";
     let cefrust_dir = std::path::Path::new(&cefrust_path);
+    if cfg!(target_os = "linux") {
+        unsafe { x11::xlib::XSetErrorHandler(Option::Some(xerror_handler_impl)) };
+        unsafe { x11::xlib::XSetIOErrorHandler(Option::Some(xioerror_handler_impl)) };
+        env::set_current_dir(cefrust_dir);
+        println!("{:?}", env::current_dir().unwrap().to_str());
+    }
     let subp = cefrust::subp_path(cefrust_dir);
     let subp_cef = cefrust::cef_string(&subp);
     
     //let cefrust_dir = cefrust_dir.to_str().unwrap();
     let locales_cef = cefrust::cef_string(cefrust_dir.join("locales").to_str().unwrap());
     //let resources_cef = cefrust::cef_string(cefrust_dir.join("Resources").to_str().unwrap());
-    let resources_cef = cefrust::cef_string_empty();
+    //let resources_cef = cefrust::cef_string_empty();
+    let resources_cef = cefrust::cef_string(cefrust_dir.to_str().unwrap());
     let logfile_cef = cefrust::cef_string(cefrust_dir.join("lib.log").to_str().unwrap());
 
     let settings = cef::_cef_settings_t {
@@ -85,9 +97,19 @@ pub extern fn init(japp: *const cef::cef_app_t, cefrust_path: *const libc::c_cha
     let app_box = Box::new(app);
     let app_raw = Box::into_raw(app_box);
     println!("Calling cef_initialize");
+    backup_signal_handlers();
     unsafe { cef::cef_initialize(&main_args, &settings, &mut (*app_raw), std::ptr::null_mut()) };
+    restore_signal_handlers();
     //unsafe { cef::cef_initialize(&main_args, &settings, &mut app.cef_app, std::ptr::null_mut()) };
     app_raw
+}
+
+fn restore_signal_handlers() {
+
+}
+
+fn backup_signal_handlers() {
+
 }
 
 fn str_from_c(cstr: *const libc::c_char) -> &'static str {
@@ -176,7 +198,6 @@ pub extern fn resized(browser: *mut cef::cef_browser_t, width: i32, height: i32)
 
 #[cfg(target_os = "linux")]
 fn do_resize(win_handle: std::os::raw::c_ulong, width: i32, height: i32) {
-    extern crate x11;
     use x11::xlib;
 
     let xwindow = win_handle;

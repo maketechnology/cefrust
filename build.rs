@@ -24,6 +24,12 @@ fn main() {
     cef_path.push("cef_windows");
   }
 
+  if cfg!(target_os = "linux") {
+    println!("cargo:rustc-link-lib=gtk-x11-2.0");
+    println!("cargo:rustc-link-lib=gdk-x11-2.0");
+    println!("cargo:rustc-link-lib=X11");
+  }
+
   // Tell cargo to tell rustc to link the system shared library.
   let mut cef_bin = cef_path.clone();
   cef_bin.push(CEF_TARGET);
@@ -49,10 +55,6 @@ fn main() {
   //cef_path_win.push("cef_windows");
   //create_links_win(cef_path_win.clone());
   create_links(cef_path.clone());
-
-  //println!("cargo:rustc-link-lib=gtk-x11-2.0");
-  //println!("cargo:rustc-link-lib=gdk-x11-2.0");
-  //println!("cargo:rustc-link-lib=X11");
   
   //gen_gtk();
 }

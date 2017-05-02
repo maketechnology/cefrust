@@ -7,8 +7,8 @@ pub mod cef;
 pub mod base;
 
 //use std::ffi;
-//use std::os::unix::ffi::OsStrExt;
 //use std::os::raw;
+//use std::os::unix::ffi::OsStrExt;
 
 pub fn subp_path(cwd: &std::path::Path) -> String {
     let subp_path = if cfg!(target_os = "windows") { 
@@ -25,6 +25,8 @@ pub fn subp_path(cwd: &std::path::Path) -> String {
 
 #[cfg(unix)]
 pub fn prepare_args() -> cef::_cef_main_args_t {
+    use std::ffi;
+    use std::os::raw;
     let mut args: Vec<*mut raw::c_char> = std::env::args().map(|arg| {
         println!("arg: {:?}", arg);
         let carg_rslt = ffi::CString::new(arg);
