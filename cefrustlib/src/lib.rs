@@ -2,6 +2,8 @@ extern crate cefrust;
 extern crate libc;
 #[cfg(target_os = "linux")]
 extern crate x11;
+#[cfg(unix)]
+extern crate nix;
 
 mod app;
 mod client;
@@ -11,6 +13,7 @@ mod gtk2;
 use cefrust::cef;
 
 use std::env;
+use std::collections::HashMap;
 
 #[cfg(target_os = "linux")]
 unsafe extern fn xerror_handler_impl(_: *mut x11::xlib::Display, event: *mut x11::xlib::XErrorEvent) -> libc::c_int {
@@ -44,7 +47,7 @@ pub extern fn init(japp: *const cef::cef_app_t, cefrust_path: *const libc::c_cha
     if cfg!(target_os = "linux") {
         unsafe { x11::xlib::XSetErrorHandler(Option::Some(xerror_handler_impl)) };
         unsafe { x11::xlib::XSetIOErrorHandler(Option::Some(xioerror_handler_impl)) };
-        env::set_current_dir(cefrust_dir);
+        env::set_current_dir(cefrust_dir).expect("Failed to set current dir");
         println!("{:?}", env::current_dir().unwrap().to_str());
     }
     let subp = cefrust::subp_path(cefrust_dir);
@@ -96,20 +99,52 @@ pub extern fn init(japp: *const cef::cef_app_t, cefrust_path: *const libc::c_cha
 
     let app_box = Box::new(app);
     let app_raw = Box::into_raw(app_box);
+    
     println!("Calling cef_initialize");
-    backup_signal_handlers();
-    unsafe { cef::cef_initialize(&main_args, &settings, &mut (*app_raw), std::ptr::null_mut()) };
-    restore_signal_handlers();
-    //unsafe { cef::cef_initialize(&main_args, &settings, &mut app.cef_app, std::ptr::null_mut()) };
+    if cfg!(unix) {
+        let mut signal_handlers: HashMap<libc::c_int, nix::sys::signal::SigAction> = HashMap::new();
+        backup_signal_handlers(&mut signal_handlers);
+        unsafe { cef::cef_initialize(&main_args, &settings, &mut (*app_raw), std::ptr::null_mut()) };
+        if cfg!(unix) {
+            restore_signal_handlers(signal_handlers);
+        }
+    } else {
+       unsafe { cef::cef_initialize(&main_args, &settings, &mut (*app_raw), std::ptr::null_mut()) };
+    }
+    
     app_raw
 }
 
-fn restore_signal_handlers() {
-
+#[cfg(unix)]
+fn backup_signal_handlers(signal_handlers: &mut HashMap<libc::c_int, nix::sys::signal::SigAction>) {
+    use nix::sys::signal;
+    let signals_to_restore = [signal::SIGHUP, signal::SIGINT, signal::SIGQUIT, signal::SIGILL, 
+        signal::SIGABRT, signal::SIGFPE, signal::SIGSEGV, signal::SIGALRM, signal::SIGTERM, 
+        signal::SIGCHLD, signal::SIGBUS, signal::SIGTRAP, signal::SIGPIPE];
+    
+    for signal in &signals_to_restore {
+        //let sigact: *mut libc::sigaction = unsafe { std::mem::zeroed() };
+        //let sigact: libc::sigaction = libc::sigaction {};
+        //unsafe { libc::sigaction(*signal, std::ptr::null(), sigact) };
+        //println!("backup signal {:?}:{:?}", *signal, sigact);
+        //signal_handlers.insert(*signal, sigact);
+        let sig_action = signal::SigAction::new(signal::SigHandler::SigDfl,
+                                          signal::SaFlags::empty(),
+                                          signal::SigSet::empty());
+        let oldsigact = unsafe { signal::sigaction(*signal, &sig_action) };
+        println!("backup signal {:?}:{:?}", signal, "oldsigact.ok()");
+        signal_handlers.insert(*signal as libc::c_int, oldsigact.unwrap());
+    }
 }
 
-fn backup_signal_handlers() {
-
+#[cfg(unix)]
+fn restore_signal_handlers(signal_handlers: HashMap<libc::c_int, nix::sys::signal::SigAction>) {
+    use nix::sys::signal;
+    for (signal, sigact) in signal_handlers {
+        println!("restore signal {:?}:{:?}", signal, "sigact");
+        //unsafe { libc::sigaction(signal, sigact, std::ptr::null_mut()) };
+        unsafe { signal::sigaction(std::mem::transmute(signal), &sigact).unwrap() };
+    }
 }
 
 fn str_from_c(cstr: *const libc::c_char) -> &'static str {
