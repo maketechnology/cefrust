@@ -13,6 +13,7 @@ mod gtk2;
 use cefrust::cef;
 
 use std::env;
+#[cfg(unix)]
 use std::collections::HashMap;
 
 #[cfg(target_os = "linux")]
@@ -36,20 +37,16 @@ pub extern fn init(japp: *const cef::cef_app_t, cefrust_path: *const libc::c_cha
 
     let key = "LD_LIBRARY_PATH";
     env::set_var(key, cefrust_path);
-    assert_eq!(env::var(key), Ok("/home/guille/.swtcef/3.2785.1486.g8c4ba9f/linux-x86_64".to_string()));
 
     //println!("sizeof: {}", std::mem::size_of::<app::App>());
 
     let main_args = cefrust::prepare_args();
 
-    //let cefrust_dir = "/home/guille/workspaces/rust/cefrust/target/debug";
     let cefrust_dir = std::path::Path::new(&cefrust_path);
-    if cfg!(target_os = "linux") {
-        unsafe { x11::xlib::XSetErrorHandler(Option::Some(xerror_handler_impl)) };
-        unsafe { x11::xlib::XSetIOErrorHandler(Option::Some(xioerror_handler_impl)) };
-        env::set_current_dir(cefrust_dir).expect("Failed to set current dir");
-        println!("{:?}", env::current_dir().unwrap().to_str());
-    }
+
+    env::set_current_dir(cefrust_dir).expect("Failed to set current dir");
+    println!("{:?}", env::current_dir().unwrap().to_str());
+
     let subp = cefrust::subp_path(cefrust_dir);
     let subp_cef = cefrust::cef_string(&subp);
     
@@ -101,18 +98,37 @@ pub extern fn init(japp: *const cef::cef_app_t, cefrust_path: *const libc::c_cha
     let app_raw = Box::into_raw(app_box);
     
     println!("Calling cef_initialize");
-    if cfg!(unix) {
-        let mut signal_handlers: HashMap<libc::c_int, nix::sys::signal::SigAction> = HashMap::new();
-        backup_signal_handlers(&mut signal_handlers);
-        unsafe { cef::cef_initialize(&main_args, &settings, &mut (*app_raw), std::ptr::null_mut()) };
-        if cfg!(unix) {
-            restore_signal_handlers(signal_handlers);
-        }
-    } else {
-       unsafe { cef::cef_initialize(&main_args, &settings, &mut (*app_raw), std::ptr::null_mut()) };
-    }
+    do_initialize(main_args, settings, app_raw);
     
     app_raw
+}
+
+#[cfg(target_os = "linux")]
+fn do_initialize(main_args: cef::_cef_main_args_t, settings: cef::_cef_settings_t, app_raw: *mut cefrust::cef::_cef_app_t) {
+    unsafe { x11::xlib::XSetErrorHandler(Option::Some(xerror_handler_impl)) };
+    unsafe { x11::xlib::XSetIOErrorHandler(Option::Some(xioerror_handler_impl)) };
+
+    let mut signal_handlers: HashMap<libc::c_int, nix::sys::signal::SigAction> = HashMap::new();
+    backup_signal_handlers(&mut signal_handlers);
+    
+    unsafe { cef::cef_initialize(&main_args, &settings, &mut (*app_raw), std::ptr::null_mut()) };
+
+    restore_signal_handlers(signal_handlers);
+}
+
+#[cfg(target_os = "macos")]
+fn do_initialize(main_args: cef::_cef_main_args_t, settings: cef::_cef_settings_t, app_raw: *mut cefrust::cef::_cef_app_t) {
+    let mut signal_handlers: HashMap<libc::c_int, nix::sys::signal::SigAction> = HashMap::new();
+    backup_signal_handlers(&mut signal_handlers);
+    
+    unsafe { cef::cef_initialize(&main_args, &settings, &mut (*app_raw), std::ptr::null_mut()) };
+
+    restore_signal_handlers(signal_handlers);
+}
+
+#[cfg(target_os = "windows")]
+fn do_initialize(main_args: cef::_cef_main_args_t, settings: cef::_cef_settings_t, app_raw: *mut cefrust::cef::_cef_app_t) {
+    unsafe { cef::cef_initialize(&main_args, &settings, &mut (*app_raw), std::ptr::null_mut()) };
 }
 
 #[cfg(unix)]
