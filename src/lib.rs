@@ -14,7 +14,8 @@ pub fn subp_path(cwd: &std::path::Path) -> String {
     let subp_path = if cfg!(target_os = "windows") { 
         cwd.join("cefrust_subp.exe")
     } else if cfg!(target_os = "macos") {
-        cwd.join("../Frameworks/cefrust_subp.app/Contents/MacOS/cefrust_subp")
+        //cwd.join("../Frameworks/cefrust_subp.app/Contents/MacOS/cefrust_subp")
+        cwd.join("cefrust_subp.app/Contents/MacOS/cefrust_subp")
     } else { 
         cwd.join("cefrust_subp") 
     };

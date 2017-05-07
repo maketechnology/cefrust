@@ -4,7 +4,7 @@ use std::option::Option;
 
 const DEBUG_REFERENCE_COUNTING: bool = false;
 
-pub type CefBase = cef::cef_base_t;
+pub type CefBase = cef::cef_base_ref_counted_t;
 
 
 ///
@@ -33,7 +33,7 @@ impl CefBase {
 ///
 // Increment the reference count.
 ///
-pub unsafe extern "C" fn add_ref(_: *mut cef::cef_base_t) {
+pub unsafe extern "C" fn add_ref(_: *mut cef::cef_base_ref_counted_t) {
     debug_callback("cef_base_t.add_ref");
     if DEBUG_REFERENCE_COUNTING {
         println!("+");
@@ -44,7 +44,7 @@ pub unsafe extern "C" fn add_ref(_: *mut cef::cef_base_t) {
 // Decrement the reference count.  Delete this object when no references
 // remain.
 ///
-pub unsafe extern "C" fn release(_: *mut cef::cef_base_t)
+pub unsafe extern "C" fn release(_: *mut cef::cef_base_ref_counted_t)
                                         -> ::std::os::raw::c_int {
     debug_callback("cef_base_t.release");
     if DEBUG_REFERENCE_COUNTING {
@@ -56,7 +56,7 @@ pub unsafe extern "C" fn release(_: *mut cef::cef_base_t)
 ///
 // Returns the current number of references.
 ///
-pub unsafe extern "C" fn has_one_ref(_: *mut cef::cef_base_t)
+pub unsafe extern "C" fn has_one_ref(_: *mut cef::cef_base_ref_counted_t)
                                         -> ::std::os::raw::c_int {
     debug_callback("cef_base_t.get_refct");
     if DEBUG_REFERENCE_COUNTING {
