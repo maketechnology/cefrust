@@ -14,8 +14,8 @@
 #[cfg(windows)] pub use self::win::_cef_main_args_t;
 
 pub type wchar_t = ::std::os::raw::c_int;
-pub type int64 = ::std::os::raw::c_longlong;
-pub type uint64 = ::std::os::raw::c_ulonglong;
+pub type int64 = ::std::os::raw::c_long;
+pub type uint64 = ::std::os::raw::c_ulong;
 pub type int32 = ::std::os::raw::c_int;
 pub type uint32 = ::std::os::raw::c_uint;
 pub type char16 = ::std::os::raw::c_ushort;
@@ -281,8 +281,8 @@ extern "C" {
     ///
     pub fn cef_string_list_copy(list: cef_string_list_t) -> cef_string_list_t;
 }
-pub type __darwin_time_t = ::std::os::raw::c_long;
-pub type time_t = __darwin_time_t;
+pub type __time_t = ::std::os::raw::c_long;
+pub type time_t = __time_t;
 ///
 #[repr(C)]
 #[derive(Debug, Copy)]
@@ -375,6 +375,22 @@ extern "C" {
                           cef_time2: *const cef_time_t,
                           delta: *mut ::std::os::raw::c_longlong)
      -> ::std::os::raw::c_int;
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _XEvent {
+    _unused: [u8; 0],
+}
+pub type XEvent = _XEvent;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _XDisplay {
+    _unused: [u8; 0],
+}
+pub type XDisplay = _XDisplay;
+extern "C" {
+    ///
+    pub fn cef_get_xdisplay() -> *mut XDisplay;
 }
 pub type cef_window_info_t = _cef_window_info_t;
 pub type cef_color_t = uint32;
@@ -7334,12 +7350,12 @@ pub struct _cef_browser_host_t {
     pub get_window_handle: ::std::option::Option<unsafe extern "C" fn(self_:
                                                                           *mut _cef_browser_host_t)
                                                      ->
-                                                         *mut ::std::os::raw::c_void>,
+                                                         ::std::os::raw::c_ulong>,
     ///
     pub get_opener_window_handle: ::std::option::Option<unsafe extern "C" fn(self_:
                                                                                  *mut _cef_browser_host_t)
                                                             ->
-                                                                *mut ::std::os::raw::c_void>,
+                                                                ::std::os::raw::c_ulong>,
     ///
     pub has_view: ::std::option::Option<unsafe extern "C" fn(self_:
                                                                  *mut _cef_browser_host_t)
@@ -13212,7 +13228,7 @@ pub struct _cef_keyboard_handler_t {
                                                                      event:
                                                                          *const _cef_key_event_t,
                                                                      os_event:
-                                                                         *mut ::std::os::raw::c_void,
+                                                                         *mut XEvent,
                                                                      is_keyboard_shortcut:
                                                                          *mut ::std::os::raw::c_int)
                                                     -> ::std::os::raw::c_int>,
@@ -13224,7 +13240,7 @@ pub struct _cef_keyboard_handler_t {
                                                                  event:
                                                                      *const _cef_key_event_t,
                                                                  os_event:
-                                                                     *mut ::std::os::raw::c_void)
+                                                                     *mut XEvent)
                                                 -> ::std::os::raw::c_int>,
 }
 #[test]
@@ -13428,7 +13444,7 @@ pub struct _cef_render_handler_t {
                                                                      browser:
                                                                          *mut _cef_browser_t,
                                                                      cursor:
-                                                                         *mut ::std::os::raw::c_void,
+                                                                         ::std::os::raw::c_ulong,
                                                                      type_:
                                                                          cef_cursor_type_t,
                                                                      custom_cursor_info:
