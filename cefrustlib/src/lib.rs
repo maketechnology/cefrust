@@ -91,7 +91,7 @@ pub extern fn init(japp: *const cef::cef_app_t, cefrust_path: *const libc::c_cha
         locale: cefrust::cef_string_empty(),
         log_file: logfile_cef,
         log_severity: cef::cef_log_severity_t::LOGSEVERITY_INFO,
-        //log_severity: cef::LOGSEVERITY_VERBOSE,
+        //log_severity: cef::cef_log_severity_t::LOGSEVERITY_VERBOSE,
         javascript_flags: cefrust::cef_string_empty(),
         resources_dir_path: resources_cef,
         locales_dir_path: locales_cef,
@@ -164,7 +164,7 @@ fn backup_signal_handlers(signal_handlers: &mut HashMap<libc::c_int, nix::sys::s
                                           signal::SaFlags::empty(),
                                           signal::SigSet::empty());
         let oldsigact = unsafe { signal::sigaction(*signal, &sig_action) };
-        println!("backup signal {:?}:{:?}", signal, "oldsigact.ok()");
+        //println!("backup signal {:?}:{:?}", signal, "oldsigact.ok()");
         signal_handlers.insert(*signal as libc::c_int, oldsigact.unwrap());
     }
 }
@@ -173,7 +173,7 @@ fn backup_signal_handlers(signal_handlers: &mut HashMap<libc::c_int, nix::sys::s
 fn restore_signal_handlers(signal_handlers: HashMap<libc::c_int, nix::sys::signal::SigAction>) {
     use nix::sys::signal;
     for (signal, sigact) in signal_handlers {
-        println!("restore signal {:?}:{:?}", signal, "sigact");
+        //println!("restore signal {:?}:{:?}", signal, "sigact");
         //unsafe { libc::sigaction(signal, sigact, std::ptr::null_mut()) };
         unsafe { signal::sigaction(std::mem::transmute(signal), &sigact).unwrap() };
     }
@@ -283,9 +283,8 @@ fn do_resize(win_handle: std::os::raw::c_ulong, width: i32, height: i32) {
 }
 
 #[cfg(target_os = "macos")]
-fn do_resize(win_handle: *mut std::os::raw::c_void, width: i32, height: i32) {
-    // TODO
-    println!("Calling resized {}:{}", width, height);
+fn do_resize(win_handle: std::os::raw::c_ulong, width: i32, height: i32) {
+    // handled by cocoa
 }
 
 #[cfg(target_family = "windows")]
@@ -350,7 +349,7 @@ fn do_set_focus(parent: *mut libc::c_void, focus: i32) {
 
 #[cfg(target_os = "macos")]
 fn do_set_focus(parent: *mut libc::c_void, focus: i32) {
-    // TODO
+    // handled by cocoa
 }
 
 #[no_mangle]
