@@ -37,6 +37,13 @@ pub fn prepare_args() -> cef::_cef_main_args_t {
         let mp = carg.into_raw();
         mp
     }).collect();
+    if cfg!(target_os = "macos") {
+        let carg_rslt = ffi::CString::new("--disable-gpu-compositing");
+        let carg = carg_rslt.expect("cant create arg");
+        let mp = carg.into_raw();
+        args.push(mp);
+        println!("Force --disable-gpu-compositing");
+    }
 
     let args_size = args.len() as i32;
     let args_ptr = args.as_mut_ptr();
