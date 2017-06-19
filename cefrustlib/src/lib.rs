@@ -353,8 +353,8 @@ fn do_set_focus(parent: *mut libc::c_void, focus: i32) {
 }
 
 #[no_mangle]
-pub extern fn shutdown() {
-    println!("Calling cef_shutdown");
+pub extern fn shutdownCEF() {
+    println!("Calling cef_shutdownCEF");
     // Shut down CEF.
     unsafe { cef::cef_shutdown() };
 }

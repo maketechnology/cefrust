@@ -11,17 +11,24 @@ fn main() {
   // due change on build tools.
   // Stay with 2785 until size is reduced on newer versions
   //let cef_path = format!("{}/Downloads/cef_binary_3.2883.1539.gd7f087e_linux64/", env::var("HOME").unwrap());
+
   let cwd = std::env::current_dir().unwrap();
   let mut cef_path = cwd.clone();
+
+  let target_triple = env::var("TARGET").unwrap();
+  //panic!(target_triple);
   
   if cfg!(target_os = "macos") {
     cef_path.push("cef_osx");
   } 
   else if cfg!(target_os = "linux") {
     cef_path.push("cef_linux");
-  } 
-  else if cfg!(target_os = "windows") {
-    cef_path.push("cef_windows");
+  }  
+  else if cfg!(target_os = "windows") && target_triple.starts_with("i686") {
+    cef_path.push("cef_windows32");
+  }
+  else if cfg!(target_os = "windows") && cfg!(target_arch = "x86_64") {
+    cef_path.push("cef_windows64");
   }
 
   if cfg!(target_os = "linux") {
