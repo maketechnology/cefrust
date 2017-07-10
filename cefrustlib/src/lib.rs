@@ -51,11 +51,6 @@ pub extern fn init(japp: *const cef::cef_app_t, cefrust_path: *const libc::c_cha
     let subp_cef = cefrust::cef_string(&subp);
     
     //let cefrust_dir = cefrust_dir.to_str().unwrap();
-    let locales_cef = if cfg!(target_os = "macos") {
-        cefrust::cef_string(cefrust_dir.join("Chromium Embedded Framework.framework").join("Resources").to_str().unwrap())
-    } else {
-        cefrust::cef_string(cefrust_dir.join("locales").to_str().unwrap())
-    };
     //let resources_cef = cefrust::cef_string(cefrust_dir.join("Resources").to_str().unwrap());
     //let resources_cef = cefrust::cef_string_empty();
     let resources_cef = if cfg!(target_os = "macos") {
@@ -64,12 +59,16 @@ pub extern fn init(japp: *const cef::cef_app_t, cefrust_path: *const libc::c_cha
         cefrust::cef_string(cefrust_dir.to_str().unwrap())
         //cefrust::cef_string_empty()
     };
+    let locales_cef = if cfg!(target_os = "macos") {
+        cefrust::cef_string(cefrust_dir.join("Chromium Embedded Framework.framework").join("Resources").to_str().unwrap())
+    } else {
+        cefrust::cef_string(cefrust_dir.join("locales").to_str().unwrap())
+    };
     let framework_dir_cef = if cfg!(target_os = "macos") {
         cefrust::cef_string(cefrust_dir.join("Chromium Embedded Framework.framework").to_str().unwrap())
     } else {
         cefrust::cef_string_empty()
     };
-    
     let logfile_cef = cefrust::cef_string(cefrust_dir.join("lib.log").to_str().unwrap());
 
     let settings = cef::_cef_settings_t {
