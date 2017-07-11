@@ -14,7 +14,8 @@ pub fn subp_path(cwd: &std::path::Path) -> String {
     let subp_path = if cfg!(target_os = "windows") { 
         cwd.join("cefrust_subp.exe")
     } else if cfg!(target_os = "macos") {
-        cwd.join("../Frameworks/cefrust_subp.app/Contents/MacOS/cefrust_subp")
+        //cwd.join("../Frameworks/cefrust_subp.app/Contents/MacOS/cefrust_subp")
+        cwd.join("cefrust_subp.app/Contents/MacOS/cefrust_subp")
     } else { 
         cwd.join("cefrust_subp") 
     };
@@ -36,6 +37,13 @@ pub fn prepare_args() -> cef::_cef_main_args_t {
         let mp = carg.into_raw();
         mp
     }).collect();
+    if cfg!(target_os = "macos") {
+        let carg_rslt = ffi::CString::new("--disable-gpu-compositing");
+        let carg = carg_rslt.expect("cant create arg");
+        let mp = carg.into_raw();
+        args.push(mp);
+        println!("Force --disable-gpu-compositing");
+    }
 
     let args_size = args.len() as i32;
     let args_ptr = args.as_mut_ptr();

@@ -54,7 +54,7 @@ pub fn create_browser(canvas_hwnd: std::os::raw::c_ulong, url: &str, jclient: &m
     //    Option::Some(window_focus_in), std::ptr::null_mut(), Option::None, gtk2::G_CONNECT_SWAPPED) };
 
     let window_info = cef_window_info(canvas_hwnd);
-    println!("parent {:?}", window_info.parent_window);
+    //println!("parent {:?}", window_info.parent_window);
     //self.vbox_hwnd = vbox;
 
     // Browser settings.
@@ -73,25 +73,24 @@ pub fn create_browser(canvas_hwnd: std::os::raw::c_ulong, url: &str, jclient: &m
         minimum_font_size: 0,
         minimum_logical_font_size: 0,
         default_encoding: cefrust::cef_string_empty(),
-        remote_fonts: cef::STATE_DEFAULT,
-        javascript: cef::STATE_DEFAULT,
-        javascript_open_windows: cef::STATE_DEFAULT,
-        javascript_close_windows: cef::STATE_DEFAULT,
-        javascript_access_clipboard: cef::STATE_DEFAULT,
-        javascript_dom_paste: cef::STATE_DEFAULT,
-        caret_browsing: cef::STATE_DEFAULT,
-        plugins: cef::STATE_DEFAULT,
-        universal_access_from_file_urls: cef::STATE_DEFAULT,
-        file_access_from_file_urls: cef::STATE_DEFAULT,
-        web_security: cef::STATE_DEFAULT,
-        image_loading: cef::STATE_DEFAULT,
-        image_shrink_standalone_to_fit: cef::STATE_DEFAULT,
-        text_area_resize: cef::STATE_DEFAULT,
-        tab_to_links: cef::STATE_DEFAULT,
-        local_storage: cef::STATE_DEFAULT,
-        databases: cef::STATE_DEFAULT,
-        application_cache: cef::STATE_DEFAULT,
-        webgl: cef::STATE_DEFAULT,
+        remote_fonts: cef::cef_state_t::STATE_DEFAULT,
+        javascript: cef::cef_state_t::STATE_DEFAULT,
+        javascript_open_windows: cef::cef_state_t::STATE_DEFAULT,
+        javascript_close_windows: cef::cef_state_t::STATE_DEFAULT,
+        javascript_access_clipboard: cef::cef_state_t::STATE_DEFAULT,
+        javascript_dom_paste: cef::cef_state_t::STATE_DEFAULT,
+        plugins: cef::cef_state_t::STATE_DEFAULT,
+        universal_access_from_file_urls: cef::cef_state_t::STATE_DEFAULT,
+        file_access_from_file_urls: cef::cef_state_t::STATE_DEFAULT,
+        web_security: cef::cef_state_t::STATE_DEFAULT,
+        image_loading: cef::cef_state_t::STATE_DEFAULT,
+        image_shrink_standalone_to_fit: cef::cef_state_t::STATE_DEFAULT,
+        text_area_resize: cef::cef_state_t::STATE_DEFAULT,
+        tab_to_links: cef::cef_state_t::STATE_DEFAULT,
+        local_storage: cef::cef_state_t::STATE_DEFAULT,
+        databases: cef::cef_state_t::STATE_DEFAULT,
+        application_cache: cef::cef_state_t::STATE_DEFAULT,
+        webgl: cef::cef_state_t::STATE_DEFAULT,
         background_color: 0,
         accept_language_list: cefrust::cef_string_empty()
     };

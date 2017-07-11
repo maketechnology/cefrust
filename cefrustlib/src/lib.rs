@@ -51,10 +51,25 @@ pub extern fn init(japp: *const cef::cef_app_t, cefrust_path: *const libc::c_cha
     let subp_cef = cefrust::cef_string(&subp);
     
     //let cefrust_dir = cefrust_dir.to_str().unwrap();
-    let locales_cef = cefrust::cef_string(cefrust_dir.join("locales").to_str().unwrap());
+    let locales_cef = if cfg!(target_os = "macos") {
+        cefrust::cef_string(cefrust_dir.join("Chromium Embedded Framework.framework").join("Resources").to_str().unwrap())
+    } else {
+        cefrust::cef_string(cefrust_dir.join("locales").to_str().unwrap())
+    };
     //let resources_cef = cefrust::cef_string(cefrust_dir.join("Resources").to_str().unwrap());
     //let resources_cef = cefrust::cef_string_empty();
-    let resources_cef = cefrust::cef_string(cefrust_dir.to_str().unwrap());
+    let resources_cef = if cfg!(target_os = "macos") {
+        cefrust::cef_string(cefrust_dir.join("Chromium Embedded Framework.framework").join("Resources").to_str().unwrap())
+    } else {
+        cefrust::cef_string(cefrust_dir.to_str().unwrap())
+        //cefrust::cef_string_empty()
+    };
+    let framework_dir_cef = if cfg!(target_os = "macos") {
+        cefrust::cef_string(cefrust_dir.join("Chromium Embedded Framework.framework").to_str().unwrap())
+    } else {
+        cefrust::cef_string_empty()
+    };
+    
     let logfile_cef = cefrust::cef_string(cefrust_dir.join("lib.log").to_str().unwrap());
 
     let settings = cef::_cef_settings_t {
@@ -62,6 +77,7 @@ pub extern fn init(japp: *const cef::cef_app_t, cefrust_path: *const libc::c_cha
         single_process: 0,
         no_sandbox: 1,
         browser_subprocess_path: subp_cef,
+        framework_dir_path: framework_dir_cef,
         multi_threaded_message_loop: 0,
         external_message_pump: 1,
         windowless_rendering_enabled: 0,
@@ -74,8 +90,8 @@ pub extern fn init(japp: *const cef::cef_app_t, cefrust_path: *const libc::c_cha
         product_version: cefrust::cef_string_empty(),
         locale: cefrust::cef_string_empty(),
         log_file: logfile_cef,
-        log_severity: cef::LOGSEVERITY_INFO,
-        //log_severity: cef::LOGSEVERITY_VERBOSE,
+        log_severity: cef::cef_log_severity_t::LOGSEVERITY_INFO,
+        //log_severity: cef::cef_log_severity_t::LOGSEVERITY_VERBOSE,
         javascript_flags: cefrust::cef_string_empty(),
         resources_dir_path: resources_cef,
         locales_dir_path: locales_cef,
@@ -148,7 +164,7 @@ fn backup_signal_handlers(signal_handlers: &mut HashMap<libc::c_int, nix::sys::s
                                           signal::SaFlags::empty(),
                                           signal::SigSet::empty());
         let oldsigact = unsafe { signal::sigaction(*signal, &sig_action) };
-        println!("backup signal {:?}:{:?}", signal, "oldsigact.ok()");
+        //println!("backup signal {:?}:{:?}", signal, "oldsigact.ok()");
         signal_handlers.insert(*signal as libc::c_int, oldsigact.unwrap());
     }
 }
@@ -157,7 +173,7 @@ fn backup_signal_handlers(signal_handlers: &mut HashMap<libc::c_int, nix::sys::s
 fn restore_signal_handlers(signal_handlers: HashMap<libc::c_int, nix::sys::signal::SigAction>) {
     use nix::sys::signal;
     for (signal, sigact) in signal_handlers {
-        println!("restore signal {:?}:{:?}", signal, "sigact");
+        //println!("restore signal {:?}:{:?}", signal, "sigact");
         //unsafe { libc::sigaction(signal, sigact, std::ptr::null_mut()) };
         unsafe { signal::sigaction(std::mem::transmute(signal), &sigact).unwrap() };
     }
@@ -266,6 +282,11 @@ fn do_resize(win_handle: std::os::raw::c_ulong, width: i32, height: i32) {
         (xlib::CWX | xlib::CWY | xlib::CWHeight | xlib::CWWidth) as u32, &mut changes) };
 }
 
+#[cfg(target_os = "macos")]
+fn do_resize(win_handle: std::os::raw::c_ulong, width: i32, height: i32) {
+    // handled by cocoa
+}
+
 #[cfg(target_family = "windows")]
 fn do_resize(win_handle: std::os::raw::c_ulong, width: i32, height: i32) {
     extern crate winapi;
@@ -324,6 +345,11 @@ fn do_set_focus(parent: *mut libc::c_void, focus: i32) {
 #[cfg(target_family = "windows")]
 fn do_set_focus(parent: *mut libc::c_void, focus: i32) {
     // TODO
+}
+
+#[cfg(target_os = "macos")]
+fn do_set_focus(parent: *mut libc::c_void, focus: i32) {
+    // handled by cocoa
 }
 
 #[no_mangle]

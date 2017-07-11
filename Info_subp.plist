@@ -11,7 +11,7 @@
 	<key>CFBundleExecutable</key>
 	<string>cefrust_subp</string>
 	<key>CFBundleIdentifier</key>
-	<string>org.cef.cefrust_subp</string>
+	<string>com.cef.cefrust_subp</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>

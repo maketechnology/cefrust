@@ -15,7 +15,7 @@ fn main() {
   let mut cef_path = cwd.clone();
   
   if cfg!(target_os = "macos") {
-    cef_path.push("cef_mac");
+    cef_path.push("cef_osx");
   } 
   else if cfg!(target_os = "linux") {
     cef_path.push("cef_linux");
@@ -45,9 +45,10 @@ fn main() {
   };
   println!("cargo:rustc-link-lib={}", lib);
 
-  //gen_cef(cef_path.display());
-  //gen_os(cef_path.display());
-  
+  if cfg!(feature = "gen") {
+    gen_cef(cef_path.display());
+    gen_os(cef_path.display());
+  }
   //let mut cef_path_linux = cwd.clone();
   //cef_path_linux.push("cef_linux");
   //create_links_linux(cef_path_linux.clone());
@@ -59,7 +60,7 @@ fn main() {
   //gen_gtk();
 }
 
-#[cfg(unix)]
+#[cfg(target_os = "linux")]
 fn create_links(mut cef_path: path::PathBuf) {
   //link(cef_path.clone(), "Resources");
   cef_path.push("Resources");
@@ -122,7 +123,7 @@ fn create_links(mut cef_path: path::PathBuf) {
 
   let mut opts = fs_extra::dir::CopyOptions::new();
   opts.skip_exist = true;
-  fs_extra::dir::copy(cef_path.join("Chromium Embedded Framework.framework"), & app_path, &opts).unwrap();
+  fs_extra::dir::copy(cef_path.join("Chromium Embedded Framework.framework"), &app_path, &opts).unwrap();
   //link_gen(cef_path.clone(), app_path.clone(), "Chromium Embedded Framework.framework");
 
   app_path.push("cefrust_subp.app/Contents");
@@ -258,6 +259,7 @@ fn generator(cef_path: path::Display) -> bindgen::Builder {
             vars: false,
             methods: true,
             constructors: false,
+            destructors: false
         };
   let gen = bindgen::builder()
     .clang_arg(format!("-I{}", cef_path))
@@ -283,6 +285,7 @@ fn gen_gtk() {
             vars: true,
             methods: true,
             constructors: true,
+            destructors: true
         };
   let _ = bindgen::builder()
     //.header("/usr/include/gtk-2.0/gtk/gtk.h")

@@ -1,15 +1,17 @@
 [package]
 name = "cefrustlib"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Guillermo Zunino <guillez@gmail.com>"]
 build = "build.rs"
 
 [dependencies]
-cefrust = { path = "..", version = "0.1.0" }
+cefrust = { path = "..", version = "0.2.0" }
 libc = "0.2.21"
 
 [target.'cfg(target_os = "linux")'.dependencies]
-x11 = "2.12.0"
+x11 = "2.13.0"
+
+[target.'cfg(unix)'.dependencies]
 nix = "0.8.1"
 
 [target.'cfg(windows)'.dependencies]

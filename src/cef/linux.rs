@@ -13,8 +13,20 @@ pub struct _cef_main_args_t {
 }
 #[test]
 fn bindgen_test_layout__cef_main_args_t() {
-    assert_eq!(::std::mem::size_of::<_cef_main_args_t>() , 16usize);
-    assert_eq!(::std::mem::align_of::<_cef_main_args_t>() , 8usize);
+    assert_eq!(::std::mem::size_of::<_cef_main_args_t>() , 16usize , concat !
+               ( "Size of: " , stringify ! ( _cef_main_args_t ) ));
+    assert_eq! (::std::mem::align_of::<_cef_main_args_t>() , 8usize , concat !
+                ( "Alignment of " , stringify ! ( _cef_main_args_t ) ));
+    assert_eq! (unsafe {
+                & ( * ( 0 as * const _cef_main_args_t ) ) . argc as * const _
+                as usize } , 0usize , concat ! (
+                "Alignment of field: " , stringify ! ( _cef_main_args_t ) ,
+                "::" , stringify ! ( argc ) ));
+    assert_eq! (unsafe {
+                & ( * ( 0 as * const _cef_main_args_t ) ) . argv as * const _
+                as usize } , 8usize , concat ! (
+                "Alignment of field: " , stringify ! ( _cef_main_args_t ) ,
+                "::" , stringify ! ( argv ) ));
 }
 impl Clone for _cef_main_args_t {
     fn clone(&self) -> Self { *self }
@@ -38,8 +50,52 @@ pub struct _cef_window_info_t {
 }
 #[test]
 fn bindgen_test_layout__cef_window_info_t() {
-    assert_eq!(::std::mem::size_of::<_cef_window_info_t>() , 40usize);
-    assert_eq!(::std::mem::align_of::<_cef_window_info_t>() , 8usize);
+    assert_eq!(::std::mem::size_of::<_cef_window_info_t>() , 40usize , concat
+               ! ( "Size of: " , stringify ! ( _cef_window_info_t ) ));
+    assert_eq! (::std::mem::align_of::<_cef_window_info_t>() , 8usize , concat
+                ! ( "Alignment of " , stringify ! ( _cef_window_info_t ) ));
+    assert_eq! (unsafe {
+                & ( * ( 0 as * const _cef_window_info_t ) ) . x as * const _
+                as usize } , 0usize , concat ! (
+                "Alignment of field: " , stringify ! ( _cef_window_info_t ) ,
+                "::" , stringify ! ( x ) ));
+    assert_eq! (unsafe {
+                & ( * ( 0 as * const _cef_window_info_t ) ) . y as * const _
+                as usize } , 4usize , concat ! (
+                "Alignment of field: " , stringify ! ( _cef_window_info_t ) ,
+                "::" , stringify ! ( y ) ));
+    assert_eq! (unsafe {
+                & ( * ( 0 as * const _cef_window_info_t ) ) . width as * const
+                _ as usize } , 8usize , concat ! (
+                "Alignment of field: " , stringify ! ( _cef_window_info_t ) ,
+                "::" , stringify ! ( width ) ));
+    assert_eq! (unsafe {
+                & ( * ( 0 as * const _cef_window_info_t ) ) . height as *
+                const _ as usize } , 12usize , concat ! (
+                "Alignment of field: " , stringify ! ( _cef_window_info_t ) ,
+                "::" , stringify ! ( height ) ));
+    assert_eq! (unsafe {
+                & ( * ( 0 as * const _cef_window_info_t ) ) . parent_window as
+                * const _ as usize } , 16usize , concat ! (
+                "Alignment of field: " , stringify ! ( _cef_window_info_t ) ,
+                "::" , stringify ! ( parent_window ) ));
+    assert_eq! (unsafe {
+                & ( * ( 0 as * const _cef_window_info_t ) ) .
+                windowless_rendering_enabled as * const _ as usize } , 24usize
+                , concat ! (
+                "Alignment of field: " , stringify ! ( _cef_window_info_t ) ,
+                "::" , stringify ! ( windowless_rendering_enabled ) ));
+    assert_eq! (unsafe {
+                & ( * ( 0 as * const _cef_window_info_t ) ) .
+                transparent_painting_enabled as * const _ as usize } , 28usize
+                , concat ! (
+                "Alignment of field: " , stringify ! ( _cef_window_info_t ) ,
+                "::" , stringify ! ( transparent_painting_enabled ) ));
+    assert_eq! (unsafe {
+                & ( * ( 0 as * const _cef_window_info_t ) ) . window as *
+                const _ as usize } , 32usize , concat ! (
+                "Alignment of field: " , stringify ! ( _cef_window_info_t ) ,
+                "::" , stringify ! ( window ) ));
 }
 impl Clone for _cef_window_info_t {
     fn clone(&self) -> Self { *self }
