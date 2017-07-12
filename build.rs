@@ -41,8 +41,8 @@ fn main() {
     "framework=Chromium Embedded Framework"
   } else { 
     println!("cargo:rustc-link-search={}", cef_bin.display());
-    //println!("cargo:rustc-link-search={}", cwd.display());
-    //println!("cargo:rustc-link-lib={}", "stdc++");
+    println!("cargo:rustc-link-search={}", cwd.display());
+    println!("cargo:rustc-link-lib={}", "stdc++");
     "cef" 
   };
   println!("cargo:rustc-link-lib={}", lib);
