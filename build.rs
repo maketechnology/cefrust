@@ -4,6 +4,9 @@ use std::env;
 use std::path;
 //use std::string::String;
 
+#[cfg(debug_assertions)]
+const CEF_TARGET: &'static str = "Debug";
+#[cfg(not(debug_assertions))]
 const CEF_TARGET: &'static str = "Release";
 
 fn main() {
@@ -271,7 +274,7 @@ fn generator(cef_path: path::Display) -> bindgen::Builder {
     .link("cef")
     //.use_core()
     .with_codegen_config(config)
-    .no_unstable_rust()
+    .derive_debug(true)
     .raw_line("#![allow(dead_code)]")
     .raw_line("#![allow(non_snake_case)]")
     .raw_line("#![allow(non_camel_case_types)]");
@@ -302,7 +305,6 @@ fn gen_gtk() {
     .clang_arg(format!("-I{}", "/usr/include/atk-1.0"))
     //.use_core()
     .with_codegen_config(config)
-    .no_unstable_rust()
     .raw_line("#![allow(dead_code)]")
     .raw_line("#![allow(non_snake_case)]")
     .raw_line("#![allow(non_camel_case_types)]")

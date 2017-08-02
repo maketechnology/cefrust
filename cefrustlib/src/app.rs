@@ -99,11 +99,12 @@ pub fn create_browser(canvas_hwnd: std::os::raw::c_ulong, url: &str, jclient: &m
     // cef_client_t structure must be filled. It must implement
     // reference counting. You cannot pass a structure 
     // initialized with zeroes.
-    let mut client = client::new();
-    client.get_focus_handler = jclient.get_focus_handler;
+    //let mut client = client::new();
+    //client.get_focus_handler = jclient.get_focus_handler;
+    //client.get_life_span_handler = jclient.get_life_span_handler;
 
-    let client = Box::new(client);
-    let client = Box::into_raw(client);
+    //let client = Box::new(client);
+    //let client = Box::into_raw(client);
 
     let url_cef = cefrust::cef_string(url);
 
@@ -112,7 +113,8 @@ pub fn create_browser(canvas_hwnd: std::os::raw::c_ulong, url: &str, jclient: &m
     //if unsafe { cef::cef_browser_host_create_browser(&window_info, client, &url_cef, &browser_settings, std::ptr::null_mut()) } != 1 {
         //println!("Failed calling browserHostCreateBrowser");
     //}
-    let browser: *mut cef::cef_browser_t = unsafe { cef::cef_browser_host_create_browser_sync(&window_info, client, &url_cef, &browser_settings, std::ptr::null_mut()) };
+    let browser: *mut cef::cef_browser_t = unsafe { cef::cef_browser_host_create_browser_sync(&window_info, jclient, &url_cef, &browser_settings, std::ptr::null_mut()) };
+    assert_eq!(unsafe{(*browser).base.size}, std::mem::size_of::<cef::_cef_browser_t>());
     browser
 }
 
