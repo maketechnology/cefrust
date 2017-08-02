@@ -30,15 +30,15 @@ unsafe extern fn xioerror_handler_impl(_: *mut x11::xlib::Display) -> libc::c_in
 }
 
 #[no_mangle]
-pub extern fn init(japp: *const cef::cef_app_t, cefrust_path: *const libc::c_char) -> *const cef::cef_app_t {
+pub extern fn cefswt_init(japp: *mut cef::cef_app_t, cefrust_path: *const libc::c_char) {
     println!("DLL init");
+    assert_eq!(unsafe{(*japp).base.size}, std::mem::size_of::<cef::_cef_app_t>());
+    //println!("app {:?}", japp);
 
     let cefrust_path = str_from_c(cefrust_path);
 
     let key = "LD_LIBRARY_PATH";
     env::set_var(key, cefrust_path);
-
-    //println!("sizeof: {}", std::mem::size_of::<app::App>());
 
     let main_args = cefrust::prepare_args();
 
@@ -51,11 +51,6 @@ pub extern fn init(japp: *const cef::cef_app_t, cefrust_path: *const libc::c_cha
     let subp_cef = cefrust::cef_string(&subp);
     
     //let cefrust_dir = cefrust_dir.to_str().unwrap();
-    let locales_cef = if cfg!(target_os = "macos") {
-        cefrust::cef_string(cefrust_dir.join("Chromium Embedded Framework.framework").join("Resources").to_str().unwrap())
-    } else {
-        cefrust::cef_string(cefrust_dir.join("locales").to_str().unwrap())
-    };
     //let resources_cef = cefrust::cef_string(cefrust_dir.join("Resources").to_str().unwrap());
     //let resources_cef = cefrust::cef_string_empty();
     let resources_cef = if cfg!(target_os = "macos") {
@@ -64,12 +59,16 @@ pub extern fn init(japp: *const cef::cef_app_t, cefrust_path: *const libc::c_cha
         cefrust::cef_string(cefrust_dir.to_str().unwrap())
         //cefrust::cef_string_empty()
     };
+    let locales_cef = if cfg!(target_os = "macos") {
+        cefrust::cef_string(cefrust_dir.join("Chromium Embedded Framework.framework").join("Resources").to_str().unwrap())
+    } else {
+        cefrust::cef_string(cefrust_dir.join("locales").to_str().unwrap())
+    };
     let framework_dir_cef = if cfg!(target_os = "macos") {
         cefrust::cef_string(cefrust_dir.join("Chromium Embedded Framework.framework").to_str().unwrap())
     } else {
         cefrust::cef_string_empty()
     };
-    
     let logfile_cef = cefrust::cef_string(cefrust_dir.join("lib.log").to_str().unwrap());
 
     let settings = cef::_cef_settings_t {
@@ -107,16 +106,15 @@ pub extern fn init(japp: *const cef::cef_app_t, cefrust_path: *const libc::c_cha
 
     // Initialize CEF in the main process.
     //let mut app = app::new(hwnd);
-    let mut app = app::new();
-    app.get_browser_process_handler = unsafe {(*japp).get_browser_process_handler};
+    //let mut app = app::new();
+    //app.get_browser_process_handler = unsafe {(*japp).get_browser_process_handler};
 
-    let app_box = Box::new(app);
-    let app_raw = Box::into_raw(app_box);
+    //let app_box = Box::new(app);
+    //let app_raw = Box::into_raw(app_box);
+    //let app_raw = japp;
     
     println!("Calling cef_initialize");
-    do_initialize(main_args, settings, app_raw);
-    
-    app_raw
+    do_initialize(main_args, settings, japp);
 }
 
 #[cfg(target_os = "linux")]
@@ -127,7 +125,7 @@ fn do_initialize(main_args: cef::_cef_main_args_t, settings: cef::_cef_settings_
     let mut signal_handlers: HashMap<libc::c_int, nix::sys::signal::SigAction> = HashMap::new();
     backup_signal_handlers(&mut signal_handlers);
     
-    unsafe { cef::cef_initialize(&main_args, &settings, &mut (*app_raw), std::ptr::null_mut()) };
+    unsafe { cef::cef_initialize(&main_args, &settings, app_raw, std::ptr::null_mut()) };
 
     restore_signal_handlers(signal_handlers);
 }
@@ -186,13 +184,12 @@ fn str_from_c(cstr: *const libc::c_char) -> &'static str {
 }
 
 #[no_mangle]
-pub extern fn create_browser(hwnd: std::os::raw::c_ulong, url: *const libc::c_char, client: &mut cef::_cef_client_t) -> *const cef::cef_browser_t {
+pub extern fn cefswt_create_browser(hwnd: std::os::raw::c_ulong, url: *const libc::c_char, client: &mut cef::_cef_client_t) -> *const cef::cef_browser_t {
     println!("create_browser");
+    assert_eq!(unsafe{(*client).base.size}, std::mem::size_of::<cef::_cef_client_t>());
 
     println!("hwnd: {}", hwnd);
     println!("client: {:?}", client);
-    println!("_cef_client_t sizeof: {:?}", std::mem::size_of::<cef::_cef_client_t>());
-    println!("_cef_focus_handler_t sizeof: {:?}", std::mem::size_of::<cef::_cef_focus_handler_t>());
  
     //let url = "http://www.google.com";
     //let url = std::ffi::CString::new(url).unwrap().to_str().unwrap();
@@ -205,7 +202,7 @@ pub extern fn create_browser(hwnd: std::os::raw::c_ulong, url: *const libc::c_ch
 }
 
 #[no_mangle]
-pub extern fn do_message_loop_work() {
+pub extern fn cefswt_do_message_loop_work() {
     //println!("Calling cef_run_message_loop");
     // Run the CEF message loop. This will block until CefQuitMessageLoop() is called.
     //unsafe { cef::cef_run_message_loop() };
@@ -215,7 +212,25 @@ pub extern fn do_message_loop_work() {
 }
 
 #[no_mangle]
-pub extern fn resized(browser: *mut cef::cef_browser_t, width: i32, height: i32) {
+pub extern fn cefswt_free(obj: *mut cef::cef_browser_t) {
+    //println!("freeing {:?}", obj);
+    unsafe {
+        assert_eq!((*obj).base.size, std::mem::size_of::<cef::_cef_browser_t>());
+
+        let host = get_browser_host(obj);
+
+        //println!("freeing {:?}", browser);
+        let rls_fn = (*obj).base.release.expect("null release");
+        println!("call rls");
+        let refs = rls_fn(obj as *mut cef::_cef_base_ref_counted_t);
+        assert_eq!(refs, 1);
+    }
+
+    println!("freed");
+}
+
+#[no_mangle]
+pub extern fn cefswt_resized(browser: *mut cef::cef_browser_t, width: i32, height: i32) {
     //println!("Calling resized {}:{}", width, height);
     
     //println!("hwnd: {}", unsafe { (*app).canvas_hwnd });
@@ -300,7 +315,7 @@ fn do_resize(win_handle: std::os::raw::c_ulong, width: i32, height: i32) {
 }
 
 #[no_mangle]
-pub extern fn try_close_browser(browser: *mut cef::cef_browser_t) {
+pub extern fn cefswt_close_browser(browser: *mut cef::cef_browser_t) {
     let browser_host = get_browser_host(browser);
     let close_fn = unsafe { (*browser_host).close_browser.expect("null try_close_browser") };
     unsafe { close_fn(browser_host, 1) };
@@ -308,7 +323,7 @@ pub extern fn try_close_browser(browser: *mut cef::cef_browser_t) {
 
 
 #[no_mangle]
-pub extern fn load_url(browser: *mut cef::cef_browser_t, url: *const libc::c_char) {
+pub extern fn cefswt_load_url(browser: *mut cef::cef_browser_t, url: *const libc::c_char) {
     let url = str_from_c(url);
     let url_cef = cefrust::cef_string(url);
     println!("url: {:?}", url);
@@ -319,7 +334,7 @@ pub extern fn load_url(browser: *mut cef::cef_browser_t, url: *const libc::c_cha
 }
 
 #[no_mangle]
-pub extern fn set_focus(browser: *mut cef::cef_browser_t, set: bool, parent: *mut libc::c_void) {
+pub extern fn cefswt_set_focus(browser: *mut cef::cef_browser_t, set: bool, parent: *mut libc::c_void) {
     let browser_host = get_browser_host(browser);
     let focus_fn = unsafe { (*browser_host).set_focus.expect("null set_focus") };
     let focus = if set {
@@ -353,10 +368,11 @@ fn do_set_focus(parent: *mut libc::c_void, focus: i32) {
 }
 
 #[no_mangle]
-pub extern fn shutdown() {
-    println!("Calling cef_shutdown");
+pub extern fn cefswt_shutdown() {
+    println!("r: Calling cef_shutdown");
     // Shut down CEF.
     unsafe { cef::cef_shutdown() };
+    println!("r: After Calling cef_shutdown");
 }
 
 fn get_browser_host(browser: *mut cef::cef_browser_t) -> *mut cef::_cef_browser_host_t {

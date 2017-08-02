@@ -15,7 +15,7 @@ fn subp() {
     println!("Calling cef_execute_process");
     //println!("Hello CEF, ARGS: {:?}", main_args.argc);
     let exit_code: raw::c_int = unsafe { cef::cef_execute_process(&main_args, std::ptr::null_mut(), std::ptr::null_mut()) };
-    println!("existing subp with {}", exit_code);
+    println!("exiting subp with {}", exit_code);
     std::process::exit(exit_code);
 }
 
