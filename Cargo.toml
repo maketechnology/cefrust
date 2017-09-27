@@ -25,4 +25,4 @@ winapi = "0.2.8"
 kernel32-sys = "0.2.2"
 
 [target.'cfg(target_os = "macos")'.dependencies]
-cocoa = "0.8.1"
+cocoa = "0.10.0"
