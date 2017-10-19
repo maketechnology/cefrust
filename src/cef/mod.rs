@@ -466,8 +466,6 @@ pub struct _cef_settings_t {
     ///
     pub uncaught_exception_stack_size: ::std::os::raw::c_int,
     ///
-    pub context_safety_implementation: ::std::os::raw::c_int,
-    ///
     pub ignore_certificate_errors: ::std::os::raw::c_int,
     ///
     pub enable_net_security_expiration: ::std::os::raw::c_int,
@@ -478,7 +476,7 @@ pub struct _cef_settings_t {
 }
 #[test]
 fn bindgen_test_layout__cef_settings_t() {
-    assert_eq!(::std::mem::size_of::<_cef_settings_t>() , 368usize , concat !
+    assert_eq!(::std::mem::size_of::<_cef_settings_t>() , 360usize , concat !
                ( "Size of: " , stringify ! ( _cef_settings_t ) ));
     assert_eq! (::std::mem::align_of::<_cef_settings_t>() , 8usize , concat !
                 ( "Alignment of " , stringify ! ( _cef_settings_t ) ));
@@ -614,30 +612,24 @@ fn bindgen_test_layout__cef_settings_t() {
                 "::" , stringify ! ( uncaught_exception_stack_size ) ));
     assert_eq! (unsafe {
                 & ( * ( 0 as * const _cef_settings_t ) ) .
-                context_safety_implementation as * const _ as usize } ,
-                324usize , concat ! (
-                "Alignment of field: " , stringify ! ( _cef_settings_t ) ,
-                "::" , stringify ! ( context_safety_implementation ) ));
-    assert_eq! (unsafe {
-                & ( * ( 0 as * const _cef_settings_t ) ) .
-                ignore_certificate_errors as * const _ as usize } , 328usize ,
+                ignore_certificate_errors as * const _ as usize } , 324usize ,
                 concat ! (
                 "Alignment of field: " , stringify ! ( _cef_settings_t ) ,
                 "::" , stringify ! ( ignore_certificate_errors ) ));
     assert_eq! (unsafe {
                 & ( * ( 0 as * const _cef_settings_t ) ) .
                 enable_net_security_expiration as * const _ as usize } ,
-                332usize , concat ! (
+                328usize , concat ! (
                 "Alignment of field: " , stringify ! ( _cef_settings_t ) ,
                 "::" , stringify ! ( enable_net_security_expiration ) ));
     assert_eq! (unsafe {
                 & ( * ( 0 as * const _cef_settings_t ) ) . background_color as
-                * const _ as usize } , 336usize , concat ! (
+                * const _ as usize } , 332usize , concat ! (
                 "Alignment of field: " , stringify ! ( _cef_settings_t ) ,
                 "::" , stringify ! ( background_color ) ));
     assert_eq! (unsafe {
                 & ( * ( 0 as * const _cef_settings_t ) ) .
-                accept_language_list as * const _ as usize } , 344usize ,
+                accept_language_list as * const _ as usize } , 336usize ,
                 concat ! (
                 "Alignment of field: " , stringify ! ( _cef_settings_t ) ,
                 "::" , stringify ! ( accept_language_list ) ));
@@ -3527,6 +3519,219 @@ extern "C" {
 ///
 #[repr(C)]
 #[derive(Debug, Copy)]
+pub struct _cef_image_t {
+    ///
+    pub base: cef_base_ref_counted_t,
+    ///
+    pub is_empty: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                 *mut _cef_image_t)
+                                            -> ::std::os::raw::c_int>,
+    ///
+    pub is_same: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                *mut _cef_image_t,
+                                                            that:
+                                                                *mut _cef_image_t)
+                                           -> ::std::os::raw::c_int>,
+    ///
+    pub add_bitmap: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                   *mut _cef_image_t,
+                                                               scale_factor:
+                                                                   f32,
+                                                               pixel_width:
+                                                                   ::std::os::raw::c_int,
+                                                               pixel_height:
+                                                                   ::std::os::raw::c_int,
+                                                               color_type:
+                                                                   cef_color_type_t,
+                                                               alpha_type:
+                                                                   cef_alpha_type_t,
+                                                               pixel_data:
+                                                                   *const ::std::os::raw::c_void,
+                                                               pixel_data_size:
+                                                                   usize)
+                                              -> ::std::os::raw::c_int>,
+    ///
+    pub add_png: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                *mut _cef_image_t,
+                                                            scale_factor: f32,
+                                                            png_data:
+                                                                *const ::std::os::raw::c_void,
+                                                            png_data_size:
+                                                                usize)
+                                           -> ::std::os::raw::c_int>,
+    ///
+    pub add_jpeg: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                 *mut _cef_image_t,
+                                                             scale_factor:
+                                                                 f32,
+                                                             jpeg_data:
+                                                                 *const ::std::os::raw::c_void,
+                                                             jpeg_data_size:
+                                                                 usize)
+                                            -> ::std::os::raw::c_int>,
+    ///
+    pub get_width: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                  *mut _cef_image_t)
+                                             -> usize>,
+    ///
+    pub get_height: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                   *mut _cef_image_t)
+                                              -> usize>,
+    ///
+    pub has_representation: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                           *mut _cef_image_t,
+                                                                       scale_factor:
+                                                                           f32)
+                                                      ->
+                                                          ::std::os::raw::c_int>,
+    ///
+    pub remove_representation: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                              *mut _cef_image_t,
+                                                                          scale_factor:
+                                                                              f32)
+                                                         ->
+                                                             ::std::os::raw::c_int>,
+    ///
+    pub get_representation_info: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                                *mut _cef_image_t,
+                                                                            scale_factor:
+                                                                                f32,
+                                                                            actual_scale_factor:
+                                                                                *mut f32,
+                                                                            pixel_width:
+                                                                                *mut ::std::os::raw::c_int,
+                                                                            pixel_height:
+                                                                                *mut ::std::os::raw::c_int)
+                                                           ->
+                                                               ::std::os::raw::c_int>,
+    ///
+    pub get_as_bitmap: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                      *mut _cef_image_t,
+                                                                  scale_factor:
+                                                                      f32,
+                                                                  color_type:
+                                                                      cef_color_type_t,
+                                                                  alpha_type:
+                                                                      cef_alpha_type_t,
+                                                                  pixel_width:
+                                                                      *mut ::std::os::raw::c_int,
+                                                                  pixel_height:
+                                                                      *mut ::std::os::raw::c_int)
+                                                 -> *mut _cef_binary_value_t>,
+    ///
+    pub get_as_png: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                   *mut _cef_image_t,
+                                                               scale_factor:
+                                                                   f32,
+                                                               with_transparency:
+                                                                   ::std::os::raw::c_int,
+                                                               pixel_width:
+                                                                   *mut ::std::os::raw::c_int,
+                                                               pixel_height:
+                                                                   *mut ::std::os::raw::c_int)
+                                              -> *mut _cef_binary_value_t>,
+    ///
+    pub get_as_jpeg: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                    *mut _cef_image_t,
+                                                                scale_factor:
+                                                                    f32,
+                                                                quality:
+                                                                    ::std::os::raw::c_int,
+                                                                pixel_width:
+                                                                    *mut ::std::os::raw::c_int,
+                                                                pixel_height:
+                                                                    *mut ::std::os::raw::c_int)
+                                               -> *mut _cef_binary_value_t>,
+}
+#[test]
+fn bindgen_test_layout__cef_image_t() {
+    assert_eq!(::std::mem::size_of::<_cef_image_t>() , 136usize , concat ! (
+               "Size of: " , stringify ! ( _cef_image_t ) ));
+    assert_eq! (::std::mem::align_of::<_cef_image_t>() , 8usize , concat ! (
+                "Alignment of " , stringify ! ( _cef_image_t ) ));
+    assert_eq! (unsafe {
+                & ( * ( 0 as * const _cef_image_t ) ) . base as * const _ as
+                usize } , 0usize , concat ! (
+                "Alignment of field: " , stringify ! ( _cef_image_t ) , "::" ,
+                stringify ! ( base ) ));
+    assert_eq! (unsafe {
+                & ( * ( 0 as * const _cef_image_t ) ) . is_empty as * const _
+                as usize } , 32usize , concat ! (
+                "Alignment of field: " , stringify ! ( _cef_image_t ) , "::" ,
+                stringify ! ( is_empty ) ));
+    assert_eq! (unsafe {
+                & ( * ( 0 as * const _cef_image_t ) ) . is_same as * const _
+                as usize } , 40usize , concat ! (
+                "Alignment of field: " , stringify ! ( _cef_image_t ) , "::" ,
+                stringify ! ( is_same ) ));
+    assert_eq! (unsafe {
+                & ( * ( 0 as * const _cef_image_t ) ) . add_bitmap as * const
+                _ as usize } , 48usize , concat ! (
+                "Alignment of field: " , stringify ! ( _cef_image_t ) , "::" ,
+                stringify ! ( add_bitmap ) ));
+    assert_eq! (unsafe {
+                & ( * ( 0 as * const _cef_image_t ) ) . add_png as * const _
+                as usize } , 56usize , concat ! (
+                "Alignment of field: " , stringify ! ( _cef_image_t ) , "::" ,
+                stringify ! ( add_png ) ));
+    assert_eq! (unsafe {
+                & ( * ( 0 as * const _cef_image_t ) ) . add_jpeg as * const _
+                as usize } , 64usize , concat ! (
+                "Alignment of field: " , stringify ! ( _cef_image_t ) , "::" ,
+                stringify ! ( add_jpeg ) ));
+    assert_eq! (unsafe {
+                & ( * ( 0 as * const _cef_image_t ) ) . get_width as * const _
+                as usize } , 72usize , concat ! (
+                "Alignment of field: " , stringify ! ( _cef_image_t ) , "::" ,
+                stringify ! ( get_width ) ));
+    assert_eq! (unsafe {
+                & ( * ( 0 as * const _cef_image_t ) ) . get_height as * const
+                _ as usize } , 80usize , concat ! (
+                "Alignment of field: " , stringify ! ( _cef_image_t ) , "::" ,
+                stringify ! ( get_height ) ));
+    assert_eq! (unsafe {
+                & ( * ( 0 as * const _cef_image_t ) ) . has_representation as
+                * const _ as usize } , 88usize , concat ! (
+                "Alignment of field: " , stringify ! ( _cef_image_t ) , "::" ,
+                stringify ! ( has_representation ) ));
+    assert_eq! (unsafe {
+                & ( * ( 0 as * const _cef_image_t ) ) . remove_representation
+                as * const _ as usize } , 96usize , concat ! (
+                "Alignment of field: " , stringify ! ( _cef_image_t ) , "::" ,
+                stringify ! ( remove_representation ) ));
+    assert_eq! (unsafe {
+                & ( * ( 0 as * const _cef_image_t ) ) .
+                get_representation_info as * const _ as usize } , 104usize ,
+                concat ! (
+                "Alignment of field: " , stringify ! ( _cef_image_t ) , "::" ,
+                stringify ! ( get_representation_info ) ));
+    assert_eq! (unsafe {
+                & ( * ( 0 as * const _cef_image_t ) ) . get_as_bitmap as *
+                const _ as usize } , 112usize , concat ! (
+                "Alignment of field: " , stringify ! ( _cef_image_t ) , "::" ,
+                stringify ! ( get_as_bitmap ) ));
+    assert_eq! (unsafe {
+                & ( * ( 0 as * const _cef_image_t ) ) . get_as_png as * const
+                _ as usize } , 120usize , concat ! (
+                "Alignment of field: " , stringify ! ( _cef_image_t ) , "::" ,
+                stringify ! ( get_as_png ) ));
+    assert_eq! (unsafe {
+                & ( * ( 0 as * const _cef_image_t ) ) . get_as_jpeg as * const
+                _ as usize } , 128usize , concat ! (
+                "Alignment of field: " , stringify ! ( _cef_image_t ) , "::" ,
+                stringify ! ( get_as_jpeg ) ));
+}
+impl Clone for _cef_image_t {
+    fn clone(&self) -> Self { *self }
+}
+pub type cef_image_t = _cef_image_t;
+extern "C" {
+    ///
+    pub fn cef_image_create() -> *mut cef_image_t;
+}
+///
+#[repr(C)]
+#[derive(Debug, Copy)]
 pub struct _cef_read_handler_t {
     ///
     pub base: cef_base_ref_counted_t,
@@ -3966,10 +4171,22 @@ pub struct _cef_drag_data_t {
                                                                  *const cef_string_t,
                                                              display_name:
                                                                  *const cef_string_t)>,
+    ///
+    pub get_image: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                  *mut _cef_drag_data_t)
+                                             -> *mut _cef_image_t>,
+    ///
+    pub get_image_hotspot: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                          *mut _cef_drag_data_t)
+                                                     -> cef_point_t>,
+    ///
+    pub has_image: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                  *mut _cef_drag_data_t)
+                                             -> ::std::os::raw::c_int>,
 }
 #[test]
 fn bindgen_test_layout__cef_drag_data_t() {
-    assert_eq!(::std::mem::size_of::<_cef_drag_data_t>() , 208usize , concat !
+    assert_eq!(::std::mem::size_of::<_cef_drag_data_t>() , 232usize , concat !
                ( "Size of: " , stringify ! ( _cef_drag_data_t ) ));
     assert_eq! (::std::mem::align_of::<_cef_drag_data_t>() , 8usize , concat !
                 ( "Alignment of " , stringify ! ( _cef_drag_data_t ) ));
@@ -4091,6 +4308,21 @@ fn bindgen_test_layout__cef_drag_data_t() {
                 const _ as usize } , 200usize , concat ! (
                 "Alignment of field: " , stringify ! ( _cef_drag_data_t ) ,
                 "::" , stringify ! ( add_file ) ));
+    assert_eq! (unsafe {
+                & ( * ( 0 as * const _cef_drag_data_t ) ) . get_image as *
+                const _ as usize } , 208usize , concat ! (
+                "Alignment of field: " , stringify ! ( _cef_drag_data_t ) ,
+                "::" , stringify ! ( get_image ) ));
+    assert_eq! (unsafe {
+                & ( * ( 0 as * const _cef_drag_data_t ) ) . get_image_hotspot
+                as * const _ as usize } , 216usize , concat ! (
+                "Alignment of field: " , stringify ! ( _cef_drag_data_t ) ,
+                "::" , stringify ! ( get_image_hotspot ) ));
+    assert_eq! (unsafe {
+                & ( * ( 0 as * const _cef_drag_data_t ) ) . has_image as *
+                const _ as usize } , 224usize , concat ! (
+                "Alignment of field: " , stringify ! ( _cef_drag_data_t ) ,
+                "::" , stringify ! ( has_image ) ));
 }
 impl Clone for _cef_drag_data_t {
     fn clone(&self) -> Self { *self }
@@ -5634,219 +5866,6 @@ fn bindgen_test_layout__cef_frame_t() {
 }
 impl Clone for _cef_frame_t {
     fn clone(&self) -> Self { *self }
-}
-///
-#[repr(C)]
-#[derive(Debug, Copy)]
-pub struct _cef_image_t {
-    ///
-    pub base: cef_base_ref_counted_t,
-    ///
-    pub is_empty: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                 *mut _cef_image_t)
-                                            -> ::std::os::raw::c_int>,
-    ///
-    pub is_same: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                *mut _cef_image_t,
-                                                            that:
-                                                                *mut _cef_image_t)
-                                           -> ::std::os::raw::c_int>,
-    ///
-    pub add_bitmap: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                   *mut _cef_image_t,
-                                                               scale_factor:
-                                                                   f32,
-                                                               pixel_width:
-                                                                   ::std::os::raw::c_int,
-                                                               pixel_height:
-                                                                   ::std::os::raw::c_int,
-                                                               color_type:
-                                                                   cef_color_type_t,
-                                                               alpha_type:
-                                                                   cef_alpha_type_t,
-                                                               pixel_data:
-                                                                   *const ::std::os::raw::c_void,
-                                                               pixel_data_size:
-                                                                   usize)
-                                              -> ::std::os::raw::c_int>,
-    ///
-    pub add_png: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                *mut _cef_image_t,
-                                                            scale_factor: f32,
-                                                            png_data:
-                                                                *const ::std::os::raw::c_void,
-                                                            png_data_size:
-                                                                usize)
-                                           -> ::std::os::raw::c_int>,
-    ///
-    pub add_jpeg: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                 *mut _cef_image_t,
-                                                             scale_factor:
-                                                                 f32,
-                                                             jpeg_data:
-                                                                 *const ::std::os::raw::c_void,
-                                                             jpeg_data_size:
-                                                                 usize)
-                                            -> ::std::os::raw::c_int>,
-    ///
-    pub get_width: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                  *mut _cef_image_t)
-                                             -> usize>,
-    ///
-    pub get_height: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                   *mut _cef_image_t)
-                                              -> usize>,
-    ///
-    pub has_representation: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                           *mut _cef_image_t,
-                                                                       scale_factor:
-                                                                           f32)
-                                                      ->
-                                                          ::std::os::raw::c_int>,
-    ///
-    pub remove_representation: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                              *mut _cef_image_t,
-                                                                          scale_factor:
-                                                                              f32)
-                                                         ->
-                                                             ::std::os::raw::c_int>,
-    ///
-    pub get_representation_info: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                                *mut _cef_image_t,
-                                                                            scale_factor:
-                                                                                f32,
-                                                                            actual_scale_factor:
-                                                                                *mut f32,
-                                                                            pixel_width:
-                                                                                *mut ::std::os::raw::c_int,
-                                                                            pixel_height:
-                                                                                *mut ::std::os::raw::c_int)
-                                                           ->
-                                                               ::std::os::raw::c_int>,
-    ///
-    pub get_as_bitmap: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                      *mut _cef_image_t,
-                                                                  scale_factor:
-                                                                      f32,
-                                                                  color_type:
-                                                                      cef_color_type_t,
-                                                                  alpha_type:
-                                                                      cef_alpha_type_t,
-                                                                  pixel_width:
-                                                                      *mut ::std::os::raw::c_int,
-                                                                  pixel_height:
-                                                                      *mut ::std::os::raw::c_int)
-                                                 -> *mut _cef_binary_value_t>,
-    ///
-    pub get_as_png: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                   *mut _cef_image_t,
-                                                               scale_factor:
-                                                                   f32,
-                                                               with_transparency:
-                                                                   ::std::os::raw::c_int,
-                                                               pixel_width:
-                                                                   *mut ::std::os::raw::c_int,
-                                                               pixel_height:
-                                                                   *mut ::std::os::raw::c_int)
-                                              -> *mut _cef_binary_value_t>,
-    ///
-    pub get_as_jpeg: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                    *mut _cef_image_t,
-                                                                scale_factor:
-                                                                    f32,
-                                                                quality:
-                                                                    ::std::os::raw::c_int,
-                                                                pixel_width:
-                                                                    *mut ::std::os::raw::c_int,
-                                                                pixel_height:
-                                                                    *mut ::std::os::raw::c_int)
-                                               -> *mut _cef_binary_value_t>,
-}
-#[test]
-fn bindgen_test_layout__cef_image_t() {
-    assert_eq!(::std::mem::size_of::<_cef_image_t>() , 136usize , concat ! (
-               "Size of: " , stringify ! ( _cef_image_t ) ));
-    assert_eq! (::std::mem::align_of::<_cef_image_t>() , 8usize , concat ! (
-                "Alignment of " , stringify ! ( _cef_image_t ) ));
-    assert_eq! (unsafe {
-                & ( * ( 0 as * const _cef_image_t ) ) . base as * const _ as
-                usize } , 0usize , concat ! (
-                "Alignment of field: " , stringify ! ( _cef_image_t ) , "::" ,
-                stringify ! ( base ) ));
-    assert_eq! (unsafe {
-                & ( * ( 0 as * const _cef_image_t ) ) . is_empty as * const _
-                as usize } , 32usize , concat ! (
-                "Alignment of field: " , stringify ! ( _cef_image_t ) , "::" ,
-                stringify ! ( is_empty ) ));
-    assert_eq! (unsafe {
-                & ( * ( 0 as * const _cef_image_t ) ) . is_same as * const _
-                as usize } , 40usize , concat ! (
-                "Alignment of field: " , stringify ! ( _cef_image_t ) , "::" ,
-                stringify ! ( is_same ) ));
-    assert_eq! (unsafe {
-                & ( * ( 0 as * const _cef_image_t ) ) . add_bitmap as * const
-                _ as usize } , 48usize , concat ! (
-                "Alignment of field: " , stringify ! ( _cef_image_t ) , "::" ,
-                stringify ! ( add_bitmap ) ));
-    assert_eq! (unsafe {
-                & ( * ( 0 as * const _cef_image_t ) ) . add_png as * const _
-                as usize } , 56usize , concat ! (
-                "Alignment of field: " , stringify ! ( _cef_image_t ) , "::" ,
-                stringify ! ( add_png ) ));
-    assert_eq! (unsafe {
-                & ( * ( 0 as * const _cef_image_t ) ) . add_jpeg as * const _
-                as usize } , 64usize , concat ! (
-                "Alignment of field: " , stringify ! ( _cef_image_t ) , "::" ,
-                stringify ! ( add_jpeg ) ));
-    assert_eq! (unsafe {
-                & ( * ( 0 as * const _cef_image_t ) ) . get_width as * const _
-                as usize } , 72usize , concat ! (
-                "Alignment of field: " , stringify ! ( _cef_image_t ) , "::" ,
-                stringify ! ( get_width ) ));
-    assert_eq! (unsafe {
-                & ( * ( 0 as * const _cef_image_t ) ) . get_height as * const
-                _ as usize } , 80usize , concat ! (
-                "Alignment of field: " , stringify ! ( _cef_image_t ) , "::" ,
-                stringify ! ( get_height ) ));
-    assert_eq! (unsafe {
-                & ( * ( 0 as * const _cef_image_t ) ) . has_representation as
-                * const _ as usize } , 88usize , concat ! (
-                "Alignment of field: " , stringify ! ( _cef_image_t ) , "::" ,
-                stringify ! ( has_representation ) ));
-    assert_eq! (unsafe {
-                & ( * ( 0 as * const _cef_image_t ) ) . remove_representation
-                as * const _ as usize } , 96usize , concat ! (
-                "Alignment of field: " , stringify ! ( _cef_image_t ) , "::" ,
-                stringify ! ( remove_representation ) ));
-    assert_eq! (unsafe {
-                & ( * ( 0 as * const _cef_image_t ) ) .
-                get_representation_info as * const _ as usize } , 104usize ,
-                concat ! (
-                "Alignment of field: " , stringify ! ( _cef_image_t ) , "::" ,
-                stringify ! ( get_representation_info ) ));
-    assert_eq! (unsafe {
-                & ( * ( 0 as * const _cef_image_t ) ) . get_as_bitmap as *
-                const _ as usize } , 112usize , concat ! (
-                "Alignment of field: " , stringify ! ( _cef_image_t ) , "::" ,
-                stringify ! ( get_as_bitmap ) ));
-    assert_eq! (unsafe {
-                & ( * ( 0 as * const _cef_image_t ) ) . get_as_png as * const
-                _ as usize } , 120usize , concat ! (
-                "Alignment of field: " , stringify ! ( _cef_image_t ) , "::" ,
-                stringify ! ( get_as_png ) ));
-    assert_eq! (unsafe {
-                & ( * ( 0 as * const _cef_image_t ) ) . get_as_jpeg as * const
-                _ as usize } , 128usize , concat ! (
-                "Alignment of field: " , stringify ! ( _cef_image_t ) , "::" ,
-                stringify ! ( get_as_jpeg ) ));
-}
-impl Clone for _cef_image_t {
-    fn clone(&self) -> Self { *self }
-}
-pub type cef_image_t = _cef_image_t;
-extern "C" {
-    ///
-    pub fn cef_image_create() -> *mut cef_image_t;
 }
 ///
 #[repr(C)]
@@ -7631,10 +7650,15 @@ pub struct _cef_browser_host_t {
                                                                                      *mut _cef_browser_host_t)
                                                                 ->
                                                                     *mut _cef_navigation_entry_t>,
+    ///
+    pub set_accessibility_state: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                                *mut _cef_browser_host_t,
+                                                                            accessibility_state:
+                                                                                cef_state_t)>,
 }
 #[test]
 fn bindgen_test_layout__cef_browser_host_t() {
-    assert_eq!(::std::mem::size_of::<_cef_browser_host_t>() , 440usize ,
+    assert_eq!(::std::mem::size_of::<_cef_browser_host_t>() , 448usize ,
                concat ! ( "Size of: " , stringify ! ( _cef_browser_host_t )
                ));
     assert_eq! (::std::mem::align_of::<_cef_browser_host_t>() , 8usize ,
@@ -7929,6 +7953,12 @@ fn bindgen_test_layout__cef_browser_host_t() {
                 432usize , concat ! (
                 "Alignment of field: " , stringify ! ( _cef_browser_host_t ) ,
                 "::" , stringify ! ( get_visible_navigation_entry ) ));
+    assert_eq! (unsafe {
+                & ( * ( 0 as * const _cef_browser_host_t ) ) .
+                set_accessibility_state as * const _ as usize } , 440usize ,
+                concat ! (
+                "Alignment of field: " , stringify ! ( _cef_browser_host_t ) ,
+                "::" , stringify ! ( set_accessibility_state ) ));
 }
 impl Clone for _cef_browser_host_t {
     fn clone(&self) -> Self { *self }
@@ -8666,6 +8696,8 @@ pub struct _cef_print_handler_t {
     ///
     pub on_print_settings: ::std::option::Option<unsafe extern "C" fn(self_:
                                                                           *mut _cef_print_handler_t,
+                                                                      browser:
+                                                                          *mut _cef_browser_t,
                                                                       settings:
                                                                           *mut _cef_print_settings_t,
                                                                       get_defaults:
@@ -8673,6 +8705,8 @@ pub struct _cef_print_handler_t {
     ///
     pub on_print_dialog: ::std::option::Option<unsafe extern "C" fn(self_:
                                                                         *mut _cef_print_handler_t,
+                                                                    browser:
+                                                                        *mut _cef_browser_t,
                                                                     has_selection:
                                                                         ::std::os::raw::c_int,
                                                                     callback:
@@ -8681,6 +8715,8 @@ pub struct _cef_print_handler_t {
     ///
     pub on_print_job: ::std::option::Option<unsafe extern "C" fn(self_:
                                                                      *mut _cef_print_handler_t,
+                                                                 browser:
+                                                                     *mut _cef_browser_t,
                                                                  document_name:
                                                                      *const cef_string_t,
                                                                  pdf_file_path:
@@ -8690,7 +8726,9 @@ pub struct _cef_print_handler_t {
                                                 -> ::std::os::raw::c_int>,
     ///
     pub on_print_reset: ::std::option::Option<unsafe extern "C" fn(self_:
-                                                                       *mut _cef_print_handler_t)>,
+                                                                       *mut _cef_print_handler_t,
+                                                                   browser:
+                                                                       *mut _cef_browser_t)>,
     ///
     pub get_pdf_paper_size: ::std::option::Option<unsafe extern "C" fn(self_:
                                                                            *mut _cef_print_handler_t,
@@ -13365,9 +13403,64 @@ impl Clone for _cef_life_span_handler_t {
 ///
 #[repr(C)]
 #[derive(Debug, Copy)]
+pub struct _cef_accessibility_handler_t {
+    ///
+    pub base: cef_base_ref_counted_t,
+    ///
+    pub on_accessibility_tree_change: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                                     *mut _cef_accessibility_handler_t,
+                                                                                 value:
+                                                                                     *mut _cef_value_t)>,
+    ///
+    pub on_accessibility_location_change: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                                         *mut _cef_accessibility_handler_t,
+                                                                                     value:
+                                                                                         *mut _cef_value_t)>,
+}
+#[test]
+fn bindgen_test_layout__cef_accessibility_handler_t() {
+    assert_eq!(::std::mem::size_of::<_cef_accessibility_handler_t>() , 48usize
+               , concat ! (
+               "Size of: " , stringify ! ( _cef_accessibility_handler_t ) ));
+    assert_eq! (::std::mem::align_of::<_cef_accessibility_handler_t>() ,
+                8usize , concat ! (
+                "Alignment of " , stringify ! ( _cef_accessibility_handler_t )
+                ));
+    assert_eq! (unsafe {
+                & ( * ( 0 as * const _cef_accessibility_handler_t ) ) . base
+                as * const _ as usize } , 0usize , concat ! (
+                "Alignment of field: " , stringify ! (
+                _cef_accessibility_handler_t ) , "::" , stringify ! ( base )
+                ));
+    assert_eq! (unsafe {
+                & ( * ( 0 as * const _cef_accessibility_handler_t ) ) .
+                on_accessibility_tree_change as * const _ as usize } , 32usize
+                , concat ! (
+                "Alignment of field: " , stringify ! (
+                _cef_accessibility_handler_t ) , "::" , stringify ! (
+                on_accessibility_tree_change ) ));
+    assert_eq! (unsafe {
+                & ( * ( 0 as * const _cef_accessibility_handler_t ) ) .
+                on_accessibility_location_change as * const _ as usize } ,
+                40usize , concat ! (
+                "Alignment of field: " , stringify ! (
+                _cef_accessibility_handler_t ) , "::" , stringify ! (
+                on_accessibility_location_change ) ));
+}
+impl Clone for _cef_accessibility_handler_t {
+    fn clone(&self) -> Self { *self }
+}
+///
+#[repr(C)]
+#[derive(Debug, Copy)]
 pub struct _cef_render_handler_t {
     ///
     pub base: cef_base_ref_counted_t,
+    ///
+    pub get_accessibility_handler: ::std::option::Option<unsafe extern "C" fn(self_:
+                                                                                  *mut _cef_render_handler_t)
+                                                             ->
+                                                                 *mut _cef_accessibility_handler_t>,
     ///
     pub get_root_screen_rect: ::std::option::Option<unsafe extern "C" fn(self_:
                                                                              *mut _cef_render_handler_t,
@@ -13493,7 +13586,7 @@ pub struct _cef_render_handler_t {
 }
 #[test]
 fn bindgen_test_layout__cef_render_handler_t() {
-    assert_eq!(::std::mem::size_of::<_cef_render_handler_t>() , 128usize ,
+    assert_eq!(::std::mem::size_of::<_cef_render_handler_t>() , 136usize ,
                concat ! ( "Size of: " , stringify ! ( _cef_render_handler_t )
                ));
     assert_eq! (::std::mem::align_of::<_cef_render_handler_t>() , 8usize ,
@@ -13506,68 +13599,74 @@ fn bindgen_test_layout__cef_render_handler_t() {
                 , "::" , stringify ! ( base ) ));
     assert_eq! (unsafe {
                 & ( * ( 0 as * const _cef_render_handler_t ) ) .
-                get_root_screen_rect as * const _ as usize } , 32usize ,
+                get_accessibility_handler as * const _ as usize } , 32usize ,
+                concat ! (
+                "Alignment of field: " , stringify ! ( _cef_render_handler_t )
+                , "::" , stringify ! ( get_accessibility_handler ) ));
+    assert_eq! (unsafe {
+                & ( * ( 0 as * const _cef_render_handler_t ) ) .
+                get_root_screen_rect as * const _ as usize } , 40usize ,
                 concat ! (
                 "Alignment of field: " , stringify ! ( _cef_render_handler_t )
                 , "::" , stringify ! ( get_root_screen_rect ) ));
     assert_eq! (unsafe {
                 & ( * ( 0 as * const _cef_render_handler_t ) ) . get_view_rect
-                as * const _ as usize } , 40usize , concat ! (
+                as * const _ as usize } , 48usize , concat ! (
                 "Alignment of field: " , stringify ! ( _cef_render_handler_t )
                 , "::" , stringify ! ( get_view_rect ) ));
     assert_eq! (unsafe {
                 & ( * ( 0 as * const _cef_render_handler_t ) ) .
-                get_screen_point as * const _ as usize } , 48usize , concat !
+                get_screen_point as * const _ as usize } , 56usize , concat !
                 (
                 "Alignment of field: " , stringify ! ( _cef_render_handler_t )
                 , "::" , stringify ! ( get_screen_point ) ));
     assert_eq! (unsafe {
                 & ( * ( 0 as * const _cef_render_handler_t ) ) .
-                get_screen_info as * const _ as usize } , 56usize , concat ! (
+                get_screen_info as * const _ as usize } , 64usize , concat ! (
                 "Alignment of field: " , stringify ! ( _cef_render_handler_t )
                 , "::" , stringify ! ( get_screen_info ) ));
     assert_eq! (unsafe {
                 & ( * ( 0 as * const _cef_render_handler_t ) ) . on_popup_show
-                as * const _ as usize } , 64usize , concat ! (
+                as * const _ as usize } , 72usize , concat ! (
                 "Alignment of field: " , stringify ! ( _cef_render_handler_t )
                 , "::" , stringify ! ( on_popup_show ) ));
     assert_eq! (unsafe {
                 & ( * ( 0 as * const _cef_render_handler_t ) ) . on_popup_size
-                as * const _ as usize } , 72usize , concat ! (
+                as * const _ as usize } , 80usize , concat ! (
                 "Alignment of field: " , stringify ! ( _cef_render_handler_t )
                 , "::" , stringify ! ( on_popup_size ) ));
     assert_eq! (unsafe {
                 & ( * ( 0 as * const _cef_render_handler_t ) ) . on_paint as *
-                const _ as usize } , 80usize , concat ! (
+                const _ as usize } , 88usize , concat ! (
                 "Alignment of field: " , stringify ! ( _cef_render_handler_t )
                 , "::" , stringify ! ( on_paint ) ));
     assert_eq! (unsafe {
                 & ( * ( 0 as * const _cef_render_handler_t ) ) .
-                on_cursor_change as * const _ as usize } , 88usize , concat !
+                on_cursor_change as * const _ as usize } , 96usize , concat !
                 (
                 "Alignment of field: " , stringify ! ( _cef_render_handler_t )
                 , "::" , stringify ! ( on_cursor_change ) ));
     assert_eq! (unsafe {
                 & ( * ( 0 as * const _cef_render_handler_t ) ) .
-                start_dragging as * const _ as usize } , 96usize , concat ! (
+                start_dragging as * const _ as usize } , 104usize , concat ! (
                 "Alignment of field: " , stringify ! ( _cef_render_handler_t )
                 , "::" , stringify ! ( start_dragging ) ));
     assert_eq! (unsafe {
                 & ( * ( 0 as * const _cef_render_handler_t ) ) .
-                update_drag_cursor as * const _ as usize } , 104usize , concat
+                update_drag_cursor as * const _ as usize } , 112usize , concat
                 ! (
                 "Alignment of field: " , stringify ! ( _cef_render_handler_t )
                 , "::" , stringify ! ( update_drag_cursor ) ));
     assert_eq! (unsafe {
                 & ( * ( 0 as * const _cef_render_handler_t ) ) .
-                on_scroll_offset_changed as * const _ as usize } , 112usize ,
+                on_scroll_offset_changed as * const _ as usize } , 120usize ,
                 concat ! (
                 "Alignment of field: " , stringify ! ( _cef_render_handler_t )
                 , "::" , stringify ! ( on_scroll_offset_changed ) ));
     assert_eq! (unsafe {
                 & ( * ( 0 as * const _cef_render_handler_t ) ) .
                 on_ime_composition_range_changed as * const _ as usize } ,
-                120usize , concat ! (
+                128usize , concat ! (
                 "Alignment of field: " , stringify ! ( _cef_render_handler_t )
                 , "::" , stringify ! ( on_ime_composition_range_changed ) ));
 }

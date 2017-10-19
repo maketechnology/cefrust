@@ -135,7 +135,6 @@ fn cef_window_info(hwnd: std::os::raw::c_ulong) -> cef::_cef_window_info_t {
         //parent_window: hwnd,
         //parent_window: 0,
         windowless_rendering_enabled: 0,
-        transparent_painting_enabled: 0,
         window: 0
     };
     println!("parent {}", window_info.parent_window);

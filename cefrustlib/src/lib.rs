@@ -97,7 +97,6 @@ pub extern fn cefswt_init(japp: *mut cef::cef_app_t, cefrust_path: *const libc::
         pack_loading_disabled: 0,
         remote_debugging_port: 9797,
         uncaught_exception_stack_size: 0,
-        context_safety_implementation: 0,
         ignore_certificate_errors: 0,
         enable_net_security_expiration: 0,
         background_color: 0,
