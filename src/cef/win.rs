@@ -5,7 +5,29 @@
 #![allow(non_camel_case_types)]
 use cef::cef_string_t;
 
+pub type wchar_t = ::std::os::raw::c_ushort;
 pub type DWORD = ::std::os::raw::c_ulong;
+#[repr(C)]
+#[derive(Debug, Copy)]
+pub struct HINSTANCE__ {
+    pub unused: ::std::os::raw::c_int,
+}
+#[test]
+fn bindgen_test_layout_HINSTANCE__() {
+    assert_eq!(::std::mem::size_of::<HINSTANCE__>() , 4usize , concat ! (
+               "Size of: " , stringify ! ( HINSTANCE__ ) ));
+    assert_eq! (::std::mem::align_of::<HINSTANCE__>() , 4usize , concat ! (
+                "Alignment of " , stringify ! ( HINSTANCE__ ) ));
+    assert_eq! (unsafe {
+                & ( * ( 0 as * const HINSTANCE__ ) ) . unused as * const _ as
+                usize } , 0usize , concat ! (
+                "Alignment of field: " , stringify ! ( HINSTANCE__ ) , "::" ,
+                stringify ! ( unused ) ));
+}
+impl Clone for HINSTANCE__ {
+    fn clone(&self) -> Self { *self }
+}
+pub type HINSTANCE = *mut HINSTANCE__;
 #[repr(C)]
 #[derive(Debug, Copy)]
 pub struct HWND__ {
@@ -13,8 +35,15 @@ pub struct HWND__ {
 }
 #[test]
 fn bindgen_test_layout_HWND__() {
-    assert_eq!(::std::mem::size_of::<HWND__>() , 4usize);
-    assert_eq!(::std::mem::align_of::<HWND__>() , 4usize);
+    assert_eq!(::std::mem::size_of::<HWND__>() , 4usize , concat ! (
+               "Size of: " , stringify ! ( HWND__ ) ));
+    assert_eq! (::std::mem::align_of::<HWND__>() , 4usize , concat ! (
+                "Alignment of " , stringify ! ( HWND__ ) ));
+    assert_eq! (unsafe {
+                & ( * ( 0 as * const HWND__ ) ) . unused as * const _ as usize
+                } , 0usize , concat ! (
+                "Alignment of field: " , stringify ! ( HWND__ ) , "::" ,
+                stringify ! ( unused ) ));
 }
 impl Clone for HWND__ {
     fn clone(&self) -> Self { *self }
@@ -27,27 +56,21 @@ pub struct HMENU__ {
 }
 #[test]
 fn bindgen_test_layout_HMENU__() {
-    assert_eq!(::std::mem::size_of::<HMENU__>() , 4usize);
-    assert_eq!(::std::mem::align_of::<HMENU__>() , 4usize);
+    assert_eq!(::std::mem::size_of::<HMENU__>() , 4usize , concat ! (
+               "Size of: " , stringify ! ( HMENU__ ) ));
+    assert_eq! (::std::mem::align_of::<HMENU__>() , 4usize , concat ! (
+                "Alignment of " , stringify ! ( HMENU__ ) ));
+    assert_eq! (unsafe {
+                & ( * ( 0 as * const HMENU__ ) ) . unused as * const _ as
+                usize } , 0usize , concat ! (
+                "Alignment of field: " , stringify ! ( HMENU__ ) , "::" ,
+                stringify ! ( unused ) ));
 }
 impl Clone for HMENU__ {
     fn clone(&self) -> Self { *self }
 }
 pub type HMENU = *mut HMENU__;
-#[repr(C)]
-#[derive(Debug, Copy)]
-pub struct HINSTANCE__ {
-    pub unused: ::std::os::raw::c_int,
-}
-#[test]
-fn bindgen_test_layout_HINSTANCE__() {
-    assert_eq!(::std::mem::size_of::<HINSTANCE__>() , 4usize);
-    assert_eq!(::std::mem::align_of::<HINSTANCE__>() , 4usize);
-}
-impl Clone for HINSTANCE__ {
-    fn clone(&self) -> Self { *self }
-}
-pub type HINSTANCE = *mut HINSTANCE__;
+pub type char16 = wchar_t;
 ///
 #[repr(C)]
 #[derive(Debug, Copy)]
@@ -56,8 +79,15 @@ pub struct _cef_main_args_t {
 }
 #[test]
 fn bindgen_test_layout__cef_main_args_t() {
-    assert_eq!(::std::mem::size_of::<_cef_main_args_t>() , 8usize);
-    assert_eq!(::std::mem::align_of::<_cef_main_args_t>() , 8usize);
+    assert_eq!(::std::mem::size_of::<_cef_main_args_t>() , 8usize , concat ! (
+               "Size of: " , stringify ! ( _cef_main_args_t ) ));
+    assert_eq! (::std::mem::align_of::<_cef_main_args_t>() , 8usize , concat !
+                ( "Alignment of " , stringify ! ( _cef_main_args_t ) ));
+    assert_eq! (unsafe {
+                & ( * ( 0 as * const _cef_main_args_t ) ) . instance as *
+                const _ as usize } , 0usize , concat ! (
+                "Alignment of field: " , stringify ! ( _cef_main_args_t ) ,
+                "::" , stringify ! ( instance ) ));
 }
 impl Clone for _cef_main_args_t {
     fn clone(&self) -> Self { *self }
@@ -78,14 +108,70 @@ pub struct _cef_window_info_t {
     ///
     pub windowless_rendering_enabled: ::std::os::raw::c_int,
     ///
-    pub transparent_painting_enabled: ::std::os::raw::c_int,
-    ///
     pub window: HWND,
 }
 #[test]
 fn bindgen_test_layout__cef_window_info_t() {
-    assert_eq!(::std::mem::size_of::<_cef_window_info_t>() , 88usize);
-    assert_eq!(::std::mem::align_of::<_cef_window_info_t>() , 8usize);
+    assert_eq!(::std::mem::size_of::<_cef_window_info_t>() , 88usize , concat
+               ! ( "Size of: " , stringify ! ( _cef_window_info_t ) ));
+    assert_eq! (::std::mem::align_of::<_cef_window_info_t>() , 8usize , concat
+                ! ( "Alignment of " , stringify ! ( _cef_window_info_t ) ));
+    assert_eq! (unsafe {
+                & ( * ( 0 as * const _cef_window_info_t ) ) . ex_style as *
+                const _ as usize } , 0usize , concat ! (
+                "Alignment of field: " , stringify ! ( _cef_window_info_t ) ,
+                "::" , stringify ! ( ex_style ) ));
+    assert_eq! (unsafe {
+                & ( * ( 0 as * const _cef_window_info_t ) ) . window_name as *
+                const _ as usize } , 8usize , concat ! (
+                "Alignment of field: " , stringify ! ( _cef_window_info_t ) ,
+                "::" , stringify ! ( window_name ) ));
+    assert_eq! (unsafe {
+                & ( * ( 0 as * const _cef_window_info_t ) ) . style as * const
+                _ as usize } , 32usize , concat ! (
+                "Alignment of field: " , stringify ! ( _cef_window_info_t ) ,
+                "::" , stringify ! ( style ) ));
+    assert_eq! (unsafe {
+                & ( * ( 0 as * const _cef_window_info_t ) ) . x as * const _
+                as usize } , 36usize , concat ! (
+                "Alignment of field: " , stringify ! ( _cef_window_info_t ) ,
+                "::" , stringify ! ( x ) ));
+    assert_eq! (unsafe {
+                & ( * ( 0 as * const _cef_window_info_t ) ) . y as * const _
+                as usize } , 40usize , concat ! (
+                "Alignment of field: " , stringify ! ( _cef_window_info_t ) ,
+                "::" , stringify ! ( y ) ));
+    assert_eq! (unsafe {
+                & ( * ( 0 as * const _cef_window_info_t ) ) . width as * const
+                _ as usize } , 44usize , concat ! (
+                "Alignment of field: " , stringify ! ( _cef_window_info_t ) ,
+                "::" , stringify ! ( width ) ));
+    assert_eq! (unsafe {
+                & ( * ( 0 as * const _cef_window_info_t ) ) . height as *
+                const _ as usize } , 48usize , concat ! (
+                "Alignment of field: " , stringify ! ( _cef_window_info_t ) ,
+                "::" , stringify ! ( height ) ));
+    assert_eq! (unsafe {
+                & ( * ( 0 as * const _cef_window_info_t ) ) . parent_window as
+                * const _ as usize } , 56usize , concat ! (
+                "Alignment of field: " , stringify ! ( _cef_window_info_t ) ,
+                "::" , stringify ! ( parent_window ) ));
+    assert_eq! (unsafe {
+                & ( * ( 0 as * const _cef_window_info_t ) ) . menu as * const
+                _ as usize } , 64usize , concat ! (
+                "Alignment of field: " , stringify ! ( _cef_window_info_t ) ,
+                "::" , stringify ! ( menu ) ));
+    assert_eq! (unsafe {
+                & ( * ( 0 as * const _cef_window_info_t ) ) .
+                windowless_rendering_enabled as * const _ as usize } , 72usize
+                , concat ! (
+                "Alignment of field: " , stringify ! ( _cef_window_info_t ) ,
+                "::" , stringify ! ( windowless_rendering_enabled ) ));
+    assert_eq! (unsafe {
+                & ( * ( 0 as * const _cef_window_info_t ) ) . window as *
+                const _ as usize } , 80usize , concat ! (
+                "Alignment of field: " , stringify ! ( _cef_window_info_t ) ,
+                "::" , stringify ! ( window ) ));
 }
 impl Clone for _cef_window_info_t {
     fn clone(&self) -> Self { *self }
