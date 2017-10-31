@@ -49,8 +49,6 @@ pub struct _cef_window_info_t {
     ///
     pub windowless_rendering_enabled: ::std::os::raw::c_int,
     ///
-    pub transparent_painting_enabled: ::std::os::raw::c_int,
-    ///
     pub view: *mut ::std::os::raw::c_void,
 }
 #[test]
@@ -100,12 +98,6 @@ fn bindgen_test_layout__cef_window_info_t() {
                 , concat ! (
                 "Alignment of field: " , stringify ! ( _cef_window_info_t ) ,
                 "::" , stringify ! ( windowless_rendering_enabled ) ));
-    assert_eq! (unsafe {
-                & ( * ( 0 as * const _cef_window_info_t ) ) .
-                transparent_painting_enabled as * const _ as usize } , 60usize
-                , concat ! (
-                "Alignment of field: " , stringify ! ( _cef_window_info_t ) ,
-                "::" , stringify ! ( transparent_painting_enabled ) ));
     assert_eq! (unsafe {
                 & ( * ( 0 as * const _cef_window_info_t ) ) . view as * const
                 _ as usize } , 64usize , concat ! (

@@ -183,7 +183,7 @@ fn str_from_c(cstr: *const libc::c_char) -> &'static str {
 }
 
 #[no_mangle]
-pub extern fn cefswt_create_browser(hwnd: std::os::raw::c_ulong, url: *const libc::c_char, client: &mut cef::_cef_client_t) -> *const cef::cef_browser_t {
+pub extern fn cefswt_create_browser(hwnd: std::os::raw::c_ulong, url: *const libc::c_char, client: &mut cef::_cef_client_t, w: std::os::raw::c_int, h: std::os::raw::c_int) -> *const cef::cef_browser_t {
     println!("create_browser");
     assert_eq!(unsafe{(*client).base.size}, std::mem::size_of::<cef::_cef_client_t>());
 
@@ -195,7 +195,7 @@ pub extern fn cefswt_create_browser(hwnd: std::os::raw::c_ulong, url: *const lib
     let url = str_from_c(url);
     println!("url: {:?}", url);
     //let url = String::from_utf16(url as &[u16]).unwrap();
-    let browser = app::create_browser(hwnd, url, client);
+    let browser = app::create_browser(hwnd, url, client, w, h);
 
     browser
 }
@@ -297,7 +297,7 @@ fn do_resize(win_handle: std::os::raw::c_ulong, width: i32, height: i32) {
 }
 
 #[cfg(target_os = "macos")]
-fn do_resize(win_handle: std::os::raw::c_ulong, width: i32, height: i32) {
+fn do_resize(win_handle: std::os::raw::c_ulong, _: i32, _: i32) {
     // handled by cocoa
 }
 

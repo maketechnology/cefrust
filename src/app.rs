@@ -61,7 +61,6 @@ fn cef_window_info(hwnd: std::os::raw::c_ulong) -> cef::_cef_window_info_t {
         parent_view: hwnd as *mut std::os::raw::c_void,
         //parent_window: 0,
         windowless_rendering_enabled: 0,
-        transparent_painting_enabled: 0,
         view: 0 as *mut std::os::raw::c_void,
         hidden: 0,
         window_name: cef::cef_string_t { str: std::ptr::null_mut(),  length: 0,  dtor: Option::None }
