@@ -42,6 +42,10 @@ pub fn prepare_args() -> cef::_cef_main_args_t {
         let carg = carg_rslt.expect("cant create arg");
         let mp = carg.into_raw();
         args.push(mp);
+        let carg_rslt = ffi::CString::new("--disable-accelerated-2d-canvas");
+        let carg = carg_rslt.expect("cant create arg");
+        let mp = carg.into_raw();
+        args.push(mp);
         println!("Force --disable-gpu-compositing");
     }
 

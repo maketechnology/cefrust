@@ -95,7 +95,6 @@ fn cef() {
         pack_loading_disabled: 0,
         remote_debugging_port: 0,
         uncaught_exception_stack_size: 100,
-        context_safety_implementation: 0,
         ignore_certificate_errors: 0,
         enable_net_security_expiration: 0,
         background_color: 0,
