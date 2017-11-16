@@ -6,10 +6,13 @@ build = "build.rs"
 
 [features]
 gen = []
+genJava = []
 
 [build-dependencies]
-bindgen = "0.29.0"
+bindgen = "0.31.3"
 fs_extra = "1.0.0"
+java_bindgen = { git = "https://github.com/maketechnology/java-bindgen", branch = "java-bindgen" }
+#java_bindgen = { path = "../java-bindgen" }
 
 [dependencies]
 libc = "0.2.21"

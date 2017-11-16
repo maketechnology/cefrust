@@ -1,4 +1,5 @@
 extern crate bindgen;
+extern crate java_bindgen;
 
 use std::env;
 use std::path;
@@ -54,6 +55,10 @@ fn main() {
     gen_cef(cef_path.display());
     gen_os(cef_path.display());
   }
+  if cfg!(feature = "genJava") {
+    gen_java_cef(cef_path.display());
+  }
+
   //let mut cef_path_linux = cwd.clone();
   //cef_path_linux.push("cef_linux");
   //create_links_linux(cef_path_linux.clone());
@@ -197,9 +202,9 @@ fn do_link(cef_path: path::PathBuf, out_path: path::PathBuf, _: bool) {
 fn gen_os(cef_path: path::Display) {
   let _ = generator(cef_path)
     .header("cef_win.h")
-    .whitelisted_type("_cef_main_args_t")
-    .whitelisted_type("_cef_window_info_t")
-    .hide_type(".*string.*")
+    .whitelist_type("_cef_main_args_t")
+    .whitelist_type("_cef_window_info_t")
+    .blacklist_type(".*string.*")
     .raw_line("use cef::cef_string_t;")
     .generate().expect("Failed to gencef win")
     .write_to_file(path::Path::new("src").join("cef").join("win.rs"));
@@ -209,8 +214,8 @@ fn gen_os(cef_path: path::Display) {
 fn gen_os(cef_path: path::Display) {
   let _ = generator(cef_path)
     .header("cef_linux.h")
-    .whitelisted_type("_cef_main_args_t")
-    .whitelisted_type("_cef_window_info_t")
+    .whitelist_type("_cef_main_args_t")
+    .whitelist_type("_cef_window_info_t")
     .generate().expect("Failed to gencef linux")
     .write_to_file(path::Path::new("src").join("cef").join("linux.rs"));
 }
@@ -219,9 +224,9 @@ fn gen_os(cef_path: path::Display) {
 fn gen_os(cef_path: path::Display) {
   let _ = generator(cef_path)
     .header("cef_mac.h")
-    .whitelisted_type("_cef_main_args_t")
-    .whitelisted_type("_cef_window_info_t")
-    .hide_type(".*string.*")
+    .whitelist_type("_cef_main_args_t")
+    .whitelist_type("_cef_window_info_t")
+    .blacklist_type(".*string.*")
     .raw_line("use cef::cef_string_t;")
     .generate().expect("Failed to gencef mac")
     .write_to_file(path::Path::new("src").join("cef").join("mac.rs"));
@@ -231,19 +236,19 @@ fn gen_os(cef_path: path::Display) {
 fn gen_cef(cef_path: path::Display) {
   let _ = generator(cef_path)
     .header("cef.h")
-    .whitelisted_type("cef_string_t")
-    .whitelisted_type(".*cef_base_t")
-    .whitelisted_type("_cef_scheme_registrar_t")
-    .whitelisted_type("_cef_.*_handler_t")
-    .whitelisted_function("cef_string_.*")
-    .whitelisted_function("cef_execute_process")
-    .whitelisted_function("cef_initialize")
-    .whitelisted_function("cef_run_message_loop")
-    .whitelisted_function("cef_shutdown")
-    .whitelisted_function("cef_browser_host_create_browser")
-    .whitelisted_function("cef_.*")
-    .hide_type("_cef_main_args_t")
-    .hide_type("_cef_window_info_t")
+    .whitelist_type("cef_string_t")
+    .whitelist_type(".*cef_base_t")
+    .whitelist_type("_cef_scheme_registrar_t")
+    .whitelist_type("_cef_.*_handler_t")
+    .whitelist_function("cef_string_.*")
+    .whitelist_function("cef_execute_process")
+    .whitelist_function("cef_initialize")
+    .whitelist_function("cef_run_message_loop")
+    .whitelist_function("cef_shutdown")
+    .whitelist_function("cef_browser_host_create_browser")
+    .whitelist_function("cef_.*")
+    .blacklist_type("_cef_main_args_t")
+    .blacklist_type("_cef_window_info_t")
     .raw_line("#[cfg(target_os = \"linux\")] pub mod linux;")
     .raw_line("#[cfg(target_os = \"linux\")] pub use self::linux::_cef_window_info_t;")
     .raw_line("#[cfg(target_os = \"linux\")] pub use self::linux::_cef_main_args_t;")
@@ -255,6 +260,109 @@ fn gen_cef(cef_path: path::Display) {
     .raw_line("#[cfg(windows)] pub use self::win::_cef_main_args_t;")
     .generate().expect("Failed to gencef")
     .write_to_file(path::Path::new("src").join("cef").join("mod.rs"));
+}
+
+#[allow(dead_code)]
+fn gen_java_cef(cef_path: path::Display) {
+  let config = java_bindgen::CodegenConfig {
+            functions: true,
+            types: true,
+            vars: false,
+            methods: true,
+            constructors: false,
+            destructors: false
+        };
+  let gen = java_bindgen::builder()
+    .clang_arg(format!("-I{}", cef_path))
+    .clang_arg(format!("-I{}", "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v7.1A\\Include"))
+    .clang_arg("-fparse-all-comments")
+    .clang_arg("-Wno-nonportable-include-path")
+    .clang_arg("-Wno-invalid-token-paste")
+//    .link("cef")
+    //.use_core()
+    .with_codegen_config(config);
+  let _ = gen
+    .header("cef_java.h")
+    .whitelist_recursively(false)
+    .whitelist_type("cef_string_t")
+    .whitelist_type("_cef_string_utf16_t")
+    .whitelist_type("cef_string_userfree_t")
+    .whitelist_type("cef_string_userfree_utf16_t")
+    // .whitelist_type("_cef_size_t")
+    // .whitelist_type("_cef_rect_t")
+    // .whitelist_type("_cef_range_t")
+    // .whitelist_type("cef_color_model_t")
+    // .whitelist_type("cef_duplex_mode_t")
+    .whitelist_type("cef_focus_source_t")
+    .whitelist_type("cef_process_id_t")
+    .whitelist_type("cef_window_open_disposition_t")
+    // .whitelist_type("_cef_browser_t")
+    // .whitelist_type("_cef_browser_host_t")
+    // .whitelist_type("_cef_frame_t")
+    // .whitelist_type("_cef_process_message_t")
+    .whitelist_type("_cef_browser_process_handler_t")
+    .whitelist_type("_cef_client_t")
+    .whitelist_type("_cef_focus_handler_t")
+    .whitelist_type("_cef_app_t")
+    .whitelist_type("_cef_life_span_handler_t")
+    // .whitelist_type("_cef_command_line_t")
+    // .whitelist_type("_cef_print_handler_t")
+    // .whitelist_type("_cef_print_settings_t")
+    // .whitelist_type("_cef_print_dialog_callback_t")
+    // .whitelist_type("_cef_print_job_callback_t")
+    .opaque_type("_cef_list_value_t")
+    .blacklist_type("_cef_base_ref_counted_t")
+    .opaque_type("_cef_print_handler_t")
+    .opaque_type("_cef_command_line_t")
+    .blacklist_type("_cef_command_line_t")
+    .opaque_type("_cef_scheme_registrar_t")
+    .opaque_type("_cef_resource_bundle_handler_t")
+    .opaque_type("_cef_render_process_handler_t")
+    .opaque_type("_cef_browser_t")
+    .opaque_type("_cef_process_message_t")
+    .opaque_type("_cef_request_handler_t")
+    .opaque_type("_cef_load_handler_t")
+    .opaque_type("_cef_render_handler_t")
+    .opaque_type("_cef_keyboard_handler_t")
+    .opaque_type("_cef_jsdialog_handler_t")
+    .opaque_type("_cef_geolocation_handler_t")
+    .opaque_type("_cef_find_handler_t")
+    .opaque_type("_cef_drag_handler_t")
+    .opaque_type("_cef_download_handler_t")
+    .opaque_type("_cef_display_handler_t")
+    .opaque_type("_cef_dialog_handler_t")
+    .opaque_type("_cef_context_menu_handler_t")
+    .opaque_type("_cef_frame_t")
+    .opaque_type("_cef_popup_features_t")
+    .opaque_type("_cef_window_info_t")
+    .opaque_type("_cef_browser_settings_t")
+    // .whitelisted_type(".*cef_base_t")
+    // .whitelisted_type("_cef_scheme_registrar_t")
+    // .whitelisted_type("_cef_.*_handler_t")
+    // .whitelisted_function("cef_string_.*")
+    // .whitelisted_function("cef_execute_process")
+    // .whitelisted_function("cef_initialize")
+    // .whitelisted_function("cef_run_message_loop")
+    // .whitelisted_function("cef_shutdown")
+    // .whitelisted_function("cef_browser_host_create_browser")
+    // .whitelisted_function("cef_.*")
+    // .blacklist_type("_cef_main_args_t")
+    // .blacklist_type("_cef_window_info_t")
+    .raw_line("package cef.capi;")
+    .raw_line("import jnr.ffi.*;")
+    .raw_line("import jnr.ffi.byref.*;")
+    .raw_line("import jnr.ffi.annotations.*;")
+    .raw_line("import jnr.ffi.util.EnumMapper.IntegerEnum;")
+    .raw_line("import cef.capi.CefFactory.cef_base_ref_counted_t;")
+    .raw_line("import static cef.capi.CefFactory.mapTypeForClosure;")
+    .enable_cxx_namespaces()
+    .disable_name_namespacing()
+    .ctypes_prefix("")
+    .layout_tests(false)
+    .rustified_enum(".*")
+    .rustfmt_bindings(false)
+    .generate().expect("Failed to gencef")
+    .write_to_file(path::Path::new("CEF.java"));
 }
 
 fn generator(cef_path: path::Display) -> bindgen::Builder {
@@ -269,11 +377,14 @@ fn generator(cef_path: path::Display) -> bindgen::Builder {
   let gen = bindgen::builder()
     .clang_arg(format!("-I{}", cef_path))
     .clang_arg(format!("-I{}", "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v7.1A\\Include"))
+    .clang_arg("-fparse-all-comments")
     .clang_arg("-Wno-nonportable-include-path")
     .clang_arg("-Wno-invalid-token-paste")
     .link("cef")
     //.use_core()
     .with_codegen_config(config)
+    .rustified_enum(".*")
+    .rustfmt_bindings(true)
     .derive_debug(true)
     .raw_line("#![allow(dead_code)]")
     .raw_line("#![allow(non_snake_case)]")
@@ -309,21 +420,21 @@ fn gen_gtk() {
     .raw_line("#![allow(non_snake_case)]")
     .raw_line("#![allow(non_camel_case_types)]")
 
-    .whitelisted_function("gtk_init")
-    .whitelisted_function("gtk_window_new")
-    .whitelisted_function("gtk_widget_get_window")
-    .whitelisted_function("gtk_window_new")
-    .whitelisted_function("gdk_x11_drawable_get_xid")
-    .whitelisted_function("gtk_window_set_default_size")
-    .whitelisted_function("gtk_window_set_position")
-    .whitelisted_function("gtk_window_set_title")
-    .whitelisted_function("gtk_vbox_new")
-    .whitelisted_function("gtk_container_add")
-    .whitelisted_function("gtk_widget_show_all")
-    .whitelisted_function("gtk_main")
-    .whitelisted_function("g_signal_connect")
-    .whitelisted_function("gtk_widget_get_allocation")
-    .whitelisted_function("g_signal_connect_data")
+    .whitelist_function("gtk_init")
+    .whitelist_function("gtk_window_new")
+    .whitelist_function("gtk_widget_get_window")
+    .whitelist_function("gtk_window_new")
+    .whitelist_function("gdk_x11_drawable_get_xid")
+    .whitelist_function("gtk_window_set_default_size")
+    .whitelist_function("gtk_window_set_position")
+    .whitelist_function("gtk_window_set_title")
+    .whitelist_function("gtk_vbox_new")
+    .whitelist_function("gtk_container_add")
+    .whitelist_function("gtk_widget_show_all")
+    .whitelist_function("gtk_main")
+    .whitelist_function("g_signal_connect")
+    .whitelist_function("gtk_widget_get_allocation")
+    .whitelist_function("g_signal_connect_data")
     .generate().unwrap()
     .write_to_file(path::Path::new("src").join("gtk2.rs"));
 }
