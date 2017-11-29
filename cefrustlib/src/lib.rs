@@ -185,7 +185,7 @@ fn str_from_c(cstr: *const libc::c_char) -> &'static str {
 #[no_mangle]
 pub extern fn cefswt_create_browser(hwnd: std::os::raw::c_ulong, url: *const libc::c_char, client: &mut cef::_cef_client_t, w: std::os::raw::c_int, h: std::os::raw::c_int) -> *const cef::cef_browser_t {
     println!("create_browser");
-    assert_eq!(unsafe{(*client).base.size}, std::mem::size_of::<cef::_cef_client_t>());
+    assert_eq!((*client).base.size, std::mem::size_of::<cef::_cef_client_t>());
 
     println!("hwnd: {}", hwnd);
     println!("client: {:?}", client);
@@ -330,6 +330,22 @@ pub extern fn cefswt_load_url(browser: *mut cef::cef_browser_t, url: *const libc
     let main_frame = unsafe { get_frame(browser) };
     let load_url = unsafe { (*main_frame).load_url.expect("null load_url") };
     unsafe { load_url(main_frame, &url_cef) };
+}
+
+#[no_mangle]
+pub extern fn cefswt_get_url(browser: *mut cef::cef_browser_t) -> *mut std::os::raw::c_char {
+    let get_frame = unsafe { (*browser).get_main_frame.expect("null get_main_frame") };
+    let main_frame = unsafe { get_frame(browser) };
+    assert!(!main_frame.is_null());
+    let get_url = unsafe { (*main_frame).get_url.expect("null get_url") };
+    let url = unsafe { get_url(main_frame) };
+    if url.is_null() {
+        return std::ptr::null_mut();
+    } else {
+        let utf8 = unsafe { cef::cef_string_userfree_utf8_alloc()};
+        unsafe { cef::cef_string_utf16_to_utf8((*url).str, (*url).length, utf8) };
+        return unsafe {(*utf8).str};
+    }
 }
 
 #[no_mangle]
