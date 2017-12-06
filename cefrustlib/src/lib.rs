@@ -4,6 +4,9 @@ extern crate libc;
 extern crate x11;
 #[cfg(unix)]
 extern crate nix;
+#[cfg(target_os = "macos")]
+#[macro_use]
+extern crate objc;
 
 mod app;
 mod client;
@@ -130,13 +133,103 @@ fn do_initialize(main_args: cef::_cef_main_args_t, settings: cef::_cef_settings_
 }
 
 #[cfg(target_os = "macos")]
+static EVENT_KEY: char = 'k';
+
+#[cfg(target_os = "macos")]
 fn do_initialize(main_args: cef::_cef_main_args_t, settings: cef::_cef_settings_t, app_raw: *mut cefrust::cef::_cef_app_t) {
     let mut signal_handlers: HashMap<libc::c_int, nix::sys::signal::SigAction> = HashMap::new();
     backup_signal_handlers(&mut signal_handlers);
     
+    swizzleSendEvent();
+
     unsafe { cef::cef_initialize(&main_args, &settings, &mut (*app_raw), std::ptr::null_mut()) };
 
     restore_signal_handlers(signal_handlers);
+}
+
+#[cfg(target_os = "macos")]
+fn swizzleSendEvent() {
+    use std::ffi::CString;
+    use objc::runtime::{BOOL, Class, Method, NO, YES, Object, Sel, self};
+    use objc::{Encode, EncodeArguments, Encoding};
+
+    fn count_args(sel: Sel) -> usize {
+        sel.name().chars().filter(|&c| c == ':').count()
+    }
+
+    fn method_type_encoding(ret: &Encoding, args: &[Encoding]) -> CString {
+        let mut types = ret.as_str().to_owned();
+        // First two arguments are always self and the selector
+        types.push_str(<*mut Object>::encode().as_str());
+        types.push_str(Sel::encode().as_str());
+        types.extend(args.iter().map(|e| e.as_str()));
+        CString::new(types).unwrap()
+    }
+    
+    pub unsafe fn add_method<F>(cls: *mut Class, sel: Sel, func: F)
+            where F: objc::declare::MethodImplementation<Callee=Object> {
+        let encs = F::Args::encodings();
+        let encs = encs.as_ref();
+        let sel_args = count_args(sel);
+        assert!(sel_args == encs.len(),
+            "Selector accepts {} arguments, but function accepts {}",
+            sel_args, encs.len(),
+        );
+
+        let types = method_type_encoding(&F::Ret::encode(), encs);
+        let success = runtime::class_addMethod(cls, sel, func.imp(),
+            types.as_ptr());
+        assert!(success != NO, "Failed to add method {:?}", sel);
+    }
+
+    pub type Id = *mut runtime::Object;
+    pub type AssociationPolicy = libc::intptr_t;
+    extern {
+        pub fn objc_getAssociatedObject(object: Id, key: *const libc::c_void) -> BOOL;
+        pub fn objc_setAssociatedObject(object: Id,
+                                    key: *const libc::c_void,
+                                    value: BOOL,
+                                    policy: AssociationPolicy);
+    }
+
+    let cls_nm = CString::new("NSApplication").unwrap();
+    let cls = unsafe { runtime::objc_getClass(cls_nm.as_ptr()) as *mut Class };
+    assert!(!cls.is_null(), "null class");
+
+    extern fn is_handling_sendevent(this: &mut Object, cmd: Sel) -> BOOL {
+        //println!("isHandlingSendEvent {:?}", this);
+        let kp = &EVENT_KEY as *const _ as *const libc::c_void;
+        let is = unsafe { objc_getAssociatedObject(this, kp) };
+        //println!("AssociatedObject: {:?}", is);
+        is
+    }
+    unsafe { add_method(cls, sel!(isHandlingSendEvent), is_handling_sendevent as extern fn(&mut Object, Sel) -> BOOL) };
+
+    extern fn set_handling_sendevent(this: &mut Object, cmd: Sel, handling_sendevent: BOOL) {
+        //println!("setHandlingSendEvent {:?} {:?}", this, handling_sendevent);
+        let kp = &EVENT_KEY as *const _ as *const libc::c_void;
+        let policy_assign = 0;
+        unsafe { objc_setAssociatedObject(this, kp, handling_sendevent, policy_assign) };
+    }
+    unsafe { add_method(cls, sel!(setHandlingSendEvent:), set_handling_sendevent as extern fn(&mut Object, Sel, BOOL)) };
+
+    extern fn swizzled_sendevent(this: &mut Object, cmd: Sel, event: Id) {
+        //println!("swizzled_sendevent {:?}", this);
+        unsafe {
+            let handling: BOOL = msg_send![this, isHandlingSendEvent];
+            msg_send![this, setHandlingSendEvent:YES];
+            msg_send![this, _swizzled_sendEvent:event];
+            msg_send![this, setHandlingSendEvent:handling];
+        }
+    }
+    let sel_swizzled_sendevent = sel!(_swizzled_sendEvent:);
+    unsafe { add_method(cls, sel_swizzled_sendevent, swizzled_sendevent as extern fn(&mut Object, Sel, Id)) };
+    
+    unsafe {
+        let original = runtime::class_getInstanceMethod(cls, sel!(sendEvent:)) as *mut Method;
+        let swizzled = runtime::class_getInstanceMethod(cls, sel_swizzled_sendevent) as *mut Method;
+        runtime::method_exchangeImplementations(original, swizzled);
+    }
 }
 
 #[cfg(target_os = "windows")]
@@ -188,7 +281,7 @@ pub extern fn cefswt_create_browser(hwnd: std::os::raw::c_ulong, url: *const lib
     assert_eq!((*client).base.size, std::mem::size_of::<cef::_cef_client_t>());
 
     println!("hwnd: {}", hwnd);
-    println!("client: {:?}", client);
+    //println!("client: {:?}", client);
  
     //let url = "http://www.google.com";
     //let url = std::ffi::CString::new(url).unwrap().to_str().unwrap();
