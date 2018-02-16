@@ -6,6 +6,8 @@
 
 
 ///
+/// Structure representing CefExecuteProcess arguments.
+///
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct _cef_main_args_t {
@@ -46,6 +48,8 @@ fn bindgen_test_layout__cef_main_args_t() {
     );
 }
 ///
+/// Class representing window information.
+///
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct _cef_window_info_t {
@@ -54,10 +58,25 @@ pub struct _cef_window_info_t {
     pub width: ::std::os::raw::c_uint,
     pub height: ::std::os::raw::c_uint,
     ///
+    /// // Pointer for the parent window.
+    /// ///
     pub parent_window: ::std::os::raw::c_ulong,
     ///
+    /// // Set to true (1) to create the browser using windowless (off-screen)
+    /// // rendering. No window will be created for the browser and all rendering will
+    /// // occur via the CefRenderHandler interface. The |parent_window| value will be
+    /// // used to identify monitor info and to act as the parent window for dialogs,
+    /// // context menus, etc. If |parent_window| is not provided then the main screen
+    /// // monitor will be used and some functionality that requires a parent window
+    /// // may not function correctly. In order to create windowless browsers the
+    /// // CefSettings.windowless_rendering_enabled value must be set to true.
+    /// // Transparent painting is enabled by default but can be disabled by setting
+    /// // CefBrowserSettings.background_color to an opaque value.
+    /// ///
     pub windowless_rendering_enabled: ::std::os::raw::c_int,
     ///
+    /// // Pointer for the new browser window. Only used with windowed rendering.
+    /// ///
     pub window: ::std::os::raw::c_ulong,
 }
 #[test]
