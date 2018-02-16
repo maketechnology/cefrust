@@ -15,23 +15,41 @@ pub struct _cef_main_args_t {
 }
 #[test]
 fn bindgen_test_layout__cef_main_args_t() {
-    assert_eq!(::std::mem::size_of::<_cef_main_args_t>() , 16usize , concat !
-               ( "Size of: " , stringify ! ( _cef_main_args_t ) ));
-    assert_eq! (::std::mem::align_of::<_cef_main_args_t>() , 8usize , concat !
-                ( "Alignment of " , stringify ! ( _cef_main_args_t ) ));
-    assert_eq! (unsafe {
-                & ( * ( 0 as * const _cef_main_args_t ) ) . argc as * const _
-                as usize } , 0usize , concat ! (
-                "Alignment of field: " , stringify ! ( _cef_main_args_t ) ,
-                "::" , stringify ! ( argc ) ));
-    assert_eq! (unsafe {
-                & ( * ( 0 as * const _cef_main_args_t ) ) . argv as * const _
-                as usize } , 8usize , concat ! (
-                "Alignment of field: " , stringify ! ( _cef_main_args_t ) ,
-                "::" , stringify ! ( argv ) ));
+    assert_eq!(
+        ::std::mem::size_of::<_cef_main_args_t>(),
+        16usize,
+        concat!("Size of: ", stringify!(_cef_main_args_t))
+    );
+    assert_eq!(
+        ::std::mem::align_of::<_cef_main_args_t>(),
+        8usize,
+        concat!("Alignment of ", stringify!(_cef_main_args_t))
+    );
+    assert_eq!(
+        unsafe { &(*(0 as *const _cef_main_args_t)).argc as *const _ as usize },
+        0usize,
+        concat!(
+            "Alignment of field: ",
+            stringify!(_cef_main_args_t),
+            "::",
+            stringify!(argc)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(0 as *const _cef_main_args_t)).argv as *const _ as usize },
+        8usize,
+        concat!(
+            "Alignment of field: ",
+            stringify!(_cef_main_args_t),
+            "::",
+            stringify!(argv)
+        )
+    );
 }
 impl Clone for _cef_main_args_t {
-    fn clone(&self) -> Self { *self }
+    fn clone(&self) -> Self {
+        *self
+    }
 }
 ///
 #[repr(C)]
@@ -53,57 +71,111 @@ pub struct _cef_window_info_t {
 }
 #[test]
 fn bindgen_test_layout__cef_window_info_t() {
-    assert_eq!(::std::mem::size_of::<_cef_window_info_t>() , 72usize , concat
-               ! ( "Size of: " , stringify ! ( _cef_window_info_t ) ));
-    assert_eq! (::std::mem::align_of::<_cef_window_info_t>() , 8usize , concat
-                ! ( "Alignment of " , stringify ! ( _cef_window_info_t ) ));
-    assert_eq! (unsafe {
-                & ( * ( 0 as * const _cef_window_info_t ) ) . window_name as *
-                const _ as usize } , 0usize , concat ! (
-                "Alignment of field: " , stringify ! ( _cef_window_info_t ) ,
-                "::" , stringify ! ( window_name ) ));
-    assert_eq! (unsafe {
-                & ( * ( 0 as * const _cef_window_info_t ) ) . x as * const _
-                as usize } , 24usize , concat ! (
-                "Alignment of field: " , stringify ! ( _cef_window_info_t ) ,
-                "::" , stringify ! ( x ) ));
-    assert_eq! (unsafe {
-                & ( * ( 0 as * const _cef_window_info_t ) ) . y as * const _
-                as usize } , 28usize , concat ! (
-                "Alignment of field: " , stringify ! ( _cef_window_info_t ) ,
-                "::" , stringify ! ( y ) ));
-    assert_eq! (unsafe {
-                & ( * ( 0 as * const _cef_window_info_t ) ) . width as * const
-                _ as usize } , 32usize , concat ! (
-                "Alignment of field: " , stringify ! ( _cef_window_info_t ) ,
-                "::" , stringify ! ( width ) ));
-    assert_eq! (unsafe {
-                & ( * ( 0 as * const _cef_window_info_t ) ) . height as *
-                const _ as usize } , 36usize , concat ! (
-                "Alignment of field: " , stringify ! ( _cef_window_info_t ) ,
-                "::" , stringify ! ( height ) ));
-    assert_eq! (unsafe {
-                & ( * ( 0 as * const _cef_window_info_t ) ) . hidden as *
-                const _ as usize } , 40usize , concat ! (
-                "Alignment of field: " , stringify ! ( _cef_window_info_t ) ,
-                "::" , stringify ! ( hidden ) ));
-    assert_eq! (unsafe {
-                & ( * ( 0 as * const _cef_window_info_t ) ) . parent_view as *
-                const _ as usize } , 48usize , concat ! (
-                "Alignment of field: " , stringify ! ( _cef_window_info_t ) ,
-                "::" , stringify ! ( parent_view ) ));
-    assert_eq! (unsafe {
-                & ( * ( 0 as * const _cef_window_info_t ) ) .
-                windowless_rendering_enabled as * const _ as usize } , 56usize
-                , concat ! (
-                "Alignment of field: " , stringify ! ( _cef_window_info_t ) ,
-                "::" , stringify ! ( windowless_rendering_enabled ) ));
-    assert_eq! (unsafe {
-                & ( * ( 0 as * const _cef_window_info_t ) ) . view as * const
-                _ as usize } , 64usize , concat ! (
-                "Alignment of field: " , stringify ! ( _cef_window_info_t ) ,
-                "::" , stringify ! ( view ) ));
+    assert_eq!(
+        ::std::mem::size_of::<_cef_window_info_t>(),
+        72usize,
+        concat!("Size of: ", stringify!(_cef_window_info_t))
+    );
+    assert_eq!(
+        ::std::mem::align_of::<_cef_window_info_t>(),
+        8usize,
+        concat!("Alignment of ", stringify!(_cef_window_info_t))
+    );
+    assert_eq!(
+        unsafe { &(*(0 as *const _cef_window_info_t)).window_name as *const _ as usize },
+        0usize,
+        concat!(
+            "Alignment of field: ",
+            stringify!(_cef_window_info_t),
+            "::",
+            stringify!(window_name)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(0 as *const _cef_window_info_t)).x as *const _ as usize },
+        24usize,
+        concat!(
+            "Alignment of field: ",
+            stringify!(_cef_window_info_t),
+            "::",
+            stringify!(x)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(0 as *const _cef_window_info_t)).y as *const _ as usize },
+        28usize,
+        concat!(
+            "Alignment of field: ",
+            stringify!(_cef_window_info_t),
+            "::",
+            stringify!(y)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(0 as *const _cef_window_info_t)).width as *const _ as usize },
+        32usize,
+        concat!(
+            "Alignment of field: ",
+            stringify!(_cef_window_info_t),
+            "::",
+            stringify!(width)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(0 as *const _cef_window_info_t)).height as *const _ as usize },
+        36usize,
+        concat!(
+            "Alignment of field: ",
+            stringify!(_cef_window_info_t),
+            "::",
+            stringify!(height)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(0 as *const _cef_window_info_t)).hidden as *const _ as usize },
+        40usize,
+        concat!(
+            "Alignment of field: ",
+            stringify!(_cef_window_info_t),
+            "::",
+            stringify!(hidden)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(0 as *const _cef_window_info_t)).parent_view as *const _ as usize },
+        48usize,
+        concat!(
+            "Alignment of field: ",
+            stringify!(_cef_window_info_t),
+            "::",
+            stringify!(parent_view)
+        )
+    );
+    assert_eq!(
+        unsafe {
+            &(*(0 as *const _cef_window_info_t)).windowless_rendering_enabled as *const _ as usize
+        },
+        56usize,
+        concat!(
+            "Alignment of field: ",
+            stringify!(_cef_window_info_t),
+            "::",
+            stringify!(windowless_rendering_enabled)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(0 as *const _cef_window_info_t)).view as *const _ as usize },
+        64usize,
+        concat!(
+            "Alignment of field: ",
+            stringify!(_cef_window_info_t),
+            "::",
+            stringify!(view)
+        )
+    );
 }
 impl Clone for _cef_window_info_t {
-    fn clone(&self) -> Self { *self }
+    fn clone(&self) -> Self {
+        *self
+    }
 }

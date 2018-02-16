@@ -18,6 +18,9 @@ nix = "0.8.1"
 winapi = "0.2.8"
 user32-sys = "0.2.0"
 
+[target.'cfg(target_os = "macos")'.dependencies]
+objc = "0.2.2"
+
 [lib]
 name = "cefrustlib"
 crate-type = ["dylib"]

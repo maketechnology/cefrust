@@ -8,7 +8,7 @@ use cefrust::cef;
 //mod base;
 mod app;
 mod client;
-mod gtk2;
+// mod gtk2;
 
 //use std::os::raw;
 //use std::option::Option;

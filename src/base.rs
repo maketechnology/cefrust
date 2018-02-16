@@ -23,7 +23,7 @@ impl CefBase {
         pub unsafe extern "C" fn add_ref(_: *mut cef::cef_base_ref_counted_t) {
             debug_callback("cef_base_t.add_ref");
             if DEBUG_REFERENCE_COUNTING {
-                println!("+");
+                // println!("+");
             }
         }
 
@@ -35,7 +35,7 @@ impl CefBase {
                                                 -> ::std::os::raw::c_int {
             debug_callback("cef_base_t.release");
             if DEBUG_REFERENCE_COUNTING {
-                println!("-");
+                // println!("-");
             }
             1
         }
@@ -47,7 +47,7 @@ impl CefBase {
                                                 -> ::std::os::raw::c_int {
             debug_callback("cef_base_t.get_refct");
             if DEBUG_REFERENCE_COUNTING {
-                println!("=");
+                // println!("=");
             }
             1
         }
