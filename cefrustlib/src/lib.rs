@@ -72,6 +72,9 @@ pub extern fn cefswt_init(japp: *mut cef::cef_app_t, cefrust_path: *const libc::
     } else {
         cefrust::cef_string_empty()
     };
+
+    let cache_dir_cef = cefrust::cef_string(cefrust_dir.parent().unwrap().parent().unwrap().join("cef_cache").to_str().unwrap());
+
     let logfile_cef = cefrust::cef_string(cefrust_dir.join("lib.log").to_str().unwrap());
 
     let settings = cef::_cef_settings_t {
@@ -84,10 +87,10 @@ pub extern fn cefswt_init(japp: *mut cef::cef_app_t, cefrust_path: *const libc::
         external_message_pump: 1,
         windowless_rendering_enabled: 0,
         command_line_args_disabled: 0,
-        cache_path: cefrust::cef_string_empty(),
+        cache_path: cache_dir_cef,
         user_data_path: cefrust::cef_string_empty(),
-        persist_session_cookies: 0,
-        persist_user_preferences: 0,
+        persist_session_cookies: 1,
+        persist_user_preferences: 1,
         user_agent: cefrust::cef_string_empty(),
         product_version: cefrust::cef_string_empty(),
         locale: cefrust::cef_string_empty(),
